@@ -1,0 +1,5 @@
+library_build_commands.txt
+.vscode
+.vscode/**
+build
+build/**
