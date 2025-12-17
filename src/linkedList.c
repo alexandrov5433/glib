@@ -63,8 +63,9 @@ void freeLinkedList(LinkedList *ll)
         {
             break;
         }
-        n = n->next;
+        Node *temp = n->next;
         freeNodeLL(n);
+        n = temp;
     }
 
     free(ll);
