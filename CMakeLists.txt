@@ -7,12 +7,14 @@ add_library(glib SHARED)
 target_sources(glib
     PRIVATE
         src/linkedList.c
+        src/hashMap.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
             include
         FILES
             include/linkedList.h
+            include/hashMap.h
 )
 
 
@@ -45,14 +47,12 @@ target_include_directories(glib
         $<INSTALL_INTERFACE:include>
 )
 
-# Optional: library properties
 set_target_properties(glib PROPERTIES
     OUTPUT_NAME "glib"
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
 )
 
-# ---------- Install rules ----------
 include(GNUInstallDirs)
 
 install(TARGETS glib
