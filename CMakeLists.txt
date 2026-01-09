@@ -8,6 +8,7 @@ target_sources(glib
     PRIVATE
         src/linkedList.c
         src/hashMap.c
+        src/sorting.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
@@ -15,6 +16,7 @@ target_sources(glib
         FILES
             include/linkedList.h
             include/hashMap.h
+            include/sorting.h
 )
 
 
