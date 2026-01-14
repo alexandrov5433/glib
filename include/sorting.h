@@ -16,8 +16,10 @@
 
 GLIB_API void quickSort(int *nums, size_t length);
 
+GLIB_API void quickSortComp(void **elements, size_t length, int (*comparator)(const void *a, const void *b));
+
 GLIB_API void bubbleSort(int *nums, size_t length);
 
-GLIB_API void bubbleSortComp(void **array, size_t length, int (*comparator)(void *first, void *second));
+GLIB_API void bubbleSortComp(void **array, size_t length, int (*comparator)(void *a, void *b));
 
 #endif

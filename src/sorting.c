@@ -55,7 +55,8 @@ static void _quickSort(int *nums, int startIndex, int endIndex)
         return;
     }
     _quickSort(nums, startIndex, i);
-    if (nums[i + 1] == nums[endIndex]) {
+    if (nums[i + 1] == nums[endIndex])
+    {
         _quickSort(nums, i + 2, endIndex);
         return;
     }
@@ -65,6 +66,44 @@ static void _quickSort(int *nums, int startIndex, int endIndex)
 void quickSort(int *nums, size_t length)
 {
     _quickSort(nums, 0, length - 1);
+}
+
+static void _quickSortComp(void **elements, int startIndex, int endIndex, int (*comparator)(const void *a, const void *b))
+{
+    if (startIndex >= endIndex)
+    {
+        return;
+    }
+    const void *pivot = elements[endIndex];
+    int i = startIndex - 1;
+    for (int j = startIndex; j < endIndex; j++)
+    {
+        if (comparator(elements[j], pivot) < 0)
+        {
+            i++;
+            swapPointer(elements, i, j);
+        }
+    }
+    swapPointer(elements, i + 1, endIndex);
+    if (startIndex == endIndex - 1 && comparator(elements[startIndex], elements[endIndex]) <= 0)
+    {
+        return;
+    }
+    _quickSortComp(elements, startIndex, i, comparator);
+    if (comparator(elements[i + 1], elements[endIndex]) == 0)
+    {
+        _quickSortComp(elements, i + 2, endIndex, comparator);
+        return;
+    }
+    _quickSortComp(elements, i + 1, endIndex, comparator);
+}
+
+/**
+ * @param comparator (<0) a comes BEFORE b. (0) a and b are EQUAL. (>0) a comes AFTER b. 
+ */
+void quickSortComp(void **elements, size_t length, int (*comparator)(const void *a, const void *b))
+{
+    _quickSortComp(elements, 0, length - 1, comparator);
 }
 
 void bubbleSort(int *nums, size_t length)
@@ -83,7 +122,7 @@ void bubbleSort(int *nums, size_t length)
     }
 }
 
-void bubbleSortComp(void **array, size_t length, int (*comparator)(void *first, void *second))
+void bubbleSortComp(void **array, size_t length, int (*comparator)(void *a, void *b))
 {
     for (int i = 0; i < length - 1; i++)
     {
