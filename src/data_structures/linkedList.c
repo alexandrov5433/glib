@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "../include/linkedList.h"
+#include "../include/data_structures/linkedList.h"
 
 /**
  * Creates a new LinkedList.

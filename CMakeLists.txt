@@ -6,16 +6,16 @@ add_library(glib SHARED)
 
 target_sources(glib
     PRIVATE
-        src/linkedList.c
-        src/hashMap.c
+        src/data_structures/linkedList.c
+        src/data_structures/hashMap.c
         src/sorting.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
             include
         FILES
-            include/linkedList.h
-            include/hashMap.h
+            include/data_structures/linkedList.h
+            include/data_structures/hashMap.h
             include/sorting.h
 )
 

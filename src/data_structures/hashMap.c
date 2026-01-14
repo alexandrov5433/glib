@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "../include/hashMap.h"
+#include "../include/data_structures/hashMap.h"
 
 HashMap *newHashMap()
 {
