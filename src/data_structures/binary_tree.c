@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "../include/data_structures/binary_tree.h"
 
-static Node *newNode(const void *data)
+static Node *newNode(void *const data)
 {
     if (data == NULL)
     {
@@ -22,7 +22,7 @@ static Node *newNode(const void *data)
     return node;
 }
 
-BinaryTree *newBinaryTree(const void *ptr, int (*comparator)(const void *a, const void *b))
+BinaryTree *newBinaryTree(void *const ptr, int (*comparator)(const void *a, const void *b))
 {
     if (ptr == NULL || comparator == NULL)
     {
@@ -69,7 +69,7 @@ int freeBT(BinaryTree *bt)
     return 0;
 }
 
-static void freeNodeAndData(Node *node, void (*releaser)(const void *ptr))
+static void freeNodeAndData(Node *node, void (*releaser)(void *ptr))
 {
     if (node == NULL)
     {
@@ -83,7 +83,7 @@ static void freeNodeAndData(Node *node, void (*releaser)(const void *ptr))
     free(node);
 }
 
-int freeBTAndData(BinaryTree *bt, void (*releaser)(const void *ptr))
+int freeBTAndData(BinaryTree *bt, void (*releaser)(void *ptr))
 {
     if (bt == NULL || releaser == NULL)
     {
@@ -94,7 +94,7 @@ int freeBTAndData(BinaryTree *bt, void (*releaser)(const void *ptr))
     return 0;
 }
 
-int addToBT(BinaryTree *bt, const void *ptr)
+int addToBT(BinaryTree *bt, void *const ptr)
 {
     if (bt == NULL || ptr == NULL)
     {
@@ -142,7 +142,7 @@ int addToBT(BinaryTree *bt, const void *ptr)
     return 3;
 }
 
-static void *_DFS(Node *node, int (*selector)(const void *ptr))
+static void *_DFS(Node *node, int (*selector)(void *const ptr))
 {
     // depth first search; pre-order
     if (node == NULL)
@@ -153,15 +153,27 @@ static void *_DFS(Node *node, int (*selector)(const void *ptr))
     {
         return node->data;
     }
-    return _DFS(node->left, selector) || _DFS(node->right, selector);
+    // TODO: void* cast
+    /*
+    $ "D:/Program Files/CMake/bin/cmake.exe" --build build
+[1/3] Building C object CMakeFiles/glib.dir/src/data_structures/binary_tree.c.obj
+D:/Code Files/C/glib/src/data_structures/binary_tree.c: In function '_DFS':
+D:/Code Files/C/glib/src/data_structures/binary_tree.c:156:12: warning: cast to pointer from integer of differen
+t size [-Wint-to-pointer-cast]
+  156 |     return (void*)(_DFS(node->left, selector) || _DFS(node->right, selector));
+      |            ^
+[3/3] Linking C executable glib_test.exe
+
+    */
+    return (void *)(_DFS(node->left, selector) || _DFS(node->right, selector));
 }
 
-static void *_BFS(Node *node, int (*selector)(const void *ptr))
+static void *_BFS(Node *node, int (*selector)(void *const ptr))
 {
     // TODO
 }
 
-void *findInBT(BinaryTree *bt, int searchAlg, int (*selector)(const void *ptr))
+void *findInBT(BinaryTree *bt, int searchAlg, int (*selector)(void *const ptr))
 {
     if (bt == NULL || selector == NULL)
     {
@@ -174,7 +186,7 @@ void *findInBT(BinaryTree *bt, int searchAlg, int (*selector)(const void *ptr))
     return _BFS(bt->root, selector);
 }
 
-static void _processBT(Node *node, void (*processor)(const void *ptr))
+static void _processBT(Node *node, void (*processor)(void *const ptr))
 {
     if (node == NULL)
     {
@@ -184,7 +196,7 @@ static void _processBT(Node *node, void (*processor)(const void *ptr))
     _processBT(node->right, processor);
 }
 
-void processBT(BinaryTree *bt, void (*processor)(const void *ptr))
+void processBT(BinaryTree *bt, void (*processor)(void *const ptr))
 {
     if (bt == NULL || processor == NULL)
     {
