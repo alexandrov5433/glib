@@ -9,6 +9,8 @@ target_sources(glib
         src/data_structures/linkedList.c
         src/data_structures/hashMap.c
         src/sorting.c
+        src/data_structures/binary_tree.c
+        src/data_structures/stack.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
@@ -17,6 +19,8 @@ target_sources(glib
             include/data_structures/linkedList.h
             include/data_structures/hashMap.h
             include/sorting.h
+            include/data_structures/binary_tree.h
+            include/data_structures/stack.h
 )
 
 
