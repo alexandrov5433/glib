@@ -55,6 +55,16 @@ int isEmptyS(const Stack *stack)
     return 0;
 }
 
+void freeS(Stack *stack)
+{
+    if (stack == NULL)
+    {
+        return;
+    }
+    free(stack->arr);
+    free(stack);
+}
+
 int pushS(Stack *stack, void *const ptr)
 {
     if (stack == NULL || ptr == NULL)
@@ -91,7 +101,7 @@ void *peekS(const Stack *stack)
     return stack->arr[stack->currentIndex];
 }
 
-int processS(const Stack *stack, void (*processor)(void *ptr))
+int processS(const Stack *stack, void (*processor)(void *const ptr))
 {
     if (stack == NULL)
     {
@@ -191,6 +201,16 @@ int isEmptyDS(const DynamicStack *stack)
     return 0;
 }
 
+void freeDS(DynamicStack *stack)
+{
+    if (stack == NULL)
+    {
+        return;
+    }
+    free(stack->arr);
+    free(stack);
+}
+
 int pushDS(DynamicStack *stack, void *const ptr)
 {
     if (ptr == NULL)
@@ -235,7 +255,7 @@ void *peekDS(const DynamicStack *stack)
     return (stack->arr)[stack->currentIndex];
 }
 
-int processDS(const DynamicStack *stack, void (*processor)(void *ptr))
+int processDS(const DynamicStack *stack, void (*processor)(void *const ptr))
 {
     if (stack == NULL)
     {
