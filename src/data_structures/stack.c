@@ -55,7 +55,7 @@ int isEmptyS(const Stack *stack)
     return 0;
 }
 
-int pushS(Stack *stack, const void *ptr)
+int pushS(Stack *stack, void *const ptr)
 {
     if (stack == NULL || ptr == NULL)
     {
@@ -76,7 +76,7 @@ void *popS(Stack *stack)
     {
         return NULL;
     }
-    void *element = stack->arr[stack->currentIndex];
+    void *const element = stack->arr[stack->currentIndex];
     stack->arr[stack->currentIndex] = NULL;
     (stack->currentIndex)--;
     return element;
@@ -99,7 +99,7 @@ int processS(const Stack *stack, void (*processor)(void *ptr))
     }
     if (isEmptyS(stack) == 1)
     {
-        return;
+        return 0;
     }
     for (int i = 0; i <= stack->currentIndex; i++)
     {
@@ -191,7 +191,7 @@ int isEmptyDS(const DynamicStack *stack)
     return 0;
 }
 
-int pushDS(DynamicStack *stack, const void *ptr)
+int pushDS(DynamicStack *stack, void *const ptr)
 {
     if (ptr == NULL)
     {
@@ -217,7 +217,7 @@ void *popDS(DynamicStack *stack)
         return NULL;
     }
 
-    const void *element = (stack->arr)[stack->currentIndex];
+    void *const element = (stack->arr)[stack->currentIndex];
     (stack->arr)[stack->currentIndex] = NULL;
     (stack->currentIndex)--;
 

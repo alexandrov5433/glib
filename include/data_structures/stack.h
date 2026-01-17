@@ -47,7 +47,7 @@ GLIB_API int isEmptyS(const Stack *stack);
  * @param ptr The pointer, which will be added as a new element on top of the Stack, If NULL, 2 is returned.
  * @returns 0 on success; 1 if the Stack is full (isFullS function).
  */
-GLIB_API int pushS(Stack *stack, const void *ptr);
+GLIB_API int pushS(Stack *stack, void *const ptr);
 
 /**
  * Retrieves the topmost element of the Stack and removes it from the Stack.
@@ -66,7 +66,7 @@ GLIB_API void *peekS(const Stack *stack);
 /**
  * Applies a processor function to every element of the Stack, from bottom to top.
  * @param stack A pointer ot Stack, the elements of which must be processed. If NULL, 1 is returned.
- * If the Stack is empty, nothing is done.
+ * If the Stack is empty, 0 is returned and nothing is done.
  * @param processor The function, which will be applied to each element.
  * @returns 0 on success.
  */
@@ -105,7 +105,7 @@ GLIB_API int isEmptyDS(const DynamicStack *stack);
  * @param ptr The pointer, which will be added to the top of the DynamicStack. If NULL, 3 is returned.
  * @returns 0 on success. 2 if a memory allocation error occurs, while extending the memory of the DynamicStack.
  */
-GLIB_API int pushDS(DynamicStack *stack, const void *ptr);
+GLIB_API int pushDS(DynamicStack *stack, void *const ptr);
 
 /**
  * Removes the topmost element of the DynamicStack and returns it.
