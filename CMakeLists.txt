@@ -11,6 +11,7 @@ target_sources(glib
         src/sorting.c
         src/data_structures/binary_tree.c
         src/data_structures/stack.c
+        src/data_structures/dynamic_array.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
@@ -21,6 +22,7 @@ target_sources(glib
             include/sorting.h
             include/data_structures/binary_tree.h
             include/data_structures/stack.h
+            include/data_structures/dynamic_array.h
 )
 
 
