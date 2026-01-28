@@ -124,7 +124,7 @@ GLIB_API int popPointer(DynamicArray *const da, void **const output);
  * If NULL, 1 is returned.
  * @returns 0 on success. 1 if the type of the DynamicArray is not INT.
  */
-GLIB_API int unshiftInt(DynamicArray *const da, int *const output);
+GLIB_API int shiftInt(DynamicArray *const da, int *const output);
 
 /**
  * Places the first item (index == 0) from the DynamicArray at the address of the output pointer. The item is removed from the array. The item is cast to char.
@@ -133,7 +133,7 @@ GLIB_API int unshiftInt(DynamicArray *const da, int *const output);
  * If NULL, 1 is returned.
  * @returns 0 on success. 1 if the type of the DynamicArray is not CHAR.
  */
-GLIB_API int unshiftChar(DynamicArray *const da, char *const output);
+GLIB_API int shiftChar(DynamicArray *const da, char *const output);
 
 /**
  * Places the first item (index == 0) from the DynamicArray at the address of the output pointer. The item is removed from the array. The item is cast to float.
@@ -142,7 +142,7 @@ GLIB_API int unshiftChar(DynamicArray *const da, char *const output);
  * If NULL, 1 is returned.
  * @returns 0 on success. 1 if the type of the DynamicArray is not FLOAT.
  */
-GLIB_API int unshiftFloat(DynamicArray *const da, float *const output);
+GLIB_API int shiftFloat(DynamicArray *const da, float *const output);
 
 /**
  * Places the first item (index == 0) from the DynamicArray at the address of the output pointer. The item is removed from the array. The item is cast to double.
@@ -151,7 +151,7 @@ GLIB_API int unshiftFloat(DynamicArray *const da, float *const output);
  * If NULL, 1 is returned.
  * @returns 0 on success. 1 if the type of the DynamicArray is not DOUBLE.
  */
-GLIB_API int unshiftDouble(DynamicArray *const da, double *output);
+GLIB_API int shiftDouble(DynamicArray *const da, double *output);
 
 /**
  * Places the first item (index == 0) from the DynamicArray at the address of the output pointer. The item is removed from the array. The item is cast to void pointer.
@@ -160,7 +160,7 @@ GLIB_API int unshiftDouble(DynamicArray *const da, double *output);
  * If NULL, 1 is returned.
  * @returns 0 on success. 1 if the type of the DynamicArray is not VIOD_PTR.
  */
-GLIB_API int unshiftPointer(DynamicArray *const da, void **const output);
+GLIB_API int shiftPointer(DynamicArray *const da, void **const output);
 
 /**
  * Applies a processor function to every item in the DynamicArray, from left to right.

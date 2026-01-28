@@ -499,7 +499,7 @@ int popPointer(DynamicArray *const da, void **const output)
     return 0;
 }
 
-int unshiftInt(DynamicArray *const da, int *const output)
+int shiftInt(DynamicArray *const da, int *const output)
 {
     if (da == NULL || output == NULL || da->type != INT || _isEmpty(da))
     {
@@ -514,7 +514,7 @@ int unshiftInt(DynamicArray *const da, int *const output)
     return 0;
 }
 
-int unshiftChar(DynamicArray *const da, char *const output)
+int shiftChar(DynamicArray *const da, char *const output)
 {
     if (da == NULL || output == NULL || da->type != CHAR || _isEmpty(da))
     {
@@ -529,7 +529,7 @@ int unshiftChar(DynamicArray *const da, char *const output)
     return 0;
 }
 
-int unshiftFloat(DynamicArray *const da, float *const output)
+int shiftFloat(DynamicArray *const da, float *const output)
 {
     if (da == NULL || output == NULL || da->type != FLOAT || _isEmpty(da))
     {
@@ -544,7 +544,7 @@ int unshiftFloat(DynamicArray *const da, float *const output)
     return 0;
 }
 
-int unshiftDouble(DynamicArray *const da, double *const output)
+int shiftDouble(DynamicArray *const da, double *const output)
 {
     if (da == NULL || output == NULL || da->type != DOUBLE || _isEmpty(da))
     {
@@ -559,7 +559,7 @@ int unshiftDouble(DynamicArray *const da, double *const output)
     return 0;
 }
 
-int unshiftPointer(DynamicArray *const da, void **const output)
+int shiftPointer(DynamicArray *const da, void **const output)
 {
     if (da == NULL || output == NULL || da->type != VOID_PTR || _isEmpty(da))
     {
