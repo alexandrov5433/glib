@@ -169,7 +169,7 @@ GLIB_API int shiftPointer(DynamicArray *const da, void **const output);
  * If the type of the array is VOID_PTR, the processor receives the item directly.
  * For any other type, the processor receives a pointer to the item, which is cast to void pointer, regardless of the type of the array.
  * The processor also receives a loopBreakTrigger (int *), which breaks the loop when it's value is set to 1.
- * @returns 0 on success.
+ * @returns 0 on success. 2 if the pointer to the item in the array could not be retrieved.
  */
 GLIB_API int processDA(DynamicArray *const da, void (*processor)(void *itemPtr, int *loopBreakTrigger));
 
@@ -179,14 +179,14 @@ GLIB_API int processDA(DynamicArray *const da, void (*processor)(void *itemPtr, 
  * @param filter A function pointer to the function, which will select the wanted items. If NULL, 1 is returned.
  * If the type of the array is VOID_PTR, the filter receives the item directly.
  * For any other type, the filter receives a pointer to the item, which is cast to void pointer, regardless of the type of the array. The filter must return 1 if the item is to stay in the array. Any other value will lead to the removal of the item.
- * @returns 0 on success.
+ * @returns 0 on success. 2 if the pointer to the item in the array could not be retrieved.
  */
 GLIB_API int filterDA(DynamicArray *const da, int (*filter)(void *itemPtr));
 
 /**
  * Gets the item at a given index, without modifing the DynamicArray.
  * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
- * @param output A double void pointer, which will receive the address of the item. If NULL, 1 is returned.
+ * @param output A double void pointer, which will receive the address of the item.
  * If the type of the array is VOID_PTR, the item it self (which is a void pointer) is placed in the output.
  * For any other type, the address of the item, cast to void pointer regardless of the type of the array, is placed in output.
  * @returns 0 on success. 1 if the given index is out of bounds.

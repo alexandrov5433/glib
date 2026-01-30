@@ -109,36 +109,45 @@ static int _shrinkDA(DynamicArray *const da)
 
 static int _moveRightOne(DynamicArray *const da)
 {
-    void **arr;
     switch (da->type)
     {
     case 0:
         // int
-        arr = (void *)da->intArr;
+        for (size_t i = da->count; i > 0; --i)
+        {
+            da->intArr[i] = da->intArr[i - 1];
+        }
         break;
     case 1:
         // char
-        arr = (void *)da->charArr;
+        for (size_t i = da->count; i > 0; --i)
+        {
+            da->charArr[i] = da->charArr[i - 1];
+        }
         break;
     case 2:
         // float
-        arr = (void *)da->floatArr;
+        for (size_t i = da->count; i > 0; --i)
+        {
+            da->floatArr[i] = da->floatArr[i - 1];
+        }
         break;
     case 3:
         // double
-        arr = (void *)da->doubleArr;
+        for (size_t i = da->count; i > 0; --i)
+        {
+            da->doubleArr[i] = da->doubleArr[i - 1];
+        }
         break;
     case 4:
         // void**
-        arr = (void *)da->voidArr;
+        for (size_t i = da->count; i > 0; --i)
+        {
+            da->voidArr[i] = da->voidArr[i - 1];
+        }
         break;
     default:
         return 1;
-    }
-
-    for (int i = da->count; i > 0; --i)
-    {
-        arr[i] = arr[i - 1];
     }
 
     return 0;
@@ -146,36 +155,45 @@ static int _moveRightOne(DynamicArray *const da)
 
 static int _moveLeftOne(DynamicArray *const da)
 {
-    void **arr;
     switch (da->type)
     {
     case 0:
         // int
-        arr = (void *)da->intArr;
+        for (size_t i = 0; i < da->count - 1; ++i)
+        {
+            da->intArr[i] = da->intArr[i + 1];
+        }
         break;
     case 1:
         // char
-        arr = (void *)da->charArr;
+        for (size_t i = 0; i < da->count - 1; ++i)
+        {
+            da->charArr[i] = da->charArr[i - 1];
+        }
         break;
     case 2:
         // float
-        arr = (void *)da->floatArr;
+        for (size_t i = 0; i < da->count - 1; ++i)
+        {
+            da->floatArr[i] = da->floatArr[i - 1];
+        }
         break;
     case 3:
         // double
-        arr = (void *)da->doubleArr;
+        for (size_t i = 0; i < da->count - 1; ++i)
+        {
+            da->doubleArr[i] = da->doubleArr[i - 1];
+        }
         break;
     case 4:
         // void**
-        arr = (void *)da->voidArr;
+        for (size_t i = 0; i < da->count - 1; ++i)
+        {
+            da->voidArr[i] = da->voidArr[i - 1];
+        }
         break;
     default:
         return 1;
-    }
-
-    for (int i = 0; i < da->count - 1; ++i)
-    {
-        arr[i] = arr[i + 1];
     }
 
     return 0;
@@ -581,7 +599,7 @@ int processDA(DynamicArray *const da, void (*processor)(void *itemPtr, int *loop
     if (da == NULL || processor == NULL)
         return 1;
 
-    void *ptr = (void *)malloc(sizeof(void *));
+    void *ptr = NULL;
     int loopBreakTrigger = 0;
     for (size_t i = 0; i < da->count; ++i)
     {
@@ -589,10 +607,12 @@ int processDA(DynamicArray *const da, void (*processor)(void *itemPtr, int *loop
             break;
 
         int err = _getPointerAtIndex(da, i, &ptr);
+        if (err || ptr == NULL)
+            return 2;
 
         processor(ptr, &loopBreakTrigger);
     }
-    free(ptr);
+
     return 0;
 }
 
@@ -605,17 +625,17 @@ int filterDA(DynamicArray *const da, int (*filter)(void *itemPtr))
     if (tempDA == NULL)
         return 1;
 
-    void *ptr = (void *)malloc(sizeof(void *));
+    void *ptr = NULL;
 
     for (size_t i = 0; i < da->count; ++i)
     {
         int err = _getPointerAtIndex(da, i, &ptr);
+        if (err || ptr == NULL)
+            return 2;
 
         if (filter(ptr) == 1)
-            pushDA(ptr, tempDA);
+            pushDA(tempDA, ptr);
     }
-
-    free(ptr);
 
     /*
     Copy the data from the tempDA to the da.
@@ -659,7 +679,7 @@ int filterDA(DynamicArray *const da, int (*filter)(void *itemPtr))
 
 int atDA(DynamicArray *const da, size_t index, void **output)
 {
-    if (da == NULL || output == NULL || _isOutOfBounds(da, index))
+    if (da == NULL || _isOutOfBounds(da, index))
         return 1;
 
     int err = _getPointerAtIndex(da, index, output);
