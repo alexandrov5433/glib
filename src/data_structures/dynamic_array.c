@@ -10,12 +10,16 @@ static int _enumCheck(enum DynamicArrayType const type)
     {
     case 0:
         // int
+        return 0;
     case 1:
         // char
+        return 0;
     case 2:
         // float
+        return 0;
     case 3:
         // double
+        return 0;
     case 4:
         // void*
         return 0;
