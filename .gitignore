@@ -3,4 +3,3 @@ library_build_commands.txt
 .vscode/**
 build
 build/**
-glib_test.c
