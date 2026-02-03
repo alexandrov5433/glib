@@ -80,9 +80,9 @@ static int _expandDA(DynamicArray *const da)
         return 1;
 
     size_t freeSpace = da->capacity - da->count;
-    if (freeSpace < DYNAMIC_ARRAY_MEMORY_INIT_CAPACITY * 0.25)
+    if (freeSpace < DYNAMIC_ARRAY_INIT_CAPACITY * 0.25)
     {
-        size_t newCapacity = da->capacity + DYNAMIC_ARRAY_MEMORY_INIT_CAPACITY;
+        size_t newCapacity = da->capacity + DYNAMIC_ARRAY_INIT_CAPACITY;
         int err = _memRealloc(da, newCapacity);
         if (err)
             return err;
@@ -96,7 +96,7 @@ static int _shrinkDA(DynamicArray *const da)
         return 1;
 
     size_t freeSpace = da->capacity - da->count;
-    if (freeSpace > DYNAMIC_ARRAY_MEMORY_INIT_CAPACITY * 2)
+    if (freeSpace > DYNAMIC_ARRAY_INIT_CAPACITY * 2)
     {
         size_t newCapacity = da->capacity - freeSpace * 0.5;
 
@@ -322,7 +322,7 @@ DynamicArray *newDynamicArray(enum DynamicArrayType const type)
         return NULL;
 
     da->count = 0;
-    da->capacity = DYNAMIC_ARRAY_MEMORY_INIT_CAPACITY;
+    da->capacity = DYNAMIC_ARRAY_INIT_CAPACITY;
     da->type = type;
     da->singleItemSize = _singleItemSize(type);
 
