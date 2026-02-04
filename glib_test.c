@@ -553,8 +553,60 @@ void dynamicArrayTest()
         }
     }
     printf("success.\n");
-
     freeDynamicArray(da);
+
+    printf("Testing void pointer array...");
+    DynamicArray *vpDa = newDynamicArray(VOID_PTR);
+
+    Person p1 = {"Alice", 25};
+    Person p2 = {"Bob", 42};
+    Person p3 = {"Charlie", 30};
+    Person p4 = {"Diana", 19};
+    Person p5 = {"Eve", 35};
+    Person p6 = {"Frank", 28};
+    Person p7 = {"Grace", 50};
+    Person p8 = {"Hank", 22};
+    Person p9 = {"Ivy", 42};
+    Person p10 = {"Jack", 27};
+
+    printf("populating...");
+    int errArr[10] = {
+        pushDA(vpDa, &p1),
+        pushDA(vpDa, &p2),
+        pushDA(vpDa, &p3),
+        pushDA(vpDa, &p4),
+        pushDA(vpDa, &p5),
+        pushDA(vpDa, &p6),
+        pushDA(vpDa, &p7),
+        pushDA(vpDa, &p8),
+        pushDA(vpDa, &p9),
+        pushDA(vpDa, &p10),
+    };
+
+    for (size_t i = 0; i < 10; ++i)
+    {
+        if (errArr[i])
+        {
+            printf("failed. One or more pushDA calls returned more than 0.\n");
+            return;
+        }
+    }
+    Person *person_five = NULL;
+    int pf_err = atDA(vpDa, 4, (void **)&person_five);
+    if (!person_five)
+    {
+        printf("failed. Person not found in array\n");
+        return;
+    }
+    if (!person_five || person_five->age != 35)
+    {
+        printf("failed. Expected age (35), received (%d).\n", person_five->age);
+        return;
+    }
+    printf("success.\n");
+
+    freeDynamicArray(vpDa);
+    
     puts("####### Test done.");
 }
 int main()
