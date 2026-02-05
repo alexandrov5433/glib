@@ -456,66 +456,38 @@ int unshiftDA(DynamicArray *const da, void *const item)
 
 // ##################   remove items   ##################
 
-int popInt(DynamicArray *const da, int *const output)
+int popDA(DynamicArray *const da, void *const output)
 {
-    if (da == NULL || output == NULL || da->type != INT || _isEmpty(da))
+    if (da == NULL || _isEmpty(da))
     {
         return 1;
     }
 
-    *output = (int)((da->intArr)[--(da->count)]);
-    _shrinkDA(da);
-
-    return 0;
-}
-
-int popChar(DynamicArray *const da, char *const output)
-{
-    if (da == NULL || output == NULL || da->type != CHAR || _isEmpty(da))
+    switch (da->type)
     {
-        return 1;
+    case 0:
+        // int
+        *(int *)output = (int)((da->intArr)[--(da->count)]);
+        break;
+    case 1:
+        // char
+        *(char *)output = (char)((da->charArr)[--(da->count)]);
+        break;
+    case 2:
+        // float
+        *(float *)output = (float)((da->floatArr)[--(da->count)]);
+        break;
+    case 3:
+        // double
+        *(double *)output = (double)((da->doubleArr)[--(da->count)]);
+        break;
+    case 4:
+        // void**
+        *(void **)output = (void *)((da->voidArr)[--(da->count)]);
+        break;
+    default:
+        return 3;
     }
-
-    *output = (char)((da->charArr)[--(da->count)]);
-    _shrinkDA(da);
-
-    return 0;
-}
-
-int popFloat(DynamicArray *const da, float *const output)
-{
-    if (da == NULL || output == NULL || da->type != FLOAT || _isEmpty(da))
-    {
-        return 1;
-    }
-
-    *output = (float)((da->floatArr)[--(da->count)]);
-    _shrinkDA(da);
-
-    return 0;
-}
-
-int popDouble(DynamicArray *const da, double *const output)
-{
-    if (da == NULL || output == NULL || da->type != DOUBLE || _isEmpty(da))
-    {
-        return 1;
-    }
-
-    *output = (double)((da->doubleArr)[--(da->count)]);
-    _shrinkDA(da);
-
-    return 0;
-}
-
-int popPointer(DynamicArray *const da, void **const output)
-{
-    if (da == NULL || output == NULL || da->type != VOID_PTR || _isEmpty(da))
-    {
-        return 1;
-    }
-
-    *output = (void *)((da->voidArr)[--(da->count)]);
     _shrinkDA(da);
 
     return 0;

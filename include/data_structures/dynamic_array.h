@@ -73,49 +73,13 @@ GLIB_API int pushDA(DynamicArray *const da, void *const item);
 GLIB_API int unshiftDA(DynamicArray *const da, void *const item);
 
 /**
- * Places the last item (index == count - 1) from the DynamicArray at the address of the output pointer. The item is removed from the array. The item is cast to int.
+ * Places the last item (index == count - 1) from the DynamicArray at the address of the output pointer. The item is removed from the array. 
+ * The item is cast to the type of the DynamicArray.
  * @param da A pointer to the DynamicArray. If NULL or the array is empty, 1 is returned.
  * @param output An int pointer, at the address of which the value of the item will be placed.
- * If NULL, 1 is returned.
- * @returns 0 on success. 1 if the type of the DynamicArray is not INT.
+ * @returns 0 on success. 1 if the type of the DynamicArray is empty. 3 if the type in the DynamicArray is not recognized.
  */
-GLIB_API int popInt(DynamicArray *const da, int *const output);
-
-/**
- * Places the last item (index == count - 1) from the DynamicArray at the address of the output pointer. The item is removed from the array. The item is cast to char.
- * @param da A pointer to the DynamicArray. If NULL or the array is empty, 1 is returned.
- * @param output A char pointer, at the address of which the value of the item will be placed.
- * If NULL, 1 is returned.
- * @returns 0 on success. 1 if the type of the DynamicArray is not CHAR.
- */
-GLIB_API int popChar(DynamicArray *const da, char *const output);
-
-/**
- * Places the last item (index == count - 1) from the DynamicArray at the address of the output pointer. The item is removed from the array. The item is cast to float.
- * @param da A pointer to the DynamicArray. If NULL or the array is empty, 1 is returned.
- * @param output A float pointer, at the address of which the value of the item will be placed.
- * If NULL, 1 is returned.
- * @returns 0 on success. 1 if the type of the DynamicArray is not FLOAT.
- */
-GLIB_API int popFloat(DynamicArray *const da, float *const output);
-
-/**
- * Places the last item (index == count - 1) from the DynamicArray at the address of the output pointer. The item is removed from the array. The item is cast to double.
- * @param da A pointer to the DynamicArray. If NULL or the array is empty, 1 is returned.
- * @param output A double pointer, at the address of which the value of the item will be placed.
- * If NULL, 1 is returned.
- * @returns 0 on success. 1 if the type of the DynamicArray is not DOUBLE.
- */
-GLIB_API int popDouble(DynamicArray *const da, double *const output);
-
-/**
- * Places the last item (index == count - 1) from the DynamicArray at the address of the output pointer. The item is removed from the array. The item is cast to void pointer.
- * @param da A pointer to the DynamicArray. If NULL or the array is empty, 1 is returned.
- * @param output A double void pointer, where the void pointer value of the item will be placed.
- * If NULL, 1 is returned.
- * @returns 0 on success. 1 if the type of the DynamicArray is not VOID_PTR.
- */
-GLIB_API int popPointer(DynamicArray *const da, void **const output);
+GLIB_API int popDA(DynamicArray *const da, void *const output);
 
 /**
  * Places the first item (index == 0) from the DynamicArray at the address of the output pointer. The item is removed from the array. The item is cast to int.

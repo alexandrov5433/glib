@@ -426,7 +426,7 @@ void dynamicArrayTest()
     for (int i = 4999; i >= 0; --i)
     {
 
-        int err = popInt(da, outputInt);
+        int err = popDA(da, outputInt);
         if (err)
         {
             printf("failed with code: %d\n", err);
@@ -606,7 +606,54 @@ void dynamicArrayTest()
     printf("success.\n");
 
     freeDynamicArray(vpDa);
-    
+
+    printf("Testing function: popDA for VOID_PTR...");
+    DynamicArray *daPopTest = newDynamicArray(VOID_PTR);
+    pushDA(daPopTest, &p1);
+    pushDA(daPopTest, &p2);
+
+    Person *person = NULL;
+    int daPopErr = popDA(daPopTest, (void *)&person);
+    if (daPopErr)
+    {
+        printf("failed. popDA reuturned error (%d).\n", daPopErr);
+        return;
+    }
+    if (person->age == 42)
+    {
+        printf("success.\n");
+    }
+    else
+    {
+        printf("failed. Expected age (42), received (%d).\n", person->age);
+        return;
+    }
+    freeDynamicArray(daPopTest);
+
+    printf("Testing function: popDA for INT...");
+    DynamicArray *daPopInt = newDynamicArray(INT);
+    for (int i = 1; i < 4; ++i)
+    {
+        pushDA(daPopInt, &i);
+    }
+    int popIntOutput = 0;
+    int popIntErr = popDA(daPopInt, &popIntOutput);
+    if (popIntErr)
+    {
+        printf("failed. popDA reuturned error (%d).\n", popIntErr);
+        return;
+    }
+    if (popIntOutput == 3)
+    {
+        printf("success.\n");
+    }
+    else
+    {
+        printf("failed. Expected (3), received (%d).\n", popIntOutput);
+        return;
+    }
+    freeDynamicArray(daPopInt);
+
     puts("####### Test done.");
 }
 int main()
