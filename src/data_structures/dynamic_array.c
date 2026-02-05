@@ -493,74 +493,38 @@ int popDA(DynamicArray *const da, void *const output)
     return 0;
 }
 
-int shiftInt(DynamicArray *const da, int *const output)
+int shiftDA(DynamicArray *const da, void *const output)
 {
-    if (da == NULL || output == NULL || da->type != INT || _isEmpty(da))
+    if (da == NULL || _isEmpty(da))
     {
         return 1;
     }
 
-    *output = (int)((da->intArr)[0]);
-    _moveLeftOne(da);
-    (da->count)--;
-    _shrinkDA(da);
-
-    return 0;
-}
-
-int shiftChar(DynamicArray *const da, char *const output)
-{
-    if (da == NULL || output == NULL || da->type != CHAR || _isEmpty(da))
+     switch (da->type)
     {
-        return 1;
+    case 0:
+        // int
+        *(int *)output = (int)((da->intArr)[0]);
+        break;
+    case 1:
+        // char
+        *(char *)output = (char)((da->charArr)[0]);
+        break;
+    case 2:
+        // float
+        *(float *)output = (float)((da->floatArr)[0]);
+        break;
+    case 3:
+        // double
+        *(double *)output = (double)((da->doubleArr)[0]);
+        break;
+    case 4:
+        // void**
+        *(void **)output = (void *)((da->voidArr)[0]);
+        break;
+    default:
+        return 3;
     }
-
-    *output = (char)((da->charArr)[0]);
-    _moveLeftOne(da);
-    (da->count)--;
-    _shrinkDA(da);
-
-    return 0;
-}
-
-int shiftFloat(DynamicArray *const da, float *const output)
-{
-    if (da == NULL || output == NULL || da->type != FLOAT || _isEmpty(da))
-    {
-        return 1;
-    }
-
-    *output = (float)((da->floatArr)[0]);
-    _moveLeftOne(da);
-    (da->count)--;
-    _shrinkDA(da);
-
-    return 0;
-}
-
-int shiftDouble(DynamicArray *const da, double *const output)
-{
-    if (da == NULL || output == NULL || da->type != DOUBLE || _isEmpty(da))
-    {
-        return 1;
-    }
-
-    *output = (double)((da->doubleArr)[0]);
-    _moveLeftOne(da);
-    (da->count)--;
-    _shrinkDA(da);
-
-    return 0;
-}
-
-int shiftPointer(DynamicArray *const da, void **const output)
-{
-    if (da == NULL || output == NULL || da->type != VOID_PTR || _isEmpty(da))
-    {
-        return 1;
-    }
-
-    *output = (void *)((da->voidArr)[0]);
     _moveLeftOne(da);
     (da->count)--;
     _shrinkDA(da);

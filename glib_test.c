@@ -466,7 +466,7 @@ void dynamicArrayTest()
     for (int i = 0; i <= 99; ++i)
     {
 
-        int err = shiftInt(da, o);
+        int err = shiftDA(da, o);
         if (err)
         {
             printf("failed with code: %d\n", err);
@@ -653,6 +653,53 @@ void dynamicArrayTest()
         return;
     }
     freeDynamicArray(daPopInt);
+
+    printf("Testing function: shiftDA for VOID_PTR...");
+    DynamicArray *daShiftVoid = newDynamicArray(VOID_PTR);
+    pushDA(daShiftVoid, &p1);
+    pushDA(daShiftVoid, &p2);
+
+    Person *shiftPerson = NULL;
+    int daShiftErr = shiftDA(daShiftVoid, (void *)&person);
+    if (daShiftErr)
+    {
+        printf("failed. shiftDA reuturned error (%d).\n", daShiftErr);
+        return;
+    }
+    if (person->age == 25)
+    {
+        printf("success.\n");
+    }
+    else
+    {
+        printf("failed. Expected age (25), received (%d).\n", person->age);
+        return;
+    }
+    freeDynamicArray(daShiftVoid);
+
+    printf("Testing function: shiftDA for INT...");
+    DynamicArray *daShiftInt = newDynamicArray(INT);
+    for (int i = 1; i < 4; ++i)
+    {
+        pushDA(daPopInt, &i);
+    }
+    int shiftIntOutput = 0;
+    int shiftIntErr = shiftDA(daShiftInt, &shiftIntOutput);
+    if (shiftIntErr)
+    {
+        printf("failed. popDA reuturned error (%d).\n", shiftIntErr);
+        return;
+    }
+    if (shiftIntOutput == 1)
+    {
+        printf("success.\n");
+    }
+    else
+    {
+        printf("failed. Expected (1), received (%d).\n", shiftIntOutput);
+        return;
+    }
+    freeDynamicArray(daShiftInt);
 
     puts("####### Test done.");
 }
