@@ -4,7 +4,7 @@
 
 // ##################   static   ##################
 
-static int _enumCheck(enum DynamicArrayType const type)
+static int _enum_check(enum DynamicArrayType const type)
 {
     switch (type)
     {
@@ -28,7 +28,7 @@ static int _enumCheck(enum DynamicArrayType const type)
     }
 }
 
-static int _memRealloc(DynamicArray *const da, size_t newCapacity)
+static int _mem_realloc(DynamicArray *const da, size_t newCapacity)
 {
     switch (da->type)
     {
@@ -74,7 +74,7 @@ static int _memRealloc(DynamicArray *const da, size_t newCapacity)
     return 0;
 }
 
-static int _expandDA(DynamicArray *const da)
+static int _expand_da(DynamicArray *const da)
 {
     if (da == NULL)
         return 1;
@@ -83,7 +83,7 @@ static int _expandDA(DynamicArray *const da)
     if (freeSpace < DYNAMIC_ARRAY_INIT_CAPACITY * 0.25)
     {
         size_t newCapacity = da->capacity + DYNAMIC_ARRAY_INIT_CAPACITY;
-        int err = _memRealloc(da, newCapacity);
+        int err = _mem_realloc(da, newCapacity);
         if (err)
             return err;
     }
@@ -104,14 +104,14 @@ static int _shrinkDA(DynamicArray *const da)
         if (newCapacity <= da->count)
             newCapacity += da->count;
 
-        int err = _memRealloc(da, newCapacity);
+        int err = _mem_realloc(da, newCapacity);
         if (err)
             return err;
     }
     return 0;
 }
 
-static int _moveRightOne(DynamicArray *const da)
+static int _move_one_right(DynamicArray *const da)
 {
     switch (da->type)
     {
@@ -157,7 +157,7 @@ static int _moveRightOne(DynamicArray *const da)
     return 0;
 }
 
-static int _moveLeftOne(DynamicArray *const da)
+static int _move_one_left(DynamicArray *const da)
 {
     switch (da->type)
     {
@@ -203,17 +203,17 @@ static int _moveLeftOne(DynamicArray *const da)
     return 0;
 }
 
-static int _isEmpty(const DynamicArray *const da)
+static int _is_empty(const DynamicArray *const da)
 {
     return da->count <= 0 ? 1 : 0;
 }
 
-static int _isOutOfBounds(const DynamicArray *const da, size_t index)
+static int _is_out_of_bounds(const DynamicArray *const da, size_t index)
 {
     return index < 0 || index >= da->count ? 1 : 0;
 }
 
-static size_t _singleItemSize(enum DynamicArrayType type)
+static size_t _single_item_size(enum DynamicArrayType type)
 {
     switch (type)
     {
@@ -237,7 +237,7 @@ static size_t _singleItemSize(enum DynamicArrayType type)
     }
 }
 
-static int _newItemsArray(DynamicArray *const da)
+static int _new_items_array(DynamicArray *const da)
 {
     switch (da->type)
     {
@@ -282,7 +282,7 @@ static int _newItemsArray(DynamicArray *const da)
     return 0;
 }
 
-static int _getPointerAtIndex(const DynamicArray *const da, const size_t index, void **output)
+static int _get_pointer_at_index(const DynamicArray *const da, const size_t index, void **output)
 {
     switch (da->type)
     {
@@ -312,9 +312,9 @@ static int _getPointerAtIndex(const DynamicArray *const da, const size_t index, 
 
 // ##################   creation and destruction  ##################
 
-DynamicArray *newDynamicArray(enum DynamicArrayType const type)
+DynamicArray *new_dynamic_array(enum DynamicArrayType const type)
 {
-    if (_enumCheck(type))
+    if (_enum_check(type))
         return NULL;
 
     DynamicArray *da = (DynamicArray *)malloc(sizeof(DynamicArray));
@@ -324,9 +324,9 @@ DynamicArray *newDynamicArray(enum DynamicArrayType const type)
     da->count = 0;
     da->capacity = DYNAMIC_ARRAY_INIT_CAPACITY;
     da->type = type;
-    da->singleItemSize = _singleItemSize(type);
+    da->singleItemSize = _single_item_size(type);
 
-    int err = _newItemsArray(da);
+    int err = _new_items_array(da);
     if (err)
     {
         free(da);
@@ -336,7 +336,7 @@ DynamicArray *newDynamicArray(enum DynamicArrayType const type)
     return da;
 }
 
-void freeDynamicArray(DynamicArray *const da)
+void free_dynamic_array(DynamicArray *const da)
 {
     if (da == NULL)
         return;
@@ -368,12 +368,12 @@ void freeDynamicArray(DynamicArray *const da)
 
 // ##################   add items   ##################
 
-int pushDA(DynamicArray *const da, void *const item)
+int push_da(DynamicArray *const da, void *const item)
 {
     if (item == NULL || da == NULL)
         return 1;
 
-    int err = _expandDA(da);
+    int err = _expand_da(da);
     if (err)
         return err;
 
@@ -406,20 +406,20 @@ int pushDA(DynamicArray *const da, void *const item)
     return 0;
 }
 
-int unshiftDA(DynamicArray *const da, void *const item)
+int unshift_da(DynamicArray *const da, void *const item)
 {
     if (item == NULL || da == NULL)
         return 1;
 
-    int err = _expandDA(da);
+    int err = _expand_da(da);
     if (err)
         return err;
 
-    err = _enumCheck(da->type);
+    err = _enum_check(da->type);
     if (err)
         return 3;
 
-    err = _moveRightOne(da);
+    err = _move_one_right(da);
     if (err)
         return 4;
 
@@ -456,9 +456,9 @@ int unshiftDA(DynamicArray *const da, void *const item)
 
 // ##################   remove items   ##################
 
-int popDA(DynamicArray *const da, void *const output)
+int pop_da(DynamicArray *const da, void *const output)
 {
-    if (da == NULL || _isEmpty(da))
+    if (da == NULL || _is_empty(da))
     {
         return 1;
     }
@@ -493,9 +493,9 @@ int popDA(DynamicArray *const da, void *const output)
     return 0;
 }
 
-int shiftDA(DynamicArray *const da, void *const output)
+int shift_da(DynamicArray *const da, void *const output)
 {
-    if (da == NULL || _isEmpty(da))
+    if (da == NULL || _is_empty(da))
     {
         return 1;
     }
@@ -525,7 +525,7 @@ int shiftDA(DynamicArray *const da, void *const output)
     default:
         return 3;
     }
-    _moveLeftOne(da);
+    _move_one_left(da);
     (da->count)--;
     _shrinkDA(da);
 
@@ -534,7 +534,7 @@ int shiftDA(DynamicArray *const da, void *const output)
 
 // ##################   processing   ##################
 
-int processDA(DynamicArray *const da, void (*processor)(void *itemPtr, int *loopBreakTrigger))
+int process_da(DynamicArray *const da, void (*processor)(void *itemPtr, int *loopBreakTrigger))
 {
     if (da == NULL || processor == NULL)
         return 1;
@@ -546,7 +546,7 @@ int processDA(DynamicArray *const da, void (*processor)(void *itemPtr, int *loop
         if (loopBreakTrigger == 1)
             break;
 
-        int err = _getPointerAtIndex(da, i, &ptr);
+        int err = _get_pointer_at_index(da, i, &ptr);
         if (err || ptr == NULL)
             return 2;
 
@@ -556,12 +556,12 @@ int processDA(DynamicArray *const da, void (*processor)(void *itemPtr, int *loop
     return 0;
 }
 
-int filterDA(DynamicArray *const da, int (*filter)(void *itemPtr))
+int filter_da(DynamicArray *const da, int (*filter)(void *itemPtr))
 {
     if (da == NULL || filter == NULL)
         return 1;
 
-    DynamicArray *tempDA = newDynamicArray(da->type);
+    DynamicArray *tempDA = new_dynamic_array(da->type);
     if (tempDA == NULL)
         return 1;
 
@@ -569,12 +569,12 @@ int filterDA(DynamicArray *const da, int (*filter)(void *itemPtr))
 
     for (size_t i = 0; i < da->count; ++i)
     {
-        int err = _getPointerAtIndex(da, i, &ptr);
+        int err = _get_pointer_at_index(da, i, &ptr);
         if (err || ptr == NULL)
             return 2;
 
         if (filter(ptr) == 1)
-            pushDA(tempDA, ptr);
+            push_da(tempDA, ptr);
     }
 
     /*
@@ -617,19 +617,19 @@ int filterDA(DynamicArray *const da, int (*filter)(void *itemPtr))
 
 // ##################   searching   ##################
 
-int atDA(DynamicArray *const da, size_t index, void **output)
+int at_da(DynamicArray *const da, size_t index, void **output)
 {
-    if (da == NULL || _isOutOfBounds(da, index))
+    if (da == NULL || _is_out_of_bounds(da, index))
         return 1;
 
-    int err = _getPointerAtIndex(da, index, output);
+    int err = _get_pointer_at_index(da, index, output);
     if (err)
         return 2;
 
     return 0;
 }
 
-int findDA(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
+int find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
 {
     if (da == NULL || output == NULL || selector == NULL)
         return 1;
@@ -637,7 +637,7 @@ int findDA(DynamicArray *const da, void **const output, int (*selector)(void *it
     void *ptr = (void *)malloc(sizeof(void *));
     for (size_t i = 0; i < da->count; ++i)
     {
-        int err = _getPointerAtIndex(da, i, &ptr);
+        int err = _get_pointer_at_index(da, i, &ptr);
         if (err)
         {
             free(ptr);
@@ -654,7 +654,7 @@ int findDA(DynamicArray *const da, void **const output, int (*selector)(void *it
     return -1;
 }
 
-int findLastDA(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
+int find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
 {
     if (da == NULL || output == NULL || selector == NULL)
         return 1;
@@ -662,7 +662,7 @@ int findLastDA(DynamicArray *const da, void **const output, int (*selector)(void
     void *ptr = (void *)malloc(sizeof(void *));
     for (size_t i = da->count - 1; i >= 0; --i)
     {
-        int err = _getPointerAtIndex(da, i, &ptr);
+        int err = _get_pointer_at_index(da, i, &ptr);
         if (err)
         {
             free(ptr);
@@ -679,7 +679,7 @@ int findLastDA(DynamicArray *const da, void **const output, int (*selector)(void
     return -1;
 }
 
-int findIndexDA(DynamicArray *const da, int *const output, int (*selector)(void *itemPtr))
+int find_index_da(DynamicArray *const da, int *const output, int (*selector)(void *itemPtr))
 {
     if (da == NULL || output == NULL || selector == NULL)
         return 1;
@@ -687,7 +687,7 @@ int findIndexDA(DynamicArray *const da, int *const output, int (*selector)(void 
     void *ptr = (void *)malloc(sizeof(void *));
     for (size_t i = 0; i < da->count; ++i)
     {
-        int err = _getPointerAtIndex(da, i, &ptr);
+        int err = _get_pointer_at_index(da, i, &ptr);
         if (err)
         {
             free(ptr);
@@ -705,7 +705,7 @@ int findIndexDA(DynamicArray *const da, int *const output, int (*selector)(void 
     return -1;
 }
 
-int findLastIndexDA(DynamicArray *const da, int *const output, int (*selector)(void *itemPtr))
+int find_last_index_da(DynamicArray *const da, int *const output, int (*selector)(void *itemPtr))
 {
     if (da == NULL || output == NULL || selector == NULL)
         return 1;
@@ -713,7 +713,7 @@ int findLastIndexDA(DynamicArray *const da, int *const output, int (*selector)(v
     void *ptr = (void *)malloc(sizeof(void *));
     for (size_t i = da->count - 1; i >= 0; --i)
     {
-        int err = _getPointerAtIndex(da, i, &ptr);
+        int err = _get_pointer_at_index(da, i, &ptr);
         if (err)
         {
             free(ptr);
@@ -731,7 +731,7 @@ int findLastIndexDA(DynamicArray *const da, int *const output, int (*selector)(v
     return -1;
 }
 
-int indexOfDA(DynamicArray *const da, int *const output, void *const value)
+int index_of_da(DynamicArray *const da, int *const output, void *const value)
 {
     if (da == NULL || output == NULL || value == NULL)
         return 1;

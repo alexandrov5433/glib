@@ -401,7 +401,7 @@ void dynamicArrayTest()
     puts("####### Test: DynamicArray");
 
     printf("Testing: Initialization...");
-    DynamicArray *da = newDynamicArray(INT);
+    DynamicArray *da = new_dynamic_array(INT);
     if (!da)
     {
         printf("failed.\n");
@@ -409,10 +409,10 @@ void dynamicArrayTest()
     }
     printf("success.\n");
 
-    printf("Testing function: pushDA...");
+    printf("Testing function: push_da...");
     for (size_t i = 0; i < 5000; ++i)
     {
-        int err = pushDA(da, &i);
+        int err = push_da(da, &i);
         if (err)
         {
             printf("failed with code: %d\n", err);
@@ -426,7 +426,7 @@ void dynamicArrayTest()
     for (int i = 4999; i >= 0; --i)
     {
 
-        int err = popDA(da, outputInt);
+        int err = pop_da(da, outputInt);
         if (err)
         {
             printf("failed with code: %d\n", err);
@@ -449,10 +449,10 @@ void dynamicArrayTest()
     }
     printf("success.\n");
 
-    printf("Testing function: unshiftDA...");
+    printf("Testing function: unshift_da...");
     for (int i = 99; i >= 0; --i)
     {
-        int err = unshiftDA(da, &i);
+        int err = unshift_da(da, &i);
         if (err)
         {
             printf("failed with code: %d\n", err);
@@ -466,7 +466,7 @@ void dynamicArrayTest()
     for (int i = 0; i <= 99; ++i)
     {
 
-        int err = shiftDA(da, o);
+        int err = shift_da(da, o);
         if (err)
         {
             printf("failed with code: %d\n", err);
@@ -492,7 +492,7 @@ void dynamicArrayTest()
     printf("Testing function: processDA:...");
     for (size_t i = 0; i < 10; ++i)
     {
-        int err = pushDA(da, &i);
+        int err = push_da(da, &i);
         if (err)
         {
             printf("failed, while fillig array, with code: %d\n", err);
@@ -500,7 +500,7 @@ void dynamicArrayTest()
         }
     }
     printf("array filled. Starting processor...");
-    int err = processDA(da, intProcessorDA);
+    int err = process_da(da, intProcessorDA);
     if (err)
     {
         printf("failed with code: %d\n", err);
@@ -510,7 +510,7 @@ void dynamicArrayTest()
     int *intOut = NULL;
     for (size_t i = 0; i < 10; ++i)
     {
-        int err = atDA(da, i, (void **)&intOut);
+        int err = at_da(da, i, (void **)&intOut);
         if (err)
         {
             printf("failed, while getting value from array with atDA, with code: %d\n", err);
@@ -525,7 +525,7 @@ void dynamicArrayTest()
     printf("success.\n");
 
     printf("Testing function: filterDA:...");
-    int filterErr = filterDA(da, intFilterDA);
+    int filterErr = filter_da(da, intFilterDA);
     if (filterErr)
     {
         printf("failed with code: %d\n", err);
@@ -540,7 +540,7 @@ void dynamicArrayTest()
     printf("done. Checking values...");
     for (int i = 1; i <= 5; ++i)
     {
-        int err = atDA(da, i - 1, (void **)&intOut);
+        int err = at_da(da, i - 1, (void **)&intOut);
         if (err)
         {
             printf("failed, while getting value from array with atDA, with code: %d\n", err);
@@ -553,10 +553,10 @@ void dynamicArrayTest()
         }
     }
     printf("success.\n");
-    freeDynamicArray(da);
+    free_dynamic_array(da);
 
     printf("Testing void pointer array...");
-    DynamicArray *vpDa = newDynamicArray(VOID_PTR);
+    DynamicArray *vpDa = new_dynamic_array(VOID_PTR);
 
     Person p1 = {"Alice", 25};
     Person p2 = {"Bob", 42};
@@ -571,28 +571,28 @@ void dynamicArrayTest()
 
     printf("populating...");
     int errArr[10] = {
-        pushDA(vpDa, &p1),
-        pushDA(vpDa, &p2),
-        pushDA(vpDa, &p3),
-        pushDA(vpDa, &p4),
-        pushDA(vpDa, &p5),
-        pushDA(vpDa, &p6),
-        pushDA(vpDa, &p7),
-        pushDA(vpDa, &p8),
-        pushDA(vpDa, &p9),
-        pushDA(vpDa, &p10),
+        push_da(vpDa, &p1),
+        push_da(vpDa, &p2),
+        push_da(vpDa, &p3),
+        push_da(vpDa, &p4),
+        push_da(vpDa, &p5),
+        push_da(vpDa, &p6),
+        push_da(vpDa, &p7),
+        push_da(vpDa, &p8),
+        push_da(vpDa, &p9),
+        push_da(vpDa, &p10),
     };
 
     for (size_t i = 0; i < 10; ++i)
     {
         if (errArr[i])
         {
-            printf("failed. One or more pushDA calls returned more than 0.\n");
+            printf("failed. One or more push_da calls returned more than 0.\n");
             return;
         }
     }
     Person *person_five = NULL;
-    int pf_err = atDA(vpDa, 4, (void **)&person_five);
+    int pf_err = at_da(vpDa, 4, (void **)&person_five);
     if (!person_five)
     {
         printf("failed. Person not found in array\n");
@@ -605,18 +605,18 @@ void dynamicArrayTest()
     }
     printf("success.\n");
 
-    freeDynamicArray(vpDa);
+    free_dynamic_array(vpDa);
 
     printf("Testing function: popDA for VOID_PTR...");
-    DynamicArray *daPopTest = newDynamicArray(VOID_PTR);
-    pushDA(daPopTest, &p1);
-    pushDA(daPopTest, &p2);
+    DynamicArray *daPopTest = new_dynamic_array(VOID_PTR);
+    push_da(daPopTest, &p1);
+    push_da(daPopTest, &p2);
 
     Person *person = NULL;
-    int daPopErr = popDA(daPopTest, (void *)&person);
+    int daPopErr = pop_da(daPopTest, (void *)&person);
     if (daPopErr)
     {
-        printf("failed. popDA reuturned error (%d).\n", daPopErr);
+        printf("failed. pop_da reuturned error (%d).\n", daPopErr);
         return;
     }
     if (person->age == 42)
@@ -628,16 +628,16 @@ void dynamicArrayTest()
         printf("failed. Expected age (42), received (%d).\n", person->age);
         return;
     }
-    freeDynamicArray(daPopTest);
+    free_dynamic_array(daPopTest);
 
-    printf("Testing function: popDA for INT...");
-    DynamicArray *daPopInt = newDynamicArray(INT);
+    printf("Testing function: pop_da for INT...");
+    DynamicArray *daPopInt = new_dynamic_array(INT);
     for (int i = 1; i < 4; ++i)
     {
-        pushDA(daPopInt, &i);
+        push_da(daPopInt, &i);
     }
     int popIntOutput = 0;
-    int popIntErr = popDA(daPopInt, &popIntOutput);
+    int popIntErr = pop_da(daPopInt, &popIntOutput);
     if (popIntErr)
     {
         printf("failed. popDA reuturned error (%d).\n", popIntErr);
@@ -652,18 +652,18 @@ void dynamicArrayTest()
         printf("failed. Expected (3), received (%d).\n", popIntOutput);
         return;
     }
-    freeDynamicArray(daPopInt);
+    free_dynamic_array(daPopInt);
 
-    printf("Testing function: shiftDA for VOID_PTR...");
-    DynamicArray *daShiftVoid = newDynamicArray(VOID_PTR);
-    pushDA(daShiftVoid, &p1);
-    pushDA(daShiftVoid, &p2);
+    printf("Testing function: shift_da for VOID_PTR...");
+    DynamicArray *daShiftVoid = new_dynamic_array(VOID_PTR);
+    push_da(daShiftVoid, &p1);
+    push_da(daShiftVoid, &p2);
 
     Person *shiftPerson = NULL;
-    int daShiftErr = shiftDA(daShiftVoid, (void *)&person);
+    int daShiftErr = shift_da(daShiftVoid, (void *)&person);
     if (daShiftErr)
     {
-        printf("failed. shiftDA reuturned error (%d).\n", daShiftErr);
+        printf("failed. shift_da reuturned error (%d).\n", daShiftErr);
         return;
     }
     if (person->age == 25)
@@ -675,16 +675,16 @@ void dynamicArrayTest()
         printf("failed. Expected age (25), received (%d).\n", person->age);
         return;
     }
-    freeDynamicArray(daShiftVoid);
+    free_dynamic_array(daShiftVoid);
 
-    printf("Testing function: shiftDA for INT...");
-    DynamicArray *daShiftInt = newDynamicArray(INT);
+    printf("Testing function: shift_da for INT...");
+    DynamicArray *daShiftInt = new_dynamic_array(INT);
     for (int i = 1; i < 4; ++i)
     {
-        pushDA(daPopInt, &i);
+        push_da(daPopInt, &i);
     }
     int shiftIntOutput = 0;
-    int shiftIntErr = shiftDA(daShiftInt, &shiftIntOutput);
+    int shiftIntErr = shift_da(daShiftInt, &shiftIntOutput);
     if (shiftIntErr)
     {
         printf("failed. popDA reuturned error (%d).\n", shiftIntErr);
@@ -699,7 +699,7 @@ void dynamicArrayTest()
         printf("failed. Expected (1), received (%d).\n", shiftIntOutput);
         return;
     }
-    freeDynamicArray(daShiftInt);
+    free_dynamic_array(daShiftInt);
 
     puts("####### Test done.");
 }
