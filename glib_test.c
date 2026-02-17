@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include "include/data_structures/linkedList.h"
-#include "include/data_structures/hashMap.h"
+#include "include/data_structures/hash_map.h"
 #include "include/sorting.h"
 #include "include/data_structures/stack.h"
 #include "include/data_structures/dynamic_array.h"
@@ -189,27 +189,104 @@ void bubbleSortCompTest()
 
 void hashMapTest()
 {
-    HashMap *map = newHashMap();
-    int one = 1;
-    int two = 2;
-    int three = 3;
-    putHM("one", &one, map);
-    putHM("two", &two, map);
-    putHM("three", &three, map);
-
-    int *pOne = getHM("one", map);
-    int *pTwo = getHM("two", map);
-    int *pThree = getHM("three", map);
-    if (pOne == NULL || pTwo == NULL || pThree == NULL)
+    int VALUES = 100000;
+    puts("##########################");
+    puts("Testing: HashMap");
+    HashMap *map = new_hash_map();
+    if (!map)
     {
-        puts("HashMap: Value NOT found.");
-        freeHashMap(map);
+        puts("HashMap was not initialized.");
+        puts("Test: Failed.");
+        puts("##########################");
         return;
     }
-    printf("One: %d\n", *pOne);
-    printf("Two: %d\n", *pTwo);
-    printf("Three: %d\n", *pThree);
-    freeHashMap(map);
+
+
+
+    puts("Testing: put_hm");
+    clock_t c11 = clock();
+    char strBuff[10] = {0};
+    for (int i = 0; i < VALUES; ++i)
+    {
+        memset(strBuff, 0, 10);
+        snprintf(strBuff, 10, "%d", i);
+        int *num = (int *)malloc(sizeof(int));
+        *num = i;
+
+        printf("\rFunction put_hm adding: %d", i);
+        int err = put_hm(strBuff, num, map);
+        if (err)
+        {
+            printf("Function put_hm returned with Error: %d\n", err);
+            puts("Test: Failed.");
+            puts("##########################");
+            return;
+        }
+    }
+    clock_t c12 = clock();
+    double dur1 = 1000.0 * (c12 - c11) / CLOCKS_PER_SEC;
+    printf("\nCPU time used from put_hm (per clock()): %.2f ms\n", dur1);
+
+
+
+    puts("Testing: get_hm");
+    clock_t c21 = clock();
+    for (int i = 0; i < VALUES; ++i)
+    {
+        snprintf(strBuff, 10, "%d", i);
+        int *res = get_hm(strBuff, map);
+        if (*res != i)
+        {
+            printf("\nFunction get_hm returned (%d), but expected (%d).\n", *res, i);
+            puts("Test: Failed.");
+            puts("##########################");
+            return;
+        }
+        else
+        {
+            printf("\rFunction get_hm returned (%d), at index(%d).", *res, i);
+        }
+    }
+    clock_t c22 = clock();
+    double dur2 = 1000.0 * (c22 - c21) / CLOCKS_PER_SEC;
+    printf("\nCPU time used from get_hm (per clock()): %.2f ms\n", dur2);
+
+
+
+
+    puts("Testing: remove_hm");
+    clock_t c31 = clock();
+    for (int i = 0; i < VALUES; ++i)
+    {
+        memset(strBuff, 0, 10);
+        snprintf(strBuff, 10, "%d", i);
+        int err = remove_hm(strBuff, map);
+        if (err)
+        {
+            printf("\nFunction remove_hm returned with Error: %d\n", err);
+            puts("Test: Failed.");
+            puts("##########################");
+            return;
+        }
+        printf("\rFunction remove_hm removed key: %s", strBuff);
+    }
+    clock_t c32 = clock();
+    double dur3 = 1000.0 * (c32 - c31) / CLOCKS_PER_SEC;
+    printf("\nCPU time used from remove_hm (per clock()): %.2f ms\n", dur3);
+
+
+
+    if (map->elements != 0)
+    {
+        printf("HashMap elements are %d, but expected 0.\n", map->elements);
+        puts("Test: Failed.");
+        puts("##########################");
+        return;
+    }
+
+    puts("Test: Success.");
+    puts("##########################");
+    free_hash_map(map);
     return;
 }
 
@@ -707,7 +784,7 @@ int main()
 {
     clock_t c1 = clock();
 
-    // hashMapTest();
+    hashMapTest();
     // linkedListTest();
     // quickSortTest();
     // quickSortCompTest();
@@ -715,7 +792,7 @@ int main()
     // bubbleSortCompTest();
     // stackTest();
     // dynamicStackTest();
-    dynamicArrayTest();
+    // dynamicArrayTest();
     clock_t c2 = clock();
     double dur = 1000.0 * (c2 - c1) / CLOCKS_PER_SEC;
     printf("CPU time used (per clock()): %.2f ms\n", dur);
