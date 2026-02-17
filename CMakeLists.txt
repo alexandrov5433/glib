@@ -4,10 +4,18 @@ project(glib VERSION 1.0.0 LANGUAGES C)
 
 add_library(glib SHARED)
 
+# Stackoverflow: https://stackoverflow.com/questions/34625627/how-to-link-to-the-c-math-library-with-cmake
+# Many mathematical functions (pow, sqrt, fabs, log etc.)
+# are declared in math.h and require the library libm to be linked.
+# Unlike libc, which is automatically linked, libm is a separate library and often requires explicit linkage. 
+# The linker presumes all libraries to begin with lib, so to link to libm you link to m.
+# libm (Wikipedia): https://en.wikipedia.org/wiki/C_mathematical_functions#libm
+target_link_libraries(glib m)
+
 target_sources(glib
     PRIVATE
         src/data_structures/linkedList.c
-        src/data_structures/hashMap.c
+        src/data_structures/hash_map.c
         src/sorting.c
         src/data_structures/binary_tree.c
         src/data_structures/stack.c
@@ -18,7 +26,7 @@ target_sources(glib
             include
         FILES
             include/data_structures/linkedList.h
-            include/data_structures/hashMap.h
+            include/data_structures/hash_map.h
             include/sorting.h
             include/data_structures/binary_tree.h
             include/data_structures/stack.h
