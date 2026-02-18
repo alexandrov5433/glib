@@ -12,8 +12,9 @@ static Entry *_new_entry(char *key, void *value)
     if (entry == NULL)
         return NULL;
 
-    size_t keyLengthWithNullterminato = strlen(key) + 1;
-    char *keyCopy = calloc(keyLengthWithNullterminato, sizeof(char));
+    // +1 for the null-terminator '\n'
+    size_t keyLengthWithNullterminator = strlen(key) + 1;
+    char *keyCopy = calloc(keyLengthWithNullterminator, sizeof(char));
     strcpy(keyCopy, key);
     entry->key = keyCopy;
     entry->value = value;
@@ -39,21 +40,20 @@ static int _hash_str(char *str, size_t capacity)
     return (int)((asciiValue * length) % capacity);
 }
 
-static void _extend_hm(HashMap *map)
+static int _extend_hm(HashMap *map)
 {
     int emptySpace = map->capacity - map->elements;
     if (emptySpace > (map->capacity * 0.25))
-        return;
+        return 0;
 
     size_t newCapacity = ceil(map->elements * 1.5);
     Entry **newEntries = realloc(map->entries, (sizeof(Entry *) * newCapacity));
     if (newEntries == NULL)
-    {
-        puts("Error: Memory reallocation failed while extending glib::HashMap.");
-        return;
-    }
+        return 1;
+
     map->entries = newEntries;
     map->capacity = newCapacity;
+    return 0;
 }
 
 static void _squish_hm(HashMap *map)
@@ -136,7 +136,9 @@ void free_hash_map(HashMap *map)
 
 int put_hm(char *key, void *value, HashMap *map)
 {
-    _extend_hm(map);
+    if (_extend_hm(map))
+        return 2;
+        
     int index = _hash_str(key, map->capacity);
     for (size_t i = index; i < map->capacity; i++)
     {
