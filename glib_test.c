@@ -187,6 +187,10 @@ void bubbleSortCompTest()
     printf(" ]\n");
 }
 
+void hashMapProcessor(Entry *const ptr)
+{
+    (*(int*)(ptr->value))++;
+}
 void hashMapTest()
 {
     int VALUES = 10000;
@@ -200,8 +204,6 @@ void hashMapTest()
         puts("##########################");
         return;
     }
-
-
 
     puts("Testing: put_hm");
     clock_t c11 = clock();
@@ -228,12 +230,11 @@ void hashMapTest()
     printf("\nCPU time used from put_hm (per clock()): %.2f ms\n", dur1);
     printf("CPU time used from put_hm (per clock()) per value: %.6f ms\n", dur1 / VALUES);
 
-
-
     puts("Testing: get_hm");
     clock_t c21 = clock();
     for (int i = 0; i < VALUES; ++i)
     {
+        memset(strBuff, 0, 10);
         snprintf(strBuff, 10, "%d", i);
         int *res = get_hm(strBuff, map);
         if (*res != i)
@@ -253,7 +254,28 @@ void hashMapTest()
     printf("\nCPU time used from get_hm (per clock()): %.2f ms\n", dur2);
     printf("CPU time used from get_hm (per clock()) per value: %.6f ms\n", dur2 / VALUES);
 
-
+    puts("Testing: process_hm");
+    clock_t cp1 = clock();
+    int processingErr = process_hm(hashMapProcessor, map);
+    clock_t cp2 = clock();
+    double durp = 1000.0 * (cp2 - cp1) / CLOCKS_PER_SEC;
+    printf("CPU time used from process_hm (per clock()): %.2f ms\n", durp);
+    printf("CPU time used from process_hm (per clock()) per value: %.6f ms\n", durp / VALUES);
+    printf("Checking results of process_hm...");
+    for (int i = 0; i < VALUES; ++i)
+    {
+        memset(strBuff, 0, 10);
+        snprintf(strBuff, 10, "%d", i);
+        int *res = get_hm(strBuff, map);
+        if (*res != i + 1)
+        {
+            printf("\nFunction get_hm returned (%d), but expected (%d) after process_hm.\n", *res, i + 1);
+            puts("Test: Failed.");
+            puts("##########################");
+            return;
+        }
+    }
+    printf("done.\n");
 
 
     puts("Testing: remove_hm");
@@ -276,8 +298,6 @@ void hashMapTest()
     double dur3 = 1000.0 * (c32 - c31) / CLOCKS_PER_SEC;
     printf("\nCPU time used from remove_hm (per clock()): %.2f ms\n", dur3);
     printf("CPU time used from remove_hm (per clock()) per value: %.6f ms\n", dur3 / VALUES);
-
-
 
     if (map->elements != 0)
     {

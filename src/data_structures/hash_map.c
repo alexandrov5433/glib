@@ -221,3 +221,18 @@ int remove_hm(char *key, HashMap *map)
     }
     return 1;
 }
+
+int process_hm(void (*processor)(Entry *const ptr), HashMap *const map)
+{
+    if (map == NULL || processor == NULL)
+        return 1;
+
+    for (size_t i = 0; i < map->capacity; ++i)
+    {
+        Entry *const e = map->entries[i];
+        if (e != NULL)
+            processor(e);
+    }
+
+    return 0;
+}

@@ -21,7 +21,8 @@
  * @param key A null-terminated string.
  * @param value A void pointer.
  */
-typedef struct Entry {
+typedef struct Entry
+{
     char *key;
     void *value;
 } Entry;
@@ -31,7 +32,8 @@ typedef struct Entry {
  * @param elements The number of elements (Entries) present in the HashMap.
  * @param capacity The number of elements (Entries) the HashMap can contain. This value is not constant.
  */
-typedef struct HashMap {
+typedef struct HashMap
+{
     struct Entry **entries;
     size_t elements;
     size_t capacity;
@@ -54,7 +56,7 @@ GLIB_API void free_hash_map(HashMap *map);
  * @param key A null-terminated string, which is copied to create the key for the given value.
  * @param value A pointer, which will be added as the value in the HashMap for the given key.
  * @param map A pointer to the HashMap, in which the new entry must be added.
- * @returns 0 on success; 1 on failure due to lacking capacity; 2 on memory reallocation failure. 
+ * @returns 0 on success; 1 on failure due to lacking capacity; 2 on memory reallocation failure.
  */
 GLIB_API int put_hm(char *key, void *value, HashMap *map);
 
@@ -73,5 +75,13 @@ GLIB_API void *get_hm(char *key, HashMap *map);
  * @returns 0 on success; 1 on failure, because an entry with the given key was not found; 2 on failure due to memory reallocation failure.
  */
 GLIB_API int remove_hm(char *key, HashMap *map);
+
+/**
+ * Applies a processor function to every Entry in the HashMap.
+ * @param processor A function pointer to the function, which will receive a pointer to every currently available Entry in the HashMap.
+ * @param map A pointer to the HashMap, the Entries of which must be processed.
+ * @returns 0 on success; 1 if either of the arguments are null pointers.
+ */
+GLIB_API int process_hm(void (*processor)(Entry *const ptr), HashMap *const map);
 
 #endif
