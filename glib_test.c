@@ -189,7 +189,7 @@ void bubbleSortCompTest()
 
 void hashMapTest()
 {
-    int VALUES = 100000;
+    int VALUES = 10000;
     puts("##########################");
     puts("Testing: HashMap");
     HashMap *map = new_hash_map();
@@ -226,6 +226,7 @@ void hashMapTest()
     clock_t c12 = clock();
     double dur1 = 1000.0 * (c12 - c11) / CLOCKS_PER_SEC;
     printf("\nCPU time used from put_hm (per clock()): %.2f ms\n", dur1);
+    printf("CPU time used from put_hm (per clock()) per value: %.6f ms\n", dur1 / VALUES);
 
 
 
@@ -250,6 +251,7 @@ void hashMapTest()
     clock_t c22 = clock();
     double dur2 = 1000.0 * (c22 - c21) / CLOCKS_PER_SEC;
     printf("\nCPU time used from get_hm (per clock()): %.2f ms\n", dur2);
+    printf("CPU time used from get_hm (per clock()) per value: %.6f ms\n", dur2 / VALUES);
 
 
 
@@ -273,6 +275,7 @@ void hashMapTest()
     clock_t c32 = clock();
     double dur3 = 1000.0 * (c32 - c31) / CLOCKS_PER_SEC;
     printf("\nCPU time used from remove_hm (per clock()): %.2f ms\n", dur3);
+    printf("CPU time used from remove_hm (per clock()) per value: %.6f ms\n", dur3 / VALUES);
 
 
 
