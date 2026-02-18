@@ -56,21 +56,22 @@ static int _extend_hm(HashMap *map)
     return 0;
 }
 
-static void _squish_hm(HashMap *map)
+static int _squish_hm(HashMap *map)
 {
     int emptySpace = map->capacity - map->elements;
     // reduce capacity if more than 90% are free
     if (emptySpace < (map->capacity * 0.9))
-        return;
+        return 0;
 
     size_t newCapacity = ceil(map->elements * 1.5);
     Entry **newEntries = calloc(newCapacity, sizeof(Entry *));
     if (newEntries == NULL)
-        return;
+        return 1;
 
     for (size_t i = 0; i < map->capacity; i++)
     {
-        _top_of_loop: Entry *e = (map->entries)[i];
+    _top_of_loop:
+        Entry *e = (map->entries)[i];
         if (e == NULL)
             continue;
 
@@ -97,6 +98,7 @@ static void _squish_hm(HashMap *map)
     free(map->entries);
     map->entries = newEntries;
     map->capacity = newCapacity;
+    return 0;
 }
 
 // ##################   public   ##################
@@ -138,7 +140,7 @@ int put_hm(char *key, void *value, HashMap *map)
 {
     if (_extend_hm(map))
         return 2;
-        
+
     int index = _hash_str(key, map->capacity);
     for (size_t i = index; i < map->capacity; i++)
     {
@@ -185,6 +187,9 @@ void *get_hm(char *key, HashMap *map)
 
 int remove_hm(char *key, HashMap *map)
 {
+    if (_squish_hm(map))
+        return 2;
+
     int index = _hash_str(key, map->capacity);
     for (size_t i = index; i < map->capacity; i++)
     {
@@ -197,7 +202,6 @@ int remove_hm(char *key, HashMap *map)
             _free_entry(ent);
             (map->entries)[i] = NULL;
             (map->elements)--;
-            _squish_hm(map);
             return 0;
         }
     }
@@ -212,7 +216,6 @@ int remove_hm(char *key, HashMap *map)
             _free_entry(ent);
             (map->entries)[i] = NULL;
             (map->elements)--;
-            _squish_hm(map);
             return 0;
         }
     }

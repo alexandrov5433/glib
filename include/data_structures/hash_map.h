@@ -70,7 +70,7 @@ GLIB_API void *get_hm(char *key, HashMap *map);
  * Removes an entry from the HashMap.
  * @param key A null-terminated string, which is the key of the entry.
  * @param map A pointer to the HashMap, from which the entry must be removed.
- * @returns 0 on success, 1 on failure.
+ * @returns 0 on success; 1 on failure, because an entry with the given key was not found; 2 on failure due to memory reallocation failure.
  */
 GLIB_API int remove_hm(char *key, HashMap *map);
 
