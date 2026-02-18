@@ -30,14 +30,14 @@ static void _free_entry(Entry *entry)
     free(entry);
 }
 
-static int _hash_str(char *str, size_t capacity)
+static size_t _hash_str(char *str, size_t capacity)
 {
     size_t length = strlen(str);
     int asciiValue = 0;
     for (int i = 0; i < length; i++)
         asciiValue += (int)(str[i]);
 
-    return (int)((asciiValue * length) % capacity);
+    return (size_t)((asciiValue * length) % capacity);
 }
 
 static int _extend_hm(HashMap *map)
@@ -75,7 +75,7 @@ static int _squish_hm(HashMap *map)
         if (e == NULL)
             continue;
 
-        int newIndex = _hash_str(e->key, newCapacity);
+        size_t newIndex = _hash_str(e->key, newCapacity);
         for (size_t j = newIndex; j < newCapacity; j++)
         {
             if (newEntries[j] == NULL)
@@ -141,7 +141,7 @@ int put_hm(char *key, void *value, HashMap *map)
     if (_extend_hm(map))
         return 2;
 
-    int index = _hash_str(key, map->capacity);
+    size_t index = _hash_str(key, map->capacity);
     for (size_t i = index; i < map->capacity; i++)
     {
         if ((map->entries)[i] == NULL)
@@ -165,7 +165,7 @@ int put_hm(char *key, void *value, HashMap *map)
 
 void *get_hm(char *key, HashMap *map)
 {
-    int index = _hash_str(key, map->capacity);
+    size_t index = _hash_str(key, map->capacity);
     for (size_t i = index; i < map->capacity; i++)
     {
         Entry *ent = (map->entries)[i];
@@ -190,7 +190,7 @@ int remove_hm(char *key, HashMap *map)
     if (_squish_hm(map))
         return 2;
 
-    int index = _hash_str(key, map->capacity);
+    size_t index = _hash_str(key, map->capacity);
     for (size_t i = index; i < map->capacity; i++)
     {
         Entry *ent = (map->entries)[i];
