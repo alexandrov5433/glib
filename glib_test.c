@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 #include "include/data_structures/linkedList.h"
 #include "include/data_structures/hash_map.h"
 #include "include/sorting.h"
@@ -189,11 +190,18 @@ void bubbleSortCompTest()
 
 void hashMapProcessor(Entry *const ptr)
 {
-    (*(int*)(ptr->value))++;
+    (*(int *)(ptr->value))++;
+}
+int hashMapFilter(Entry *const ptr)
+{
+    if (*(int *)(ptr->value) >= 50)
+        return 0;
+
+    return 1;
 }
 void hashMapTest()
 {
-    int VALUES = 10000;
+    int VALUES = 100000;
     puts("##########################");
     puts("Testing: HashMap");
     HashMap *map = new_hash_map();
@@ -277,7 +285,6 @@ void hashMapTest()
     }
     printf("done.\n");
 
-
     puts("Testing: remove_hm");
     clock_t c31 = clock();
     for (int i = 0; i < VALUES; ++i)
@@ -307,9 +314,76 @@ void hashMapTest()
         return;
     }
 
+    free_hash_map(map);
+
+    // filter_hm test
+
+    puts("Testing: filter_hm");
+    HashMap *mapFilter = new_hash_map();
+    if (!mapFilter)
+    {
+        puts("HashMap was not initialized for the test of filter_hm.");
+        puts("Test: Failed.");
+        puts("##########################");
+        return;
+    }
+    for (int i = 0; i < VALUES; ++i)
+    {
+        memset(strBuff, 0, 10);
+        snprintf(strBuff, 10, "%d", i);
+        int *num = (int *)malloc(sizeof(int));
+        *num = i;
+
+        printf("\rFunction put_hm adding: %d", i);
+        int err = put_hm(strBuff, num, mapFilter);
+        if (err)
+        {
+            printf("\nFunction put_hm returned with Error: %d\n", err);
+            puts("Test: Failed.");
+            puts("##########################");
+            return;
+        }
+    }
+    puts("\nHashMap ready. Invoking filter_hm");
+    clock_t cf1 = clock();
+    int filterErr = filter_hm(hashMapFilter, mapFilter);
+    if (filterErr)
+    {
+        printf("Function filter_hm returned with Error: %d\n", filterErr);
+        puts("Test: Failed.");
+        puts("##########################");
+        return;
+    }
+    clock_t cf2 = clock();
+    double durf = 1000.0 * (c32 - c31) / CLOCKS_PER_SEC;
+    printf("CPU time used from filter_hm (per clock()): %.2f ms\n", durf);
+    printf("CPU time used from filter_hm (per clock()) per value: %.6f ms\n", durf / VALUES);
+    printf("Checking results of filter_hm...");
+    for (int i = 0; i < fmin(50, VALUES); ++i)
+    {
+        memset(strBuff, 0, 10);
+        snprintf(strBuff, 10, "%d", i);
+        int *res = get_hm(strBuff, mapFilter);
+        if (res == NULL)
+        {
+            printf("\nFunction get_hm returned NULL, but expected (%d) after filter_hm.\n", i + 1);
+            puts("Test: Failed.");
+            puts("##########################");
+            return;
+        }
+        if (*res != i)
+        {
+            printf("\nFunction get_hm returned (%d), but expected (%d) after filter_hm.\n", *res, i + 1);
+            puts("Test: Failed.");
+            puts("##########################");
+            return;
+        }
+    }
+    printf("done.\n");
+    free_hash_map(mapFilter);
+
     puts("Test: Success.");
     puts("##########################");
-    free_hash_map(map);
     return;
 }
 
