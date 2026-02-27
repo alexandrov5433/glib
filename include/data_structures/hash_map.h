@@ -99,7 +99,7 @@ GLIB_API int process_hm(void (*processor)(Entry *const ptr), HashMap *const map)
 /**
  * Filters the Entries of the HashMap, leaving only the selected ones.
  * @param selector A function pointer to the function, which will receive a pointer to every currently available Entry in the HashMap. 
- * The selector returns 1 if the Entry must be STAY, 0 if it must be REMOVED.
+ * The selector returns 1 if the Entry must STAY, 0 if it must be REMOVED.
  * @param map A pointer to the HashMap, which must be filtered.
  * @returns 0 on success; 
  * 1 if either of the arguments are null pointers;
