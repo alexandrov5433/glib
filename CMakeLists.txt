@@ -20,6 +20,7 @@ target_sources(glib
         src/data_structures/binary_tree.c
         src/data_structures/stack.c
         src/data_structures/dynamic_array.c
+        src/gstring.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
@@ -31,6 +32,7 @@ target_sources(glib
             include/data_structures/binary_tree.h
             include/data_structures/stack.h
             include/data_structures/dynamic_array.h
+            include/gstring.h
 )
 
 
