@@ -343,7 +343,7 @@ int duplicate_str(const String *const source, String **const output)
     return 0;
 }
 
-int get_str(const String *const source, char **const output)
+int get_raw(const String *const source, char **const output)
 {
     if (source == NULL)
         return 1;
@@ -358,7 +358,7 @@ int get_str(const String *const source, char **const output)
     return 0;
 }
 
-int get_str_nt(const String *const source, char **const output)
+int get_raw_nt(const String *const source, char **const output)
 {
     if (source == NULL)
         return 1;

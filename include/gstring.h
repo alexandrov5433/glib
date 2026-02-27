@@ -210,7 +210,7 @@ GLIB_API int duplicate_str(const String *const source, String **const output);
  *
  * 2 if memory could not be allocated.
  */
-GLIB_API int get_str(const String *const source, char **const output);
+GLIB_API int get_raw(const String *const source, char **const output);
 
 /**
  * Gives a null-terminated copy of the character array found in the String. String->str = "abc"; output = "abc\0"
@@ -224,6 +224,6 @@ GLIB_API int get_str(const String *const source, char **const output);
  * 
  * 3 if the updated size of the String is not sufficient.
  */
-GLIB_API int get_str_nt(const String *const source, char **const output);
+GLIB_API int get_raw_nt(const String *const source, char **const output);
 
 #endif
