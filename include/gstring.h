@@ -226,4 +226,17 @@ GLIB_API int get_raw(const String *const source, char **const output);
  */
 GLIB_API int get_raw_nt(const String *const source, char **const output);
 
+/**
+ * Filters the characters in the String.
+ * @param str A pointer to the String, which must be filtered.
+ * @param filter A function pointer to the function, which will select which characters are to stay. 
+ * The filter returns 1 if the character is to STAY, 0 otherwise.
+ * @returns 0 on success. On failure:
+ * 
+ * 1 if the source argument is NULL.
+ *
+ * 2 if memory could not be allocated.
+ */
+GLIB_API int filter_str(String *const str, int (*filter)(char c));
+
 #endif

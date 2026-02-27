@@ -388,3 +388,36 @@ int get_raw_nt(const String *const source, char **const output)
     free_string(tempCopy);
     return 0;
 }
+
+int filter_str(String *const str, int (*filter)(char c))
+{
+    if (str == NULL || filter == NULL)
+        return 1;
+
+    char *wantedChars = _new_char_array(str->length);
+    size_t wantedCount = 0;
+    if (wantedChars == NULL)
+        return 2;
+
+    // filter return: 1 -> stay; 0 -> remove
+    for (size_t i = 0; i < str->length; ++i)
+    {
+        char c = (str->str)[i];
+        if (filter(c))
+        {
+            // filter returned 1; char is wanted
+            wantedChars[wantedCount++] = c;
+        }
+    }
+
+    // wantedCount is now the length, because of the last post-incrementation
+    char *resizedWantedChars = realloc(wantedChars, sizeof(char) * wantedCount);
+    if (resizedWantedChars == NULL)
+        return 2;
+
+    free(str->str);
+    str->str = resizedWantedChars;
+    str->length = wantedCount;
+
+    return 0;
+}

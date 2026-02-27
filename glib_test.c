@@ -879,6 +879,12 @@ void dynamicArrayTest()
     puts("####### Test done.");
 }
 
+int filter_string(char c)
+{
+    if (c == '!')
+        return 1;
+    return 0;
+}
 int is_same_string(char *a, char *b, size_t length)
 {
     for (size_t i = 0; i < length; ++i)
@@ -1062,6 +1068,24 @@ void stringTest()
         goto _test_failed;
     }
     puts("get_raw_nt: tested.");
+
+    int err12 = filter_str(testStr, filter_string);
+    if (err12)
+    {
+        printf(ANSI_COLOR_RED "Function filter_str returned with error code: %d\n" ANSI_COLOR_RESET, err12);
+        goto _test_failed;
+    }
+    if (is_same_string("!", testStr->str, 1) == 0)
+    {
+        printf(ANSI_COLOR_RED "Incorrect String after filter_str. Expected: !,\n received: %s\n" ANSI_COLOR_RESET, testStr->str);
+        goto _test_failed;
+    }
+    if (testStr->length != 1)
+    {
+        printf(ANSI_COLOR_RED "Incorrect String length after filter_str. Expected: 1,\n received: %d\n" ANSI_COLOR_RESET, testStr->length);
+        goto _test_failed;
+    }
+    puts("filter_str: tested.");
 
     free_string(testStr);
     puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
