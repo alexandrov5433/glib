@@ -1035,6 +1035,34 @@ void stringTest()
     free_string(duplicateStr);
     puts("duplicate_str: tested.");
 
+    char *getStrTest = NULL;
+    int err10 = get_str(testStr, &getStrTest);
+    if (err10)
+    {
+        printf(ANSI_COLOR_RED "Function get_str returned with error code: %d\n" ANSI_COLOR_RESET, err10);
+        goto _test_failed;
+    }
+    if (is_same_string(testStr->str, getStrTest, 39) == 0)
+    {
+        printf(ANSI_COLOR_RED "Incorrect String after get_str. Expected: %s,\n received: %s\n" ANSI_COLOR_RESET, testStr->str, getStrTest);
+        goto _test_failed;
+    }
+    puts("get_str: tested.");
+
+    char *getStrNtTest = NULL;
+    int err11 = get_str_nt(testStr, &getStrNtTest);
+    if (err11)
+    {
+        printf(ANSI_COLOR_RED "Function get_str_nt returned with error code: %d\n" ANSI_COLOR_RESET, err11);
+        goto _test_failed;
+    }
+    if (is_same_string("|p_str||p_nt||p_c_a|Pabcd!|a_c_a||a_nt||a_str|", getStrNtTest, 40) == 0)
+    {
+        printf(ANSI_COLOR_RED "Incorrect String after get_str_nt. Expected: %s,\n received: %s\n" ANSI_COLOR_RESET, testStr->str, getStrNtTest);
+        goto _test_failed;
+    }
+    puts("get_str_nt: tested.");
+
     free_string(testStr);
     puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
     puts("################## Test: String ##################");

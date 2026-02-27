@@ -200,4 +200,30 @@ GLIB_API int prepend_str(const String *const source, String *const dest);
  */
 GLIB_API int duplicate_str(const String *const source, String **const output);
 
+/**
+ * Gives a copy of the character array found in the String.
+ * @param source A pointer to the String, from which the character array will be copied.
+ * @param output A double character array pointer, where the copy will be placed.
+ * @returns 0 on success. On failure:
+ * 
+ * 1 if the source argument is NULL.
+ *
+ * 2 if memory could not be allocated.
+ */
+GLIB_API int get_str(const String *const source, char **const output);
+
+/**
+ * Gives a null-terminated copy of the character array found in the String. String->str = "abc"; output = "abc\0"
+ * @param source A pointer to the String, from which the character array will be copied.
+ * @param output A double character array pointer, where the copy will be placed.
+ * @returns 0 on success. On failure:
+ * 
+ * 1 if the source argument is NULL.
+ *
+ * 2 if memory could not be allocated.
+ * 
+ * 3 if the updated size of the String is not sufficient.
+ */
+GLIB_API int get_str_nt(const String *const source, char **const output);
+
 #endif
