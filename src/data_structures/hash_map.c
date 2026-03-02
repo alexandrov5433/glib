@@ -44,7 +44,7 @@ static size_t _hash_str(char *str, size_t capacity)
 static int _incert_entry(Entry *newEntry, size_t capacity, Entry **entries)
 {
     size_t index = _hash_str(newEntry->key, capacity);
-    for (size_t i = index; i < capacity; i++)
+    for (size_t i = index; i < capacity; ++i)
     {
         if (entries[i] == NULL)
         {
@@ -52,7 +52,7 @@ static int _incert_entry(Entry *newEntry, size_t capacity, Entry **entries)
             return 0;
         }
     }
-    for (size_t i = 0; i < index; i++)
+    for (size_t i = 0; i < index; ++i)
     {
         if (entries[i] == NULL)
         {
@@ -69,27 +69,10 @@ static int _transfer(Entry **source, Entry **destination, size_t sourceCapacity,
     {
         Entry *ent = source[h];
         if (ent == NULL)
-            goto _continue_main_loop;
+            continue;
 
-        size_t index = _hash_str(ent->key, destinationCapacity);
-        for (size_t i = index; i < destinationCapacity; ++i)
-        {
-            if (destination[i] == NULL)
-            {
-                destination[i] = ent;
-                goto _continue_main_loop;
-            }
-        }
-        for (size_t i = 0; i < index; ++i)
-        {
-            if (destination[i] == NULL)
-            {
-                destination[i] = ent;
-                goto _continue_main_loop;
-            }
-        }
-        return 1;
-    _continue_main_loop:;
+        if (_incert_entry(ent, destinationCapacity, destination))
+            return 1;
     }
     return 0;
 }

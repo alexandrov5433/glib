@@ -202,9 +202,8 @@ int hashMapFilter(Entry *const ptr)
 }
 void hashMapTest()
 {
+    puts("################## Test: HashMap ##################");
     int VALUES = 100000;
-    puts("##########################");
-    puts("Testing: HashMap");
     HashMap *map = new_hash_map();
     if (!map)
     {
@@ -382,9 +381,9 @@ void hashMapTest()
     }
     printf("done.\n");
     free_hash_map(mapFilter);
-
-    puts("Test: Success.");
-    puts("##########################");
+    
+    puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
+    puts("################## Test: HashMap ##################");
     return;
 }
 
@@ -1102,8 +1101,8 @@ int main()
 {
     clock_t c1 = clock();
 
-    stringTest();
-    // hashMapTest();
+    // stringTest();
+    hashMapTest();
     // linkedListTest();
     // quickSortTest();
     // quickSortCompTest();
