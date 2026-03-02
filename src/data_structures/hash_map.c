@@ -46,7 +46,13 @@ static int _incert_entry(Entry *newEntry, size_t capacity, Entry **entries)
     size_t index = _hash_str(newEntry->key, capacity);
     for (size_t i = index; i < capacity; ++i)
     {
-        if (entries[i] == NULL)
+        Entry *current = entries[i];
+        if (current == NULL)
+        {
+            entries[i] = newEntry;
+            return 0;
+        }
+        else if (strcmp(current->key, newEntry->key) == 0)
         {
             entries[i] = newEntry;
             return 0;
@@ -54,7 +60,13 @@ static int _incert_entry(Entry *newEntry, size_t capacity, Entry **entries)
     }
     for (size_t i = 0; i < index; ++i)
     {
-        if (entries[i] == NULL)
+        Entry *current = entries[i];
+        if (current == NULL)
+        {
+            entries[i] = newEntry;
+            return 0;
+        }
+        else if (strcmp(current->key, newEntry->key) == 0)
         {
             entries[i] = newEntry;
             return 0;

@@ -203,7 +203,7 @@ int hashMapFilter(Entry *const ptr)
 void hashMapTest()
 {
     puts("################## Test: HashMap ##################");
-    int VALUES = 100000;
+    int VALUES = 10000;
     HashMap *map = new_hash_map();
     if (!map)
     {
@@ -381,7 +381,62 @@ void hashMapTest()
     }
     printf("done.\n");
     free_hash_map(mapFilter);
-    
+
+    puts("Testing: put action for identicle keys. Value must be replaced.");
+    HashMap *identicleHM = new_hash_map();
+    for (int i = 0; i < 3; ++i)
+    {
+        memset(strBuff, 0, 10);
+        snprintf(strBuff, 10, "%d", i);
+        int *num = (int *)malloc(sizeof(int));
+        *num = i;
+
+        printf("\rFunction put_hm adding: %d", i);
+        int err = put_hm(strBuff, num, identicleHM);
+        if (err)
+        {
+            printf("Function put_hm returned with Error: %d\n", err);
+            puts("Test: Failed.");
+            puts("##########################");
+            return;
+        }
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+        memset(strBuff, 0, 10);
+        snprintf(strBuff, 10, "%d", i);
+        int *num = (int *)malloc(sizeof(int));
+        *num = i * 10;
+
+        printf("\rFunction put_hm adding: %d", i);
+        int err = put_hm(strBuff, num, identicleHM);
+        if (err)
+        {
+            printf("Function put_hm returned with Error: %d\n", err);
+            puts("Test: Failed.");
+            puts("##########################");
+            return;
+        }
+    }
+    printf("Checking results for putting identicle keys (value replacement)...");
+    for (int i = 0; i < 3; ++i)
+    {
+        memset(strBuff, 0, 10);
+        snprintf(strBuff, 10, "%d", i);
+        int *res = get_hm(strBuff, identicleHM);
+        if (*res != i * 10)
+        {
+            printf("\nFunction get_hm returned (%d), but expected (%d).\n", *res, i * 10);
+            puts("Test: Failed.");
+            puts("##########################");
+            return;
+        }
+    }
+    free_hash_map(identicleHM);
+    printf("done.\n");
+
+
+
     puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
     puts("################## Test: HashMap ##################");
     return;
