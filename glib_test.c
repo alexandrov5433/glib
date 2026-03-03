@@ -208,9 +208,7 @@ void hashMapTest()
     if (!map)
     {
         puts("HashMap was not initialized.");
-        puts("Test: Failed.");
-        puts("##########################");
-        return;
+        goto _test_failure;
     }
 
     puts("Testing: put_hm");
@@ -228,9 +226,7 @@ void hashMapTest()
         if (err)
         {
             printf("Function put_hm returned with Error: %d\n", err);
-            puts("Test: Failed.");
-            puts("##########################");
-            return;
+            goto _test_failure;
         }
     }
     clock_t c12 = clock();
@@ -248,9 +244,7 @@ void hashMapTest()
         if (*res != i)
         {
             printf("\nFunction get_hm returned (%d), but expected (%d).\n", *res, i);
-            puts("Test: Failed.");
-            puts("##########################");
-            return;
+            goto _test_failure;
         }
         else
         {
@@ -278,9 +272,7 @@ void hashMapTest()
         if (*res != i + 1)
         {
             printf("\nFunction get_hm returned (%d), but expected (%d) after process_hm.\n", *res, i + 1);
-            puts("Test: Failed.");
-            puts("##########################");
-            return;
+            goto _test_failure;
         }
     }
     printf("done.\n");
@@ -295,9 +287,7 @@ void hashMapTest()
         if (err)
         {
             printf("\nFunction remove_hm returned with Error: %d\n", err);
-            puts("Test: Failed.");
-            puts("##########################");
-            return;
+            goto _test_failure;
         }
         printf("\rFunction remove_hm removed key: %s", strBuff);
     }
@@ -309,9 +299,7 @@ void hashMapTest()
     if (map->elements != 0)
     {
         printf("HashMap elements are %d, but expected 0.\n", map->elements);
-        puts("Test: Failed.");
-        puts("##########################");
-        return;
+        goto _test_failure;
     }
 
     free_hash_map(map);
@@ -323,9 +311,7 @@ void hashMapTest()
     if (!mapFilter)
     {
         puts("HashMap was not initialized for the test of filter_hm.");
-        puts("Test: Failed.");
-        puts("##########################");
-        return;
+        goto _test_failure;
     }
     for (int i = 0; i < VALUES; ++i)
     {
@@ -339,9 +325,7 @@ void hashMapTest()
         if (err)
         {
             printf("\nFunction put_hm returned with Error: %d\n", err);
-            puts("Test: Failed.");
-            puts("##########################");
-            return;
+            goto _test_failure;
         }
     }
     puts("\nHashMap ready. Invoking filter_hm");
@@ -350,9 +334,7 @@ void hashMapTest()
     if (filterErr)
     {
         printf("Function filter_hm returned with Error: %d\n", filterErr);
-        puts("Test: Failed.");
-        puts("##########################");
-        return;
+        goto _test_failure;
     }
     clock_t cf2 = clock();
     double durf = 1000.0 * (c32 - c31) / CLOCKS_PER_SEC;
@@ -367,16 +349,12 @@ void hashMapTest()
         if (res == NULL)
         {
             printf("\nFunction get_hm returned NULL, but expected (%d) after filter_hm.\n", i + 1);
-            puts("Test: Failed.");
-            puts("##########################");
-            return;
+            goto _test_failure;
         }
         if (*res != i)
         {
             printf("\nFunction get_hm returned (%d), but expected (%d) after filter_hm.\n", *res, i + 1);
-            puts("Test: Failed.");
-            puts("##########################");
-            return;
+            goto _test_failure;
         }
     }
     printf("done.\n");
@@ -396,9 +374,7 @@ void hashMapTest()
         if (err)
         {
             printf("Function put_hm returned with Error: %d\n", err);
-            puts("Test: Failed.");
-            puts("##########################");
-            return;
+            goto _test_failure;
         }
     }
     for (int i = 0; i < 3; ++i)
@@ -413,12 +389,10 @@ void hashMapTest()
         if (err)
         {
             printf("Function put_hm returned with Error: %d\n", err);
-            puts("Test: Failed.");
-            puts("##########################");
-            return;
+            goto _test_failure;
         }
     }
-    printf("Checking results for putting identicle keys (value replacement)...");
+    printf("\nChecking results for putting identicle keys (value replacement)...");
     for (int i = 0; i < 3; ++i)
     {
         memset(strBuff, 0, 10);
@@ -427,19 +401,23 @@ void hashMapTest()
         if (*res != i * 10)
         {
             printf("\nFunction get_hm returned (%d), but expected (%d).\n", *res, i * 10);
-            puts("Test: Failed.");
-            puts("##########################");
-            return;
+            goto _test_failure;
         }
+    }
+    if (identicleHM->elements != 3)
+    {
+        printf("\nIncorrect elements count of %d in identicleHM. Expected 3.\n", identicleHM->elements);
+        goto _test_failure;
     }
     free_hash_map(identicleHM);
     printf("done.\n");
 
-
-
     puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
     puts("################## Test: HashMap ##################");
     return;
+_test_failure:
+    puts(ANSI_COLOR_RED "Result: Failure" ANSI_COLOR_RESET);
+    puts("################## Test: HashMap ##################");
 }
 
 void stackProcessor(void *const ptr)

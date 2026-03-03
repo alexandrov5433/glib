@@ -75,6 +75,44 @@ static int _incert_entry(Entry *newEntry, size_t capacity, Entry **entries)
     return 1;
 }
 
+static int _incert_replace_entry(Entry *newEntry, size_t capacity, Entry **entries, int *isReplacedOutput)
+{
+    size_t index = _hash_str(newEntry->key, capacity);
+    for (size_t i = index; i < capacity; ++i)
+    {
+        Entry *current = entries[i];
+        if (current == NULL)
+        {
+            entries[i] = newEntry;
+            *isReplacedOutput = 0;
+            return 0;
+        }
+        else if (strcmp(current->key, newEntry->key) == 0)
+        {
+            entries[i] = newEntry;
+            *isReplacedOutput = 1;
+            return 0;
+        }
+    }
+    for (size_t i = 0; i < index; ++i)
+    {
+        Entry *current = entries[i];
+        if (current == NULL)
+        {
+            entries[i] = newEntry;
+            *isReplacedOutput = 0;
+            return 0;
+        }
+        else if (strcmp(current->key, newEntry->key) == 0)
+        {
+            entries[i] = newEntry;
+            *isReplacedOutput = 1;
+            return 0;
+        }
+    }
+    return 1;
+}
+
 static int _transfer(Entry **source, Entry **destination, size_t sourceCapacity, size_t destinationCapacity)
 {
     for (size_t h = 0; h < sourceCapacity; ++h)
@@ -193,10 +231,13 @@ int put_hm(char *key, void *value, HashMap *map)
     if (newEntry == NULL)
         return 3;
 
-    if (_incert_entry(newEntry, map->capacity, map->entries))
+    int isReplaced = 0;
+    if (_incert_replace_entry(newEntry, map->capacity, map->entries, &isReplaced))
         return 1;
 
-    (map->elements)++;
+    // if 0, Entry was added. If 1, it replaced another, older one with the same key.
+    if (isReplaced == 0)
+        (map->elements)++;
 
     return 0;
 }
