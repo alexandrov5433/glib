@@ -39,10 +39,31 @@ target_sources(glib
 
 
 # executable for testing
-add_executable(glib_test glib_test.c)
+add_executable(glib_test glib_test/main.c)
 target_include_directories(glib_test PRIVATE include)
 target_link_directories(glib_test PRIVATE ${CMAKE_BINARY_DIR})
 target_link_libraries(glib_test glib)
+target_sources(glib_test 
+    PRIVATE
+        glib_test/src/dynamic_array.c
+        glib_test/src/gstring.c
+        glib_test/src/hash_map.c
+        glib_test/src/sorting.c
+        glib_test/src/stack.c
+        glib_test/src/linked_list.c
+    PUBLIC
+        FILE_SET HEADERS
+        BASE_DIRS
+            glib_test/include
+        FILES
+            glib_test/include/dynamic_array.h
+            glib_test/include/gstring.h
+            glib_test/include/hash_map.h
+            glib_test/include/sorting.h
+            glib_test/include/stack.h
+            glib_test/include/linked_list.h
+
+)
 # compile lib code with -g flag, enabling debugging of glib_test.exe with working breakpoints
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING
