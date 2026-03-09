@@ -31,12 +31,14 @@ typedef struct Entry
  * @param Entry An array of Entry pointers, which is expanded and shrunken based on the need.
  * @param elements The number of elements (Entries) present in the HashMap.
  * @param capacity The number of elements (Entries) the HashMap can contain. This value is not constant.
+ * @param value_destructor A function pointer. Is ment to free the memory of the value pointer, given by the user. Defaults to NULL.
  */
 typedef struct HashMap
 {
     struct Entry **entries;
     size_t elements;
     size_t capacity;
+    void (*value_destructor)(const Entry *const entry);
 } HashMap;
 
 /**
@@ -44,6 +46,17 @@ typedef struct HashMap
  * @returns A pointer to the HashMap. If memory could not be allocated, NULL is returned.
  */
 GLIB_API HashMap *new_hash_map();
+
+/**
+ * Adds a destructor function to the HashMap. If one is already present, the old one is replaced with the new one. 
+ * The destructor receives every available Entry upon calling free_hash_map and is ment to free the memory of the value pointer, given by the user.
+ * @param value_destructor A function pointer. Receives as a single argument an Entry pointer. 
+ * This function must NOT manipulate the Entry it self or its properties. 
+ * It sould simply free the memory pointer to by the value property pointer. The key preperty may be red, but not changed.
+ * @param map A pointer to the HashMap, in which the destructor must be added.
+ * @returns 0 on success. 1 on failure, if either of the arguments are NULL.
+ */
+GLIB_API int add_destructor_hm(void (*value_destructor)(const Entry *const entry), HashMap *map);
 
 /**
  * Frees the HashMap. The pointer of the keys and values are not freed.
@@ -107,7 +120,8 @@ GLIB_API int process_hm(void (*processor)(Entry *const ptr), HashMap *const map)
  * 2 if memory could not be allocated for temporary storage;
  * 
  * 30-something if the Entry pointer could not be placed in the DynamicArray for temporary storage by the push_da function. 
- * The error codes of push_da are the second digit: in 31 the error code of push_da is 1;
+ * The error codes of push_da are the second digit: in 31 the error code of push_da is 1. 
+ * The error code is created by adding the error code from push_da to 30.
  * 
  * 3 if at_da function returned with an error code > 0, while trying to get an Entry pointer element from the DynamicArray temporary storage;
  * 

@@ -200,6 +200,10 @@ int hashMapFilter(Entry *const ptr)
 
     return 1;
 }
+void hashMapValueDestructor(const Entry *const entry)
+{
+    free(entry->value);
+}
 void hashMapTest()
 {
     puts("################## Test: HashMap ##################");
@@ -411,6 +415,47 @@ void hashMapTest()
     }
     free_hash_map(identicleHM);
     printf("done.\n");
+
+    puts("Testing: value_destructor.");
+    HashMap *destructorHM = new_hash_map();
+    int destAddErr = add_destructor_hm(hashMapValueDestructor, destructorHM);
+    if (destAddErr)
+    {
+        printf("Failed to add value_destructor to HashMap. add_destructor_hm returned %d\n", destAddErr);
+        goto _test_failure;
+    }
+    for (int i = 0; i < VALUES; ++i)
+    {
+        memset(strBuff, 0, 10);
+        snprintf(strBuff, 10, "%d", i);
+        int *num = (int *)malloc(sizeof(int));
+        *num = i;
+
+        int err = put_hm(strBuff, num, destructorHM);
+        if (err)
+        {
+            printf("Function put_hm returned with Error: %d\n", err);
+            goto _test_failure;
+        }
+    }
+    int errDestRemove = remove_hm("0", destructorHM);
+    if (errDestRemove)
+    {
+        printf("Failed to remove value fromm HashMap. remove_hm returned %d\n", errDestRemove);
+        goto _test_failure;
+    }
+    int filterDestErr = filter_hm(hashMapFilter, destructorHM);
+    if (filterDestErr)
+    {
+        printf("Function filter_hm returned with Error: %d\n", filterDestErr);
+        goto _test_failure;
+    }
+    if (destructorHM->elements != 49)
+    {
+        printf("Incorrect elements count after filtration. Expected 49, received %d\n", destructorHM->elements);
+        goto _test_failure;
+    }
+    free_hash_map(destructorHM);
 
     puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
     puts("################## Test: HashMap ##################");

@@ -52,11 +52,6 @@ static int _incert_entry(Entry *newEntry, size_t capacity, Entry **entries)
             entries[i] = newEntry;
             return 0;
         }
-        else if (strcmp(current->key, newEntry->key) == 0)
-        {
-            entries[i] = newEntry;
-            return 0;
-        }
     }
     for (size_t i = 0; i < index; ++i)
     {
@@ -66,19 +61,14 @@ static int _incert_entry(Entry *newEntry, size_t capacity, Entry **entries)
             entries[i] = newEntry;
             return 0;
         }
-        else if (strcmp(current->key, newEntry->key) == 0)
-        {
-            entries[i] = newEntry;
-            return 0;
-        }
     }
     return 1;
 }
 
-static int _incert_replace_entry(Entry *newEntry, size_t capacity, Entry **entries, int *isReplacedOutput)
+static int _incert_replace_entry(Entry *newEntry, size_t capacityEntries, Entry **entries, int *isReplacedOutput, void (*value_destructor)(const Entry *const entry))
 {
-    size_t index = _hash_str(newEntry->key, capacity);
-    for (size_t i = index; i < capacity; ++i)
+    size_t index = _hash_str(newEntry->key, capacityEntries);
+    for (size_t i = index; i < capacityEntries; ++i)
     {
         Entry *current = entries[i];
         if (current == NULL)
@@ -89,6 +79,9 @@ static int _incert_replace_entry(Entry *newEntry, size_t capacity, Entry **entri
         }
         else if (strcmp(current->key, newEntry->key) == 0)
         {
+            if (value_destructor != NULL)
+                value_destructor(current);
+
             entries[i] = newEntry;
             *isReplacedOutput = 1;
             return 0;
@@ -105,6 +98,9 @@ static int _incert_replace_entry(Entry *newEntry, size_t capacity, Entry **entri
         }
         else if (strcmp(current->key, newEntry->key) == 0)
         {
+            if (value_destructor != NULL)
+                value_destructor(current);
+
             entries[i] = newEntry;
             *isReplacedOutput = 1;
             return 0;
@@ -197,7 +193,17 @@ HashMap *new_hash_map()
     map->entries = entries;
     map->elements = 0;
     map->capacity = HASH_MAP_INIT_CAPACITY;
+    map->value_destructor = NULL;
     return map;
+}
+
+int add_destructor_hm(void (*value_destructor)(const Entry *const entry), HashMap *map)
+{
+    if (map == NULL || value_destructor == NULL)
+        return 1;
+
+    map->value_destructor = value_destructor;
+    return 0;
 }
 
 void free_hash_map(HashMap *map)
@@ -206,11 +212,13 @@ void free_hash_map(HashMap *map)
     {
         return;
     }
-    for (int i = 0; i < map->capacity; i++)
+    for (int i = 0; i < map->capacity; ++i)
     {
         Entry *e = (map->entries)[i];
         if (e == NULL)
             continue;
+        if (map->value_destructor != NULL)
+            (map->value_destructor)(e);
         _free_entry(e);
     }
     free(map->entries);
@@ -232,7 +240,7 @@ int put_hm(char *key, void *value, HashMap *map)
         return 3;
 
     int isReplaced = 0;
-    if (_incert_replace_entry(newEntry, map->capacity, map->entries, &isReplaced))
+    if (_incert_replace_entry(newEntry, map->capacity, map->entries, &isReplaced, map->value_destructor))
         return 1;
 
     // if 0, Entry was added. If 1, it replaced another, older one with the same key.
@@ -283,6 +291,9 @@ int remove_hm(char *key, HashMap *map)
 
         if (strcmp(key, ent->key) == 0)
         {
+            if (map->value_destructor != NULL)
+                (map->value_destructor)(ent);
+
             _free_entry(ent);
             (map->entries)[i] = NULL;
             (map->elements)--;
@@ -297,6 +308,9 @@ int remove_hm(char *key, HashMap *map)
 
         if (strcmp(key, ent->key) == 0)
         {
+            if (map->value_destructor != NULL)
+                (map->value_destructor)(ent);
+
             _free_entry(ent);
             (map->entries)[i] = NULL;
             (map->elements)--;
@@ -330,7 +344,17 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
     if (entryBucket == NULL)
         return 2;
 
-    // TODO: free memory of removed Entries???
+    DynamicArray *entreisToDestroy = NULL;
+    if (map->value_destructor != NULL)
+    {
+        entreisToDestroy = new_dynamic_array(VOID_PTR);
+        if (entreisToDestroy == NULL)
+        {
+            free_dynamic_array(entryBucket);
+            return 2;
+        }
+    }
+
     for (size_t i = 0; i < map->capacity; ++i)
     {
         Entry *const e = map->entries[i];
@@ -343,6 +367,20 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
             if (pushErr > 0)
             {
                 free_dynamic_array(entryBucket);
+                free_dynamic_array(entreisToDestroy);
+                return 30 + pushErr;
+            }
+        }
+        else
+        {
+            if (map->value_destructor == NULL)
+                continue;
+
+            int pushErr = push_da(entreisToDestroy, e);
+            if (pushErr > 0)
+            {
+                free_dynamic_array(entryBucket);
+                free_dynamic_array(entreisToDestroy);
                 return 30 + pushErr;
             }
         }
@@ -353,6 +391,7 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
     if (newEntries == NULL)
     {
         free_dynamic_array(entryBucket);
+        free_dynamic_array(entreisToDestroy);
         return 2;
     }
 
@@ -360,7 +399,7 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
     if (entryBucket->count == 0)
         goto _hashmap_manipulation_stage;
 
-    // Case: some Entries must be removed.
+    // Case: leave selected Entries.
     for (size_t i = 0; i < entryBucket->count; ++i)
     {
         Entry *currentEntry = NULL;
@@ -369,12 +408,14 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
         if (atErr)
         {
             free_dynamic_array(entryBucket);
+            free_dynamic_array(entreisToDestroy);
             return 3;
         }
 
         if (currentEntry == NULL)
         {
             free_dynamic_array(entryBucket);
+            free_dynamic_array(entreisToDestroy);
             return 4;
         }
 
@@ -382,17 +423,41 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
         if (incertErr)
         {
             free_dynamic_array(entryBucket);
+            free_dynamic_array(entreisToDestroy);
             return 5;
         }
     }
 
 _hashmap_manipulation_stage:
+    if (map->value_destructor != NULL)
+    {
+        for (size_t i = 0; i < entreisToDestroy->count; ++i)
+        {
+            Entry *currentEntry = NULL;
+
+            int atErr = at_da(entreisToDestroy, i, (void **)&currentEntry);
+            if (atErr)
+            {
+                free_dynamic_array(entryBucket);
+                free_dynamic_array(entreisToDestroy);
+                free(newEntries);
+                return 3;
+            }
+
+            if (currentEntry == NULL)
+                continue;
+
+            (map->value_destructor)(currentEntry);
+        }
+    }
+
     free(map->entries);
     map->entries = newEntries;
     map->capacity = newEntriesCapacity;
     map->elements = entryBucket->count;
 
     free_dynamic_array(entryBucket);
+    free_dynamic_array(entreisToDestroy);
 
     return 0;
 }
