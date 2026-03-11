@@ -2,7 +2,7 @@
 #define DYNAMIC_ARRAY_H
 
 #ifdef _WIN32
-#ifdef GLIB_EXPORTS
+#ifdef GALXLIB_EXPORTS
 #define GLIB_API __declspec(dllexport)
 #else
 #define GLIB_API __declspec(dllimport)
