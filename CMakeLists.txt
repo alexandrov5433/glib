@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(glib VERSION 1.0.0 LANGUAGES C)
 
-add_library(glib SHARED)
+add_library(glib STATIC)
 
 # Stackoverflow: https://stackoverflow.com/questions/34625627/how-to-link-to-the-c-math-library-with-cmake
 # Many mathematical functions (pow, sqrt, fabs, log etc.)
