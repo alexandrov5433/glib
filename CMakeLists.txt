@@ -4,6 +4,18 @@ project(galxlib VERSION 1.0.0 LANGUAGES C)
 
 add_library(galxlib STATIC)
 
+
+# Linux
+# Static library (libgalxlib.a) -> /usr/lib
+# Headers (*.h) -> /usr/include/galxlib
+# Include -> #include "galxlib/***.h"    (#include "galxlib/hash_map.h")
+# Linker configuration
+# 'touch /etc/ld.so.conf.d/galxlib.conf'   with content:  /usr/lib  (this is the path to the archive)
+# Run 'sudo ldconfig' (not sure if it a must, because it updates cache for shared libraries)
+
+# When using galxlib, the project must be compiled with linker flags -lgalxlib -lm: 'gcc test.c -o test -lgalxlib -lm'
+
+
 # Stackoverflow: https://stackoverflow.com/questions/34625627/how-to-link-to-the-c-math-library-with-cmake
 # Many mathematical functions (pow, sqrt, fabs, log etc.)
 # are declared in math.h and require the library libm to be linked.
