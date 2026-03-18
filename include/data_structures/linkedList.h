@@ -1,6 +1,8 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
+#include <stddef.h>
+
 // _WIN32 is a predefined compiler macro when compiling for Windows.
 // Must NOT be defined manually! More notes in CMakeLists.txt
 #ifdef _WIN32

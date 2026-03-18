@@ -1,6 +1,8 @@
-#include <stdlib.h>
 #ifndef SORTING_H
 #define SORTING_H
+
+#include <stdlib.h>
+#include <stddef.h>
 
 // _WIN32 is a predefined compiler macro when compiling for Windows.
 // Must NOT be defined manually! More notes in CMakeLists.txt

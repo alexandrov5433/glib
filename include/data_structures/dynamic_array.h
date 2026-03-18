@@ -1,6 +1,8 @@
 #ifndef DYNAMIC_ARRAY_H
 #define DYNAMIC_ARRAY_H
 
+#include <stddef.h>
+
 #ifdef _WIN32
 #ifdef GALXLIB_EXPORTS
 #define GLIB_API __declspec(dllexport)
