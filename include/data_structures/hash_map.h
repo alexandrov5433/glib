@@ -29,7 +29,7 @@ typedef struct Entry
 
 /**
  * @param Entry An array of Entry pointers, which is expanded and shrunken based on the need.
- * @param elements The number of elements (Entries) present in the HashMap.
+ * @param n_ent The number of elements (Entries) present in the HashMap.
  * @param capacity The number of elements (Entries) the HashMap can contain. This value is not constant.
  * @param value_destructor A function pointer. Is ment to free the memory of the value pointer, given by the user. Defaults to NULL.
  */
