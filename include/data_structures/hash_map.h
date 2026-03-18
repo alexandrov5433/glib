@@ -36,7 +36,7 @@ typedef struct Entry
 typedef struct HashMap
 {
     struct Entry **entries;
-    size_t elements;
+    size_t n_ent;
     size_t capacity;
     void (*value_destructor)(const Entry *const entry);
 } HashMap;

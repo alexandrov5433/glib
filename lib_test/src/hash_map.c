@@ -119,9 +119,9 @@ void hashMapTest()
     printf("\nCPU time used from remove_hm (per clock()): %.2f ms\n", dur3);
     printf("CPU time used from remove_hm (per clock()) per value: %.6f ms\n", dur3 / VALUES);
 
-    if (map->elements != 0)
+    if (map->n_ent != 0)
     {
-        printf("HashMap elements are %d, but expected 0.\n", map->elements);
+        printf("HashMap elements are %d, but expected 0.\n", map->n_ent);
         goto _test_failure;
     }
 
@@ -227,9 +227,9 @@ void hashMapTest()
             goto _test_failure;
         }
     }
-    if (identicleHM->elements != 3)
+    if (identicleHM->n_ent != 3)
     {
-        printf("\nIncorrect elements count of %d in identicleHM. Expected 3.\n", identicleHM->elements);
+        printf("\nIncorrect elements count of %d in identicleHM. Expected 3.\n", identicleHM->n_ent);
         goto _test_failure;
     }
     free_hash_map(identicleHM);
@@ -269,9 +269,9 @@ void hashMapTest()
         printf("Function filter_hm returned with Error: %d\n", filterDestErr);
         goto _test_failure;
     }
-    if (destructorHM->elements != 49)
+    if (destructorHM->n_ent != 49)
     {
-        printf("Incorrect elements count after filtration. Expected 49, received %d\n", destructorHM->elements);
+        printf("Incorrect elements count after filtration. Expected 49, received %d\n", destructorHM->n_ent);
         goto _test_failure;
     }
     free_hash_map(destructorHM);

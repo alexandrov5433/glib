@@ -125,11 +125,11 @@ static int _transfer(Entry **source, Entry **destination, size_t sourceCapacity,
 
 static int _extend_hm(HashMap *map)
 {
-    int emptySpace = map->capacity - map->elements;
+    int emptySpace = map->capacity - map->n_ent;
     if (emptySpace > (map->capacity * 0.25))
         return 0;
 
-    size_t newCapacity = ceil(map->elements * 1.5);
+    size_t newCapacity = ceil(map->n_ent * 1.5);
     Entry **newEntries = calloc(newCapacity, sizeof(Entry *));
     if (newEntries == NULL)
         return 1;
@@ -148,12 +148,12 @@ static int _extend_hm(HashMap *map)
 
 static int _squish_hm(HashMap *map)
 {
-    int emptySpace = map->capacity - map->elements;
+    int emptySpace = map->capacity - map->n_ent;
     // reduce capacity if more than 90% are free
     if (emptySpace < (map->capacity * 0.9))
         return 0;
 
-    size_t newCapacity = ceil(map->elements * 1.5);
+    size_t newCapacity = ceil(map->n_ent * 1.5);
     Entry **newEntries = calloc(newCapacity, sizeof(Entry *));
     if (newEntries == NULL)
         return 1;
@@ -191,7 +191,7 @@ HashMap *new_hash_map()
         return NULL;
 
     map->entries = entries;
-    map->elements = 0;
+    map->n_ent = 0;
     map->capacity = HASH_MAP_INIT_CAPACITY;
     map->value_destructor = NULL;
     return map;
@@ -245,7 +245,7 @@ int put_hm(char *key, void *value, HashMap *map)
 
     // if 0, Entry was added. If 1, it replaced another, older one with the same key.
     if (isReplaced == 0)
-        (map->elements)++;
+        (map->n_ent)++;
 
     return 0;
 }
@@ -296,7 +296,7 @@ int remove_hm(char *key, HashMap *map)
 
             _free_entry(ent);
             (map->entries)[i] = NULL;
-            (map->elements)--;
+            (map->n_ent)--;
             return 0;
         }
     }
@@ -313,7 +313,7 @@ int remove_hm(char *key, HashMap *map)
 
             _free_entry(ent);
             (map->entries)[i] = NULL;
-            (map->elements)--;
+            (map->n_ent)--;
             return 0;
         }
     }
@@ -454,7 +454,7 @@ _hashmap_manipulation_stage:
     free(map->entries);
     map->entries = newEntries;
     map->capacity = newEntriesCapacity;
-    map->elements = entryBucket->count;
+    map->n_ent = entryBucket->count;
 
     free_dynamic_array(entryBucket);
     free_dynamic_array(entreisToDestroy);
