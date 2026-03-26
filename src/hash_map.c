@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "../include/data_structures/hash_map.h"
-#include "../include/data_structures/dynamic_array.h"
+#include "../include/hash_map.h"
+#include "../include/dynamic_array.h"
 
 // ##################   static   ##################
 

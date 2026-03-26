@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../../include/data_structures/stack.h"
+#include "../../include/stack.h"
 #include "../include/stack.h"
 
 void printIntProcessor(void *const ptr)

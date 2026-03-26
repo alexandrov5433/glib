@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../include/data_structures/binary_tree.h"
+#include "../include/binary_tree.h"
 
 static Node *newNode(void *const data)
 {

@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "../include/data_structures/queue.h"
+#include "../include/queue.h"
 
 Queue *newQueue()
 {

@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "../include/data_structures/dynamic_array.h"
+#include "../include/dynamic_array.h"
 
 // ##################   static   ##################
 

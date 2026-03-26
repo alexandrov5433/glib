@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "../../include/data_structures/linkedList.h"
+#include "../../include/linkedList.h"
 #include "../include/linked_list.h"
 
 int firstSelector(void *arg)

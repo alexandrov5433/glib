@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "../../include/data_structures/hash_map.h"
+#include "../../include/hash_map.h"
 #include "../include/hash_map.h"
 #include "../../include/gstring.h"
 

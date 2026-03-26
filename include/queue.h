@@ -1,7 +1,7 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include "../include/data_structures/linkedList.h"
+#include "../include/linkedList.h"
 
 #ifdef _WIN32
 #ifdef GALXLIB_EXPORTS

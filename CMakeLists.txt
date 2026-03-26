@@ -39,12 +39,12 @@ endif()
 
 target_sources(galxlib
     PRIVATE
-        src/data_structures/linkedList.c
-        src/data_structures/hash_map.c
+        src/linkedList.c
+        src/hash_map.c
         src/sorting.c
-        src/data_structures/binary_tree.c
-        src/data_structures/stack.c
-        src/data_structures/dynamic_array.c
+        src/binary_tree.c
+        src/stack.c
+        src/dynamic_array.c
         src/gstring.c
         src/gregex.c
     PUBLIC
@@ -52,12 +52,12 @@ target_sources(galxlib
         BASE_DIRS
             include
         FILES
-            include/data_structures/linkedList.h
-            include/data_structures/hash_map.h
+            include/linkedList.h
+            include/hash_map.h
             include/sorting.h
-            include/data_structures/binary_tree.h
-            include/data_structures/stack.h
-            include/data_structures/dynamic_array.h
+            include/binary_tree.h
+            include/stack.h
+            include/dynamic_array.h
             include/gstring.h
             include/gregex.h
 )

@@ -1,4 +1,4 @@
-#include "../../include/data_structures/hash_map.h"
+#include "../../include/hash_map.h"
 
 #ifndef TEST_HASH_MAP
 #define TEST_HASH_MAP

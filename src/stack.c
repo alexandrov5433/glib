@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "../include/data_structures/stack.h"
+#include "../include/stack.h"
 
 // ###############################     Stack     ###############################
 
