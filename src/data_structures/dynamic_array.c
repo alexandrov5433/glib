@@ -534,29 +534,25 @@ int shift_da(DynamicArray *const da, void *const output)
 
 // ##################   processing   ##################
 
-int process_da(DynamicArray *const da, void (*processor)(void *itemPtr, int *loopBreakTrigger))
+int process_da(DynamicArray *const da, void (*processor)(void *item_ptr))
 {
     if (da == NULL || processor == NULL)
         return 1;
 
     void *ptr = NULL;
-    int loopBreakTrigger = 0;
     for (size_t i = 0; i < da->count; ++i)
     {
-        if (loopBreakTrigger == 1)
-            break;
-
         int err = _get_pointer_at_index(da, i, &ptr);
         if (err || ptr == NULL)
             return 2;
 
-        processor(ptr, &loopBreakTrigger);
+        processor(ptr);
     }
 
     return 0;
 }
 
-int filter_da(DynamicArray *const da, int (*filter)(void *itemPtr))
+int filter_da(DynamicArray *const da, int (*filter)(void *item_ptr))
 {
     if (da == NULL || filter == NULL)
         return 1;

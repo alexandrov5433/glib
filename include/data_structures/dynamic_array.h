@@ -101,7 +101,7 @@ GLIB_API int shift_da(DynamicArray *const da, void *const output);
  * The processor also receives a loopBreakTrigger (int *), which breaks the loop when it's value is set to 1.
  * @returns 0 on success. 2 if the pointer to the item in the array could not be retrieved.
  */
-GLIB_API int process_da(DynamicArray *const da, void (*processor)(void *itemPtr, int *loopBreakTrigger));
+GLIB_API int process_da(DynamicArray *const da, void (*processor)(void *item_ptr));
 
 /**
  * Filters the given DynamicArray, leaving only the items selected by the filter function.
@@ -111,7 +111,7 @@ GLIB_API int process_da(DynamicArray *const da, void (*processor)(void *itemPtr,
  * For any other type, the filter receives a pointer to the item, which is cast to void pointer, regardless of the type of the array. The filter must return 1 if the item is to stay in the array. Any other value will lead to the removal of the item.
  * @returns 0 on success. 2 if the pointer to the item in the array could not be retrieved.
  */
-GLIB_API int filter_da(DynamicArray *const da, int (*filter)(void *itemPtr));
+GLIB_API int filter_da(DynamicArray *const da, int (*filter)(void *item_ptr));
 
 /**
  * Gets the item at a given index, without modifing the DynamicArray.

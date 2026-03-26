@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../../include/data_structures/dynamic_array.h"
+#include "../../include/gstring.h"
 #include "../include/dynamic_array.h"
 
-void intProcessorDA(void *ptr, int *loopBreaker)
+void intProcessorDA(void *ptr)
 {
     *(int *)ptr += 1;
 }
@@ -316,5 +317,6 @@ void dynamicArrayTest()
     }
     free_dynamic_array(daShiftInt);
 
+    puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
     puts("################## Test: DynamicArray ##################");
 }
