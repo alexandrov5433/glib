@@ -22,7 +22,20 @@ add_library(galxlib STATIC)
 # Unlike libc, which is automatically linked, libm is a separate library and often requires explicit linkage. 
 # The linker presumes all libraries to begin with lib, so to link to libm you link to m.
 # libm (Wikipedia): https://en.wikipedia.org/wiki/C_mathematical_functions#libm
-target_link_libraries(galxlib m)
+target_link_libraries(galxlib PUBLIC m)
+
+# https://cmake.org/cmake/help/latest/command/target_link_libraries.html
+# PUBLIC - Populates both properties for building and properties for using a target.
+# PRIVATE - Populates only properties for building a target.
+# INTERFACE - Populates only properties for using a target.
+
+# https://cmake.org/cmake/help/latest/module/CheckLibraryExists.html
+include(CheckLibraryExists)
+check_library_exists(regex regcomp "" HAVE_LIBREGEX)
+
+if (HAVE_LIBREGEX)
+    target_link_libraries(meval PUBLIC regex)
+endif()
 
 target_sources(galxlib
     PRIVATE
@@ -33,6 +46,7 @@ target_sources(galxlib
         src/data_structures/stack.c
         src/data_structures/dynamic_array.c
         src/gstring.c
+        src/gregex.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
@@ -45,6 +59,7 @@ target_sources(galxlib
             include/data_structures/stack.h
             include/data_structures/dynamic_array.h
             include/gstring.h
+            include/gregex.h
 )
 
 
@@ -63,6 +78,7 @@ target_sources(lib_test
         lib_test/src/sorting.c
         lib_test/src/stack.c
         lib_test/src/linked_list.c
+        lib_test/src/gregex.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
@@ -74,6 +90,7 @@ target_sources(lib_test
             lib_test/include/sorting.h
             lib_test/include/stack.h
             lib_test/include/linked_list.h
+            lib_test/include/gregex.h
 
 )
 # compile lib code with -g flag, enabling debugging of lib_test.exe with working breakpoints
