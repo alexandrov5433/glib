@@ -15,7 +15,7 @@ int main()
 {
     clock_t c1 = clock();
 
-    stringTest();
+    test_gstring();
     hashMapTest();
     // linkedListTest();
     // quickSortTest();

@@ -5,61 +5,61 @@
 
 static char *_new_char_array(size_t length)
 {
-    return (char *)malloc(sizeof(char) * length);
+	return (char *)malloc(sizeof(char) * length);
 }
 
 static int _extend(size_t extraCharsCount, String *const str)
 {
-    if (str == NULL)
-        return 1;
+	if (str == NULL)
+		return 1;
 
-    size_t newSize = extraCharsCount + str->length;
-    if (newSize < str->length || newSize < 0)
-        return 3;
+	size_t newSize = extraCharsCount + str->length;
+	if (newSize < str->length || newSize < 0)
+		return 3;
 
-    char *newStr = realloc(str->str, newSize);
-    if (newStr == NULL)
-        return 2;
+	char *newStr = realloc(str->str, newSize);
+	if (newStr == NULL)
+		return 2;
 
-    str->str = newStr;
-    str->length = newSize;
-    return 0;
+	str->str = newStr;
+	str->length = newSize;
+	return 0;
 }
 
 static int _shrink(size_t charCountToRemove, String *const str)
 {
-    if (str == NULL)
-        return 1;
+	if (str == NULL)
+		return 1;
 
-    if (str->length < charCountToRemove)
-        charCountToRemove = str->length;
+	if (str->length < charCountToRemove)
+		charCountToRemove = str->length;
 
-    int newSize = str->length - charCountToRemove;
+	int newSize = str->length - charCountToRemove;
 
-    char *newStr = realloc(str->str, newSize);
-    if (newStr == NULL)
-        return 2;
+	char *newStr = realloc(str->str, newSize);
+	if (newStr == NULL)
+		return 2;
 
-    str->str = newStr;
-    str->length = newSize;
-    return 0;
+	str->str = newStr;
+	str->length = newSize;
+	return 0;
 }
 
 static int _shift_one_right(String *const str)
 {
-    if (str == NULL)
-        return 1;
+	if (str == NULL)
+		return 1;
 
-    int err = _extend(1, str);
-    if (err)
-        return err;
+	int err = _extend(1, str);
+	if (err)
+		return err;
 
-    for (int i = str->length - 1; i > 0; --i)
-    {
-        (str->str)[i] = (str->str)[i - 1];
-    }
+	for (int i = str->length - 1; i > 0; --i)
+	{
+		(str->str)[i] = (str->str)[i - 1];
+	}
 
-    return 0;
+	return 0;
 }
 
 /**
@@ -67,41 +67,41 @@ static int _shift_one_right(String *const str)
  */
 static int _shift_count_right(size_t count, String *const str)
 {
-    if (str == NULL)
-        return 1;
+	if (str == NULL)
+		return 1;
 
-    size_t newLength = count + str->length;
+	size_t newLength = count + str->length;
 
-    char *newArr = _new_char_array(newLength);
-    if (newArr == NULL)
-        return 2;
+	char *newArr = _new_char_array(newLength);
+	if (newArr == NULL)
+		return 2;
 
-    for (size_t i = 0; i < count; ++i)
-    {
-        newArr[i] = '#';
-    }
+	for (size_t i = 0; i < count; ++i)
+	{
+		newArr[i] = '#';
+	}
 
-    size_t j = 0;
-    for (size_t i = count; i < newLength; ++i)
-    {
-        newArr[i] = (str->str)[j++];
-    }
+	size_t j = 0;
+	for (size_t i = count; i < newLength; ++i)
+	{
+		newArr[i] = (str->str)[j++];
+	}
 
-    free(str->str);
-    str->str = newArr;
-    str->length = newLength;
+	free(str->str);
+	str->str = newArr;
+	str->length = newLength;
 
-    return 0;
+	return 0;
 }
 
 static long _index_of_nt(const char *const charArr)
 {
-    for (long i = 0L; i <= STRING_LOOP_MAX_LIMIT; ++i)
-    {
-        if (charArr[i] == '\0')
-            return i;
-    }
-    return -1L;
+	for (long i = 0L; i <= STRING_LOOP_MAX_LIMIT; ++i)
+	{
+		if (charArr[i] == '\0')
+			return i;
+	}
+	return -1L;
 }
 
 /**
@@ -110,314 +110,361 @@ static long _index_of_nt(const char *const charArr)
  */
 static int _copy_chars(const char *const source, char *const dest, size_t count)
 {
-    if (source == NULL || dest == NULL)
-        return 1;
+	if (source == NULL || dest == NULL)
+		return 1;
 
-    for (size_t i = 0; i < count; ++i)
-    {
-        dest[i] = source[i];
-    }
-    return 0;
+	for (size_t i = 0; i < count; ++i)
+	{
+		dest[i] = source[i];
+	}
+	return 0;
 }
 
 static int _duplicate_char_array(const char *const charArr, size_t length, char **const output)
 {
-    if (charArr == NULL)
-        return 1;
+	if (charArr == NULL)
+		return 1;
 
-    char *newArr = _new_char_array(length);
-    if (newArr == NULL)
-        return 2;
+	char *newArr = _new_char_array(length);
+	if (newArr == NULL)
+		return 2;
 
-    if (_copy_chars(charArr, newArr, length))
-    {
-        free(newArr);
-        return 1;
-    }
+	if (_copy_chars(charArr, newArr, length))
+	{
+		free(newArr);
+		return 1;
+	}
 
-    *output = newArr;
-    return 0;
+	*output = newArr;
+	return 0;
 }
 
 // ##################   public   ##################
 
-String *new_string(const char *const charArr, size_t length)
+String *new_string(const char *const char_arr, size_t length)
 {
-    String *newString = malloc(sizeof(String));
-    if (newString == NULL)
-        return NULL;
+	String *newString = malloc(sizeof(String));
+	if (newString == NULL)
+		return NULL;
 
-    char *str = _new_char_array(length);
-    if (str == NULL)
-    {
-        free(newString);
-        return NULL;
-    }
+	char *str = _new_char_array(length);
+	if (str == NULL)
+	{
+		free(newString);
+		return NULL;
+	}
 
-    if (str == NULL || length == 0)
-    {
-        newString->str = str;
-        newString->length = 0;
-        return newString;
-    }
+	if (str == NULL || length == 0)
+	{
+		newString->str = str;
+		newString->length = 0;
+		return newString;
+	}
 
-    if (_copy_chars(charArr, str, length))
-    {
-        free(newString);
-        free(str);
-        return NULL;
-    }
+	if (_copy_chars(char_arr, str, length))
+	{
+		free(newString);
+		free(str);
+		return NULL;
+	}
 
-    newString->str = str;
-    newString->length = length;
+	newString->str = str;
+	newString->length = length;
 
-    return newString;
+	return newString;
 }
 
 void free_string(String *str)
 {
-    if (str == NULL)
-        return;
+	if (str == NULL)
+		return;
 
-    free(str->str);
-    free(str);
+	free(str->str);
+	free(str);
 }
 
 int append_char(char c, String *const str)
 {
-    if (str == NULL)
-        return 1;
+	if (str == NULL)
+		return 1;
 
-    int err = _extend(1, str);
-    if (err)
-        return err;
+	int err = _extend(1, str);
+	if (err)
+		return err;
 
-    (str->str)[str->length - 1] = c;
+	(str->str)[str->length - 1] = c;
 
-    return 0;
+	return 0;
 }
 
 int append_char_array(const char *const charArr, size_t copyCount, String *const str)
 {
-    if (charArr == NULL || str == NULL)
-        return 1;
+	if (charArr == NULL || str == NULL)
+		return 1;
 
-    int err = _extend(copyCount, str);
-    if (err)
-        return err;
+	int err = _extend(copyCount, str);
+	if (err)
+		return err;
 
-    for (size_t i = 0; i < copyCount; ++i)
-    {
-        (str->str)[str->length - copyCount + i] = charArr[i];
-    }
+	for (size_t i = 0; i < copyCount; ++i)
+	{
+		(str->str)[str->length - copyCount + i] = charArr[i];
+	}
 
-    return 0;
+	return 0;
 }
 
 int append_nt(const char *const charArr, String *const str)
 {
-    if (charArr == NULL || str == NULL)
-        return 1;
+	if (charArr == NULL || str == NULL)
+		return 1;
 
-    long ntIndex = _index_of_nt(charArr);
-    if (ntIndex < 0)
-        return 4;
+	long ntIndex = _index_of_nt(charArr);
+	if (ntIndex < 0)
+		return 4;
 
-    // ntIndex is the length of the actual characters, because it is the index of the null-terminator
-    size_t extraSpace = ntIndex;
-    int err = _extend(extraSpace, str);
-    if (err)
-        return err;
+	// ntIndex is the length of the actual characters, because it is the index of the null-terminator
+	size_t extraSpace = ntIndex;
+	int err = _extend(extraSpace, str);
+	if (err)
+		return err;
 
-    for (size_t i = 0; i < ntIndex; ++i)
-    {
-        (str->str)[str->length - ntIndex + i] = charArr[i];
-    }
+	for (size_t i = 0; i < ntIndex; ++i)
+	{
+		(str->str)[str->length - ntIndex + i] = charArr[i];
+	}
 
-    return 0;
+	return 0;
 }
 
 int append_str(const String *const source, String *const dest)
 {
-    if (source == NULL || dest == NULL)
-        return 1;
+	if (source == NULL || dest == NULL)
+		return 1;
 
-    size_t oldDestLength = dest->length;
+	size_t oldDestLength = dest->length;
 
-    int err = _extend(source->length, dest);
-    if (err)
-        return err;
+	int err = _extend(source->length, dest);
+	if (err)
+		return err;
 
-    for (size_t i = 0; i < source->length; ++i)
-    {
-        (dest->str)[oldDestLength + i] = (source->str)[i];
-    }
+	for (size_t i = 0; i < source->length; ++i)
+	{
+		(dest->str)[oldDestLength + i] = (source->str)[i];
+	}
 
-    return 0;
+	return 0;
 }
 
 int prepend_char(char c, String *const str)
 {
-    if (str == NULL)
-        return 1;
+	if (str == NULL)
+		return 1;
 
-    int err = _shift_one_right(str);
-    if (err)
-        return err;
+	int err = _shift_one_right(str);
+	if (err)
+		return err;
 
-    (str->str)[0] = c;
+	(str->str)[0] = c;
 
-    return 0;
+	return 0;
 }
 
 int prepend_char_array(const char *const charArr, size_t copyCount, String *const str)
 {
-    if (str == NULL)
-        return 1;
+	if (charArr == NULL || str == NULL)
+		return 1;
 
-    // TODO: on error revert and restore before returning
-    int err = _shift_count_right(copyCount, str);
-    if (err)
-        return err;
+	// TODO: on error revert and restore before returning
+	int err = _shift_count_right(copyCount, str);
+	if (err)
+		return err;
 
-    _copy_chars(charArr, str->str, copyCount);
+	_copy_chars(charArr, str->str, copyCount);
 
-    return 0;
+	return 0;
 }
 
 int prepend_nt(const char *const charArr, String *const str)
 {
-    if (charArr == NULL || str == NULL)
-        return 1;
+	if (charArr == NULL || str == NULL)
+		return 1;
 
-    long ntIndex = _index_of_nt(charArr);
-    if (ntIndex < 0)
-        return 4;
+	long ntIndex = _index_of_nt(charArr);
+	if (ntIndex < 0)
+		return 4;
 
-    // ntIndex is the length of the actual characters, because it is the index of the null-terminator
-    size_t copyLength = ntIndex;
-    int err = _shift_count_right(copyLength, str);
-    if (err)
-        return err;
+	// ntIndex is the length of the actual characters, because it is the index of the null-terminator
+	size_t copyLength = ntIndex;
+	int err = _shift_count_right(copyLength, str);
+	if (err)
+		return err;
 
-    _copy_chars(charArr, str->str, copyLength);
+	_copy_chars(charArr, str->str, copyLength);
 
-    return 0;
+	return 0;
 }
 
 int prepend_str(const String *const source, String *const dest)
 {
-    if (source == NULL || dest == NULL)
-        return 1;
+	if (source == NULL || dest == NULL)
+		return 1;
 
-    int err = _shift_count_right(source->length, dest);
-    if (err)
-        return err;
+	int err = _shift_count_right(source->length, dest);
+	if (err)
+		return err;
 
-    _copy_chars(source->str, dest->str, source->length);
+	_copy_chars(source->str, dest->str, source->length);
 
-    return 0;
+	return 0;
 }
 
 int duplicate_str(const String *const source, String **const output)
 {
-    if (source == NULL)
-        return 1;
+	if (source == NULL)
+		return 1;
 
-    String *newStr = malloc(sizeof(String));
-    if (newStr == NULL)
-        return 2;
+	String *newStr = malloc(sizeof(String));
+	if (newStr == NULL)
+		return 2;
 
-    char *str = NULL;
-    int err = _duplicate_char_array(source->str, source->length, &str);
-    if (err)
-    {
-        free(newStr);
-        return err;
-    }
+	char *str = NULL;
+	int err = _duplicate_char_array(source->str, source->length, &str);
+	if (err)
+	{
+		free(newStr);
+		return err;
+	}
 
-    newStr->str = str;
-    newStr->length = source->length;
-    *output = newStr;
+	newStr->str = str;
+	newStr->length = source->length;
+	*output = newStr;
 
-    return 0;
+	return 0;
 }
 
 int get_raw(const String *const source, char **const output)
 {
-    if (source == NULL)
-        return 1;
+	if (source == NULL)
+		return 1;
 
-    char *result = NULL;
-    int duplicationErr = _duplicate_char_array(source->str, source->length, &result);
-    if (duplicationErr)
-        return duplicationErr;
+	char *result = NULL;
+	int duplicationErr = _duplicate_char_array(source->str, source->length, &result);
+	if (duplicationErr)
+		return duplicationErr;
 
-    *output = result;
+	*output = result;
 
-    return 0;
+	return 0;
 }
 
 int get_raw_nt(const String *const source, char **const output)
 {
-    if (source == NULL)
-        return 1;
+	if (source == NULL)
+		return 1;
 
-    String *tempCopy = NULL;
-    int err = duplicate_str(source, &tempCopy);
-    if (err)
-        return err;
+	String *tempCopy = NULL;
+	int err = duplicate_str(source, &tempCopy);
+	if (err)
+		return err;
 
-    int appendErr = append_char('\0', tempCopy);
-    if (appendErr)
-    {
-        free_string(tempCopy);
-        return appendErr;
-    }
+	int appendErr = append_char('\0', tempCopy);
+	if (appendErr)
+	{
+		free_string(tempCopy);
+		return appendErr;
+	}
 
-    char *result = NULL;
-    int duplicationErr = _duplicate_char_array(tempCopy->str, tempCopy->length, &result);
-    if (duplicationErr)
-    {
-        free_string(tempCopy);
-        return duplicationErr;
-    }
+	char *result = NULL;
+	int duplicationErr = _duplicate_char_array(tempCopy->str, tempCopy->length, &result);
+	if (duplicationErr)
+	{
+		free_string(tempCopy);
+		return duplicationErr;
+	}
 
-    *output = result;
+	*output = result;
 
-    free_string(tempCopy);
-    return 0;
+	free_string(tempCopy);
+	return 0;
 }
 
 int filter_str(String *const str, int (*filter)(char c))
 {
-    if (str == NULL || filter == NULL)
-        return 1;
+	if (str == NULL || filter == NULL)
+		return 1;
 
-    char *wantedChars = _new_char_array(str->length);
-    size_t wantedCount = 0;
-    if (wantedChars == NULL)
-        return 2;
+	char *wantedChars = _new_char_array(str->length);
+	size_t wantedCount = 0;
+	if (wantedChars == NULL)
+		return 2;
 
-    // filter return: 1 -> stay; 0 -> remove
-    for (size_t i = 0; i < str->length; ++i)
-    {
-        char c = (str->str)[i];
-        if (filter(c))
-        {
-            // filter returned 1; char is wanted
-            wantedChars[wantedCount++] = c;
-        }
-    }
+	// filter return: 1 -> stay; 0 -> remove
+	for (size_t i = 0; i < str->length; ++i)
+	{
+		char c = (str->str)[i];
+		if (filter(c))
+		{
+			// filter returned 1; char is wanted
+			wantedChars[wantedCount++] = c;
+		}
+	}
 
-    // wantedCount is now the length, because of the last post-incrementation
-    char *resizedWantedChars = realloc(wantedChars, sizeof(char) * wantedCount);
-    if (resizedWantedChars == NULL)
-        return 2;
+	// wantedCount is now the length, because of the last post-incrementation
+	char *resizedWantedChars = realloc(wantedChars, sizeof(char) * wantedCount);
+	if (resizedWantedChars == NULL)
+		return 2;
 
-    free(str->str);
-    str->str = resizedWantedChars;
-    str->length = wantedCount;
+	free(str->str);
+	str->str = resizedWantedChars;
+	str->length = wantedCount;
 
-    return 0;
+	return 0;
+}
+
+int replace_char(String *const str, const char to_replace, const char replacement)
+{
+	if (str == NULL)
+		return 1;
+
+	if (str->length == 0)
+		return 0;
+
+	for (size_t i = 0; i < str->length; ++i)
+	{
+		if ((str->str)[i] == to_replace)
+			(str->str)[i] = replacement;
+	}
+
+	return 0;
+}
+
+int remove_char(String *const str, const char to_remove)
+{
+	if (str == NULL)
+		return 1;
+
+	if (str->length == 0)
+		return 0;
+
+	char *tmp_str = _new_char_array(str->length);
+	if (tmp_str == NULL)
+		return 2;
+
+	size_t tmp_str_length = 0;
+	for (size_t i = 0; i < str->length; ++i)
+	{
+		if ((str->str)[i] != to_remove)
+			tmp_str[tmp_str_length++] = (str->str)[i];
+	}
+
+	char *new_str = realloc(tmp_str, sizeof(char) * tmp_str_length);
+	if (new_str == NULL)
+		return 3;
+
+	free(str->str);
+	str->str = new_str;
+	str->length = tmp_str_length;
+
+	return 0;
 }

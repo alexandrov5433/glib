@@ -1,224 +1,181 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "../../include/gstring.h"
 #include "../include/gstring.h"
 
-int filter_string(char c)
+/* Simple test macros */
+#define EXPECT_EQ(actual, expected) assert((actual) == (expected))
+#define EXPECT_STR_EQ(a, b, len) assert(memcmp((a), (b), (len)) == 0)
+#define EXPECT_NOT_NULL(ptr) assert((ptr) != NULL)
+#define EXPECT_NULL(ptr) assert((ptr) == NULL)
+
+/* Sample filter: keep only digits */
+int keep_digits(char c)
 {
-    if (c == '!')
-        return 1;
-    return 0;
+	return (c >= '0' && c <= '9');
 }
-int is_same_string(char *a, char *b, size_t length)
+
+void test_gstring(void)
 {
-    for (size_t i = 0; i < length; ++i)
-    {
-        if (a[i] != b[i])
-            return 0;
-    }
-    return 1;
-}
-void stringTest()
-{
-    puts("################## Test: String ##################");
+	puts("################## Test: String ##################");
+	printf(ANSI_COLOR_CYAN "Running String tests...\n" ANSI_COLOR_RESET);
 
-    char original[4] = {'a', 'b', 'c', 'd'};
-    char *originalNt = "abcd";
-    String *testStr = new_string(original, 4);
-    if (testStr == NULL)
-    {
-        puts(ANSI_COLOR_RED "String testStr was not created." ANSI_COLOR_RESET);
-        goto _test_failed;
-    }
+	/* =========================
+	   new_string / free_string
+	   ========================= */
+	String *s1 = new_string("abc", 3);
+	EXPECT_NOT_NULL(s1);
+	EXPECT_EQ(s1->length, 3);
+	EXPECT_STR_EQ(s1->str, "abc", 3);
 
-    int err1 = append_char('!', testStr);
-    if (err1)
-    {
-        printf(ANSI_COLOR_RED "Function append_char returned with error code: %d\n" ANSI_COLOR_RESET, err1);
-        goto _test_failed;
-    }
-    if (is_same_string(testStr->str, "abcd!", 5) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after append_char. Expected: abcd!, received: %s\n" ANSI_COLOR_RESET, testStr->str);
-        goto _test_failed;
-    }
-    puts("append_char: tested.");
+	String *empty = new_string(NULL, 0);
+	EXPECT_NOT_NULL(empty);
+	EXPECT_EQ(empty->length, 0);
 
-    int err2 = append_char_array("|a_c_a|", 7, testStr);
-    if (err2)
-    {
-        printf(ANSI_COLOR_RED "Function append_char_array returned with error code: %d\n" ANSI_COLOR_RESET, err2);
-        goto _test_failed;
-    }
-    if (is_same_string(testStr->str, "abcd!|a_c_a|", 12) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after append_char_array. Expected: abcd!|a_c_a|, received: %s\n" ANSI_COLOR_RESET, testStr->str);
-        goto _test_failed;
-    }
-    puts("append_char_array: tested.");
+	free_string(empty);
+	free_string(s1);
 
-    int err3 = append_nt("|a_nt|", testStr);
-    if (err3)
-    {
-        printf(ANSI_COLOR_RED "Function append_nt returned with error code: %d\n" ANSI_COLOR_RESET, err3);
-        goto _test_failed;
-    }
-    if (is_same_string(testStr->str, "abcd!|a_c_a||a_nt|", 18) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after append_nt. Expected: abcd!|a_c_a||a_nt|, received: %s\n" ANSI_COLOR_RESET, testStr->str);
-        goto _test_failed;
-    }
-    puts("append_nt: tested.");
+	/* =========================
+	   append_char
+	   ========================= */
+	s1 = new_string("ab", 2);
+	EXPECT_EQ(append_char('c', s1), 0);
+	EXPECT_EQ(s1->length, 3);
+	EXPECT_STR_EQ(s1->str, "abc", 3);
 
-    String *toCopyFrom = new_string("|a_str|", 7);
-    if (toCopyFrom == NULL)
-    {
-        puts(ANSI_COLOR_RED "String toCopyFrom was not created." ANSI_COLOR_RESET);
-        goto _test_failed;
-    }
+	EXPECT_EQ(append_char('x', NULL), 1);
 
-    int err4 = append_str(toCopyFrom, testStr);
-    if (err4)
-    {
-        printf(ANSI_COLOR_RED "Function append_str returned with error code: %d\n" ANSI_COLOR_RESET, err4);
-        goto _test_failed;
-    }
-    if (is_same_string(testStr->str, "abcd!|a_c_a||a_nt||a_str|", 25) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after append_str. Expected: abcd!|a_c_a||a_nt||a_str|, received: %s\n" ANSI_COLOR_RESET, testStr->str);
-        goto _test_failed;
-    }
-    free_string(toCopyFrom);
-    puts("append_str: tested.");
+	/* =========================
+	   append_char_array
+	   ========================= */
+	EXPECT_EQ(append_char_array("def", 3, s1), 0);
+	EXPECT_EQ(s1->length, 6);
+	EXPECT_STR_EQ(s1->str, "abcdef", 6);
 
-    int err5 = prepend_char('P', testStr);
-    if (err5)
-    {
-        printf(ANSI_COLOR_RED "Function prepend_char returned with error code: %d\n" ANSI_COLOR_RESET, err5);
-        goto _test_failed;
-    }
-    if (is_same_string(testStr->str, "Pabcd!|a_c_a||a_nt||a_str|", 26) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after prepend_char. Expected: Pabcd!|a_c_a||a_nt||a_str|, received: %s\n" ANSI_COLOR_RESET, testStr->str);
-        goto _test_failed;
-    }
-    puts("prepend_char: tested.");
+	EXPECT_EQ(append_char_array(NULL, 3, s1), 1);
 
-    int err6 = prepend_char_array("|p_c_a|", 7, testStr);
-    if (err6)
-    {
-        printf(ANSI_COLOR_RED "Function prepend_char_array returned with error code: %d\n" ANSI_COLOR_RESET, err6);
-        goto _test_failed;
-    }
-    if (is_same_string(testStr->str, "|p_c_a|Pabcd!|a_c_a||a_nt||a_str|", 26) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after prepend_char_array. Expected: |p_c_a|Pabcd!|a_c_a||a_nt||a_str|, received: %s\n" ANSI_COLOR_RESET, testStr->str);
-        goto _test_failed;
-    }
-    puts("prepend_char_array: tested.");
+	/* =========================
+	   append_nt
+	   ========================= */
+	EXPECT_EQ(append_nt("ghi", s1), 0);
+	EXPECT_EQ(s1->length, 9);
+	EXPECT_STR_EQ(s1->str, "abcdefghi", 9);
 
-    int err7 = prepend_nt("|p_nt|", testStr);
-    if (err7)
-    {
-        printf(ANSI_COLOR_RED "Function prepend_nt returned with error code: %d\n" ANSI_COLOR_RESET, err7);
-        goto _test_failed;
-    }
-    if (is_same_string(testStr->str, "|p_nt||p_c_a|Pabcd!|a_c_a||a_nt||a_str|", 32) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after prepend_nt. Expected: |p_nt||p_c_a|Pabcd!|a_c_a||a_nt||a_str|, received: %s\n" ANSI_COLOR_RESET, testStr->str);
-        goto _test_failed;
-    }
-    puts("prepend_nt: tested.");
+	EXPECT_EQ(append_nt(NULL, s1), 1);
 
-    String *strToCopyFrom = new_string("|p_str|", 7);
-    if (strToCopyFrom == NULL)
-    {
-        puts(ANSI_COLOR_RED "String strToCopyFrom was not created." ANSI_COLOR_RESET);
-        goto _test_failed;
-    }
-    int err8 = prepend_str(strToCopyFrom, testStr);
-    if (err8)
-    {
-        printf(ANSI_COLOR_RED "Function prepend_str returned with error code: %d\n" ANSI_COLOR_RESET, err8);
-        goto _test_failed;
-    }
-    if (is_same_string(testStr->str, "|p_str||p_nt||p_c_a|Pabcd!|a_c_a||a_nt||a_str|", 39) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after prepend_str. Expected: |p_str||p_nt||p_c_a|Pabcd!|a_c_a||a_nt||a_str|, received: %s\n" ANSI_COLOR_RESET, testStr->str);
-        goto _test_failed;
-    }
-    free_string(strToCopyFrom);
-    puts("prepend_str: tested.");
+	/* =========================
+	   append_str
+	   ========================= */
+	String *s2 = new_string("XYZ", 3);
+	EXPECT_EQ(append_str(s2, s1), 0);
+	EXPECT_EQ(s1->length, 12);
+	EXPECT_STR_EQ(s1->str, "abcdefghiXYZ", 12);
 
-    String *duplicateStr = NULL;
-    int err9 = duplicate_str(testStr, &duplicateStr);
-    if (err9)
-    {
-        printf(ANSI_COLOR_RED "Function duplicate_str returned with error code: %d\n" ANSI_COLOR_RESET, err9);
-        goto _test_failed;
-    }
-    if (is_same_string(testStr->str, duplicateStr->str, 39) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after duplicate_str. Expected: %s,\n received: %s\n" ANSI_COLOR_RESET, testStr->str, duplicateStr->str);
-        goto _test_failed;
-    }
-    free_string(duplicateStr);
-    puts("duplicate_str: tested.");
+	EXPECT_EQ(append_str(NULL, s1), 1);
 
-    char *getStrTest = NULL;
-    int err10 = get_raw(testStr, &getStrTest);
-    if (err10)
-    {
-        printf(ANSI_COLOR_RED "Function get_raw returned with error code: %d\n" ANSI_COLOR_RESET, err10);
-        goto _test_failed;
-    }
-    if (is_same_string(testStr->str, getStrTest, 39) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after get_raw. Expected: %s,\n received: %s\n" ANSI_COLOR_RESET, testStr->str, getStrTest);
-        goto _test_failed;
-    }
-    puts("get_raw: tested.");
+	/* =========================
+	   prepend_char
+	   ========================= */
+	EXPECT_EQ(prepend_char('!', s1), 0);
+	EXPECT_EQ(s1->str[0], '!');
 
-    char *getStrNtTest = NULL;
-    int err11 = get_raw_nt(testStr, &getStrNtTest);
-    if (err11)
-    {
-        printf(ANSI_COLOR_RED "Function get_raw_nt returned with error code: %d\n" ANSI_COLOR_RESET, err11);
-        goto _test_failed;
-    }
-    if (is_same_string("|p_str||p_nt||p_c_a|Pabcd!|a_c_a||a_nt||a_str|", getStrNtTest, 40) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after get_raw_nt. Expected: %s,\n received: %s\n" ANSI_COLOR_RESET, testStr->str, getStrNtTest);
-        goto _test_failed;
-    }
-    puts("get_raw_nt: tested.");
+	EXPECT_EQ(prepend_char('x', NULL), 1);
 
-    int err12 = filter_str(testStr, filter_string);
-    if (err12)
-    {
-        printf(ANSI_COLOR_RED "Function filter_str returned with error code: %d\n" ANSI_COLOR_RESET, err12);
-        goto _test_failed;
-    }
-    if (is_same_string("!", testStr->str, 1) == 0)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String after filter_str. Expected: !,\n received: %s\n" ANSI_COLOR_RESET, testStr->str);
-        goto _test_failed;
-    }
-    if (testStr->length != 1)
-    {
-        printf(ANSI_COLOR_RED "Incorrect String length after filter_str. Expected: 1,\n received: %d\n" ANSI_COLOR_RESET, testStr->length);
-        goto _test_failed;
-    }
-    puts("filter_str: tested.");
+	/* =========================
+	   prepend_char_array
+	   ========================= */
+	EXPECT_EQ(prepend_char_array(">>", 2, s1), 0);
+	EXPECT_STR_EQ(s1->str, ">>!abcdefghiXYZ", s1->length);
 
-    free_string(testStr);
-    puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
-    puts("################## Test: String ##################");
-    return;
+	EXPECT_EQ(prepend_char_array(NULL, 2, s1), 1);
 
-_test_failed:
-    free_string(testStr);
-    puts(ANSI_COLOR_RED "Result: Failed" ANSI_COLOR_RESET);
-    puts("################## Test: String ##################");
+	/* =========================
+	   prepend_nt
+	   ========================= */
+	EXPECT_EQ(prepend_nt("START:", s1), 0);
+	EXPECT_STR_EQ(s1->str, "START:>>!abcdefghiXYZ", s1->length);
+
+	EXPECT_EQ(prepend_nt(NULL, s1), 1);
+
+	/* =========================
+	   prepend_str
+	   ========================= */
+	EXPECT_EQ(prepend_str(s2, s1), 0);
+	EXPECT_STR_EQ(s1->str, "XYZSTART:>>!abcdefghiXYZ", s1->length);
+
+	EXPECT_EQ(prepend_str(NULL, s1), 1);
+
+	/* =========================
+	   duplicate_str
+	   ========================= */
+	String *dup = NULL;
+	EXPECT_EQ(duplicate_str(s1, &dup), 0);
+	EXPECT_NOT_NULL(dup);
+	EXPECT_EQ(dup->length, s1->length);
+	EXPECT_STR_EQ(dup->str, s1->str, s1->length);
+
+	EXPECT_EQ(duplicate_str(NULL, &dup), 1);
+
+	/* =========================
+	   get_raw
+	   ========================= */
+	char *raw = NULL;
+	EXPECT_EQ(get_raw(s1, &raw), 0);
+	EXPECT_NOT_NULL(raw);
+	EXPECT_STR_EQ(raw, s1->str, s1->length);
+	free(raw);
+
+	EXPECT_EQ(get_raw(NULL, &raw), 1);
+
+	/* =========================
+	   get_raw_nt
+	   ========================= */
+	char *raw_nt = NULL;
+	EXPECT_EQ(get_raw_nt(s1, &raw_nt), 0);
+	EXPECT_NOT_NULL(raw_nt);
+	EXPECT_EQ(raw_nt[s1->length], '\0');
+	EXPECT_STR_EQ(raw_nt, s1->str, s1->length);
+	free(raw_nt);
+
+	EXPECT_EQ(get_raw_nt(NULL, &raw_nt), 1);
+
+	/* =========================
+	   filter_str
+	   ========================= */
+	String *num = new_string("a1b2c3", 6);
+	EXPECT_EQ(filter_str(num, keep_digits), 0);
+	EXPECT_EQ(num->length, 3);
+	EXPECT_STR_EQ(num->str, "123", 3);
+
+	EXPECT_EQ(filter_str(NULL, keep_digits), 1);
+
+	/* =========================
+	   replace_char
+	   ========================= */
+	EXPECT_EQ(replace_char(num, '1', '9'), 0);
+	EXPECT_STR_EQ(num->str, "923", 3);
+
+	EXPECT_EQ(replace_char(NULL, 'a', 'b'), 1);
+
+	/* =========================
+	   remove_char
+	   ========================= */
+	EXPECT_EQ(remove_char(num, '2'), 0);
+	EXPECT_EQ(num->length, 2);
+	EXPECT_STR_EQ(num->str, "93", 2);
+
+	EXPECT_EQ(remove_char(NULL, 'x'), 1);
+
+	/* =========================
+	   Cleanup
+	   ========================= */
+	free_string(num);
+	free_string(dup);
+	free_string(s2);
+	free_string(s1);
+
+	printf(ANSI_COLOR_GREEN "All tests passed!\n" ANSI_COLOR_RESET);
+	puts("################## Test: String ##################");
 }

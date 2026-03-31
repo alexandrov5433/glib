@@ -58,14 +58,14 @@ typedef struct String
 
 /**
  * Creates a new String.
- * @param charArr A pointer to a character array. If NULL, a String with 0 length will be created.
+ * @param char_arr A pointer to a character array. If NULL, a String with 0 length will be created.
  * The content of the array is copied, therefore it can be freed.
  * @param length The number of characters, which will be copied to the String.
  * If 0, a String with 0 length will be created and nothing is copied.
  * @returns A pointer to the new String on success.
  * NULL on failure, because of failed memory allocation or failed character coping.
  */
-GLIB_API String *new_string(const char *const charArr, size_t length);
+GLIB_API String *new_string(const char *const char_arr, size_t length);
 
 /**
  * Frees the memory of the String.
@@ -239,5 +239,34 @@ GLIB_API int get_raw_nt(const String *const source, char **const output);
  * 2 if memory could not be allocated.
  */
 GLIB_API int filter_str(String *const str, int (*filter)(char c));
+
+/**
+ * Replaces all characters in the String, which match, with the given character. 
+ * If the length property of the String is 0, nothing is done an 0 is returned. 
+ * The length property of the String is not changed.
+ * @param str A pointer to the String, which must be processed.
+ * @param to_replace The character which must be replaced.
+ * @param replacement The character which will be placed on the index of the character to_replace.
+ * @returns 0 on success. On failure:
+ * 
+ * 1 if the str argument is NULL.
+ */
+GLIB_API int replace_char(String *const str, const char to_replace, const char replacement);
+
+/**
+ * Removes all instances of the character from the String. 
+ * If the length property of the String is 0, nothing is done an 0 is returned. 
+ * The new length property of the String is equal to the original length minus the count of the removed character instances.
+ * @param str A pointer to the String, which must be processed.
+ * @param to_remove The character which must be removed. All instances are removed.
+ * @returns 0 on success. On failure:
+ * 
+ * 1 if the str argument is NULL.
+ * 
+ * 2 if memory for a new character array could not be allocated (malloc).
+ * 
+ * 3 if memory could not be reallocated (realloc). 
+ */
+GLIB_API int remove_char(String *const str, const char to_remove);
 
 #endif
