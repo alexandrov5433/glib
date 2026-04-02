@@ -12,6 +12,10 @@ int intFilterDA(void *ptr)
 {
     return *(int *)ptr <= 5 ? 1 : 0;
 }
+void int_worker(void *ptr)
+{
+    *(int *)ptr += 10;
+}
 void dynamicArrayTest()
 {
     puts("################## Test: DynamicArray ##################");
@@ -316,6 +320,50 @@ void dynamicArrayTest()
         return;
     }
     free_dynamic_array(daShiftInt);
+
+    printf("Testing function: remove_at_da for INT...\n");
+    DynamicArray *da_test = new_dynamic_array(INT);
+    for (size_t i = 0; i < 10; ++i)
+    {
+        push_da(da_test, &i);
+    }
+    int err_status_remove_at = remove_at_da(da_test, 4); // remove 4
+    if (err_status_remove_at)
+    {
+        printf("remove_at_da retuned error code (%d).\n", err_status_remove_at);
+        return;
+    }
+    if ((da_test->intArr)[4] != 5)
+    {
+        printf("remove_at_da failed. Expected 5 at index 4, received (%d).\n", (da_test->intArr)[4]);
+        return;
+    }
+    printf("Testing function: remove_first_da for INT...\n");
+    int remove_target = 2;
+    int err_status_remove_first = remove_first_da(da_test, &remove_target);
+    if (err_status_remove_first)
+    {
+        printf("remove_first_da retuned error code (%d).\n", err_status_remove_first);
+        return;
+    }
+    if ((da_test->intArr)[2] != 3)
+    {
+        printf("remove_first_da failed. Expected 3 at index 2, received (%d).\n", (da_test->intArr)[2]);
+        return;
+    }
+    printf("Testing function: apply_at_da for INT...\n");
+    int err_status_apply_at = apply_at_da(da_test, 0, int_worker);
+    if (err_status_apply_at)
+    {
+        printf("apply_at_da retuned error code (%d).\n", err_status_apply_at);
+        return;
+    }
+    if ((da_test->intArr)[0] != 10)
+    {
+        printf("apply_at_da failed. Expected 10 at index 0, received (%d).\n", (da_test->intArr)[0]);
+        return;
+    }
+    free_dynamic_array(da_test);
 
     puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
     puts("################## Test: DynamicArray ##################");

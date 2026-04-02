@@ -83,7 +83,7 @@ static int _expand_da(DynamicArray *const da)
     if (freeSpace < DYNAMIC_ARRAY_INIT_CAPACITY * 0.25)
     {
         size_t newCapacity = da->capacity + DYNAMIC_ARRAY_INIT_CAPACITY;
-        int err = _mem_realloc(da, newCapacity);
+        int err = _mem_realloc(da, newCapacity); // new_capcity is set in _mem_realloc
         if (err)
             return err;
     }
@@ -104,7 +104,7 @@ static int _shrinkDA(DynamicArray *const da)
         if (newCapacity <= da->count)
             newCapacity += da->count;
 
-        int err = _mem_realloc(da, newCapacity);
+        int err = _mem_realloc(da, newCapacity); // new_capcity is set in _mem_realloc
         if (err)
             return err;
     }
@@ -310,6 +310,100 @@ static int _get_pointer_at_index(const DynamicArray *const da, const size_t inde
     return 1;
 }
 
+static int _remove_at(DynamicArray *const da, const size_t index)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->count <= 0)
+        return 0;
+
+    if (_shrinkDA(da))
+        return 1;
+
+    DynamicArray *tmp = new_dynamic_array(da->type);
+    if (tmp == NULL)
+        return 2;
+
+    for (size_t i = 0; i < da->count; ++i)
+    {
+        if (i == index)
+            continue;
+
+        switch (da->type)
+        {
+        case 0:
+            // int
+            if (push_da(tmp, &((da->intArr)[i])))
+                goto _error_case;
+            break;
+        case 1:
+            // char
+            if (push_da(tmp, &((da->charArr)[i])))
+                goto _error_case;
+            break;
+        case 2:
+            // float
+            if (push_da(tmp, &((da->floatArr)[i])))
+                goto _error_case;
+            break;
+        case 3:
+            // double
+            if (push_da(tmp, &((da->doubleArr)[i])))
+                goto _error_case;
+            break;
+        case 4:
+            // void*
+            if (push_da(tmp, (da->voidArr)[i]))
+                goto _error_case;
+            break;
+        default:
+            goto _error_case;
+        }
+    }
+
+    switch (da->type)
+    {
+    case 0:
+        // int
+        free(da->intArr);
+        da->intArr = tmp->intArr;
+        break;
+    case 1:
+        // char
+        free(da->charArr);
+        da->charArr = tmp->charArr;
+        break;
+    case 2:
+        // float
+        free(da->floatArr);
+        da->floatArr = tmp->floatArr;
+        break;
+    case 3:
+        // double
+        free(da->doubleArr);
+        da->doubleArr = tmp->doubleArr;
+        break;
+    case 4:
+        // void*
+        free(da->voidArr);
+        da->voidArr = tmp->voidArr;
+        break;
+    }
+
+    (da->count)--;
+    /*
+    The actual array, in the union, must not need to be freed.
+    Thats why free() and not free_dynamic_array().
+    */
+    free(tmp);
+    return 0;
+
+_error_case:
+    free_dynamic_array(tmp);
+    return 3;
+}
+
 // ##################   creation and destruction  ##################
 
 DynamicArray *new_dynamic_array(enum DynamicArrayType const type)
@@ -500,7 +594,7 @@ int shift_da(DynamicArray *const da, void *const output)
         return 1;
     }
 
-     switch (da->type)
+    switch (da->type)
     {
     case 0:
         // int
@@ -532,7 +626,58 @@ int shift_da(DynamicArray *const da, void *const output)
     return 0;
 }
 
+int remove_at_da(DynamicArray *const da, const size_t index)
+{
+    if (da == NULL)
+        return 1;
+
+    int err_remove = _remove_at(da, index);
+    if (err_remove)
+        return 2;
+
+    return 0;
+}
+
+int remove_first_da(DynamicArray *const da, void *const target)
+{
+    if (da == NULL || target == NULL)
+        return 1;
+
+    int target_index = -1;
+    int status = index_of_da(da, &target_index, target);
+    if (status == -1 || target_index <= -1)
+    {
+        // not found
+        return -1;
+    }
+    else if (status >= 1)
+    {
+        // err
+        return status;
+    }
+    // status == 0
+    int err_remove = _remove_at(da, target_index);
+    if (err_remove)
+        return err_remove;
+
+    return 0;
+}
+
 // ##################   processing   ##################
+
+int apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr))
+{
+    if (da == NULL || worker == NULL)
+        return 1;
+
+    void *ptr = NULL;
+    int err = _get_pointer_at_index(da, index, &ptr);
+    if (err || ptr == NULL)
+        return 2;
+
+    worker(ptr);
+    return 0;
+}
 
 int process_da(DynamicArray *const da, void (*processor)(void *item_ptr))
 {

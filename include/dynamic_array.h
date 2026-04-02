@@ -75,7 +75,7 @@ GLIB_API int push_da(DynamicArray *const da, void *const item);
 GLIB_API int unshift_da(DynamicArray *const da, void *const item);
 
 /**
- * Places the last item (index == count - 1) from the DynamicArray at the address of the output pointer. The item is removed from the array. 
+ * Places the last item (index == count - 1) from the DynamicArray at the address of the output pointer. The item is removed from the array.
  * The item is cast to the type of the DynamicArray.
  * @param da A pointer to the DynamicArray. If NULL or the array is empty, 1 is returned.
  * @param output An int pointer, at the address of which the value of the item will be placed.
@@ -84,13 +84,55 @@ GLIB_API int unshift_da(DynamicArray *const da, void *const item);
 GLIB_API int pop_da(DynamicArray *const da, void *const output);
 
 /**
- * Places the first item (index == 0) from the DynamicArray at the address of the output pointer. The item is removed from the array. 
+ * Places the first item (index == 0) from the DynamicArray at the address of the output pointer. The item is removed from the array.
  * The item is cast to the type of the DynamicArray.
  * @param da A pointer to the DynamicArray. If NULL or the array is empty, 1 is returned.
  * @param output An int pointer, at the address of which the value of the item will be placed.
  * @returns 0 on success. 1 if the type of the DynamicArray is empty. 3 if the type of the DynamicArray is not recognized.
  */
 GLIB_API int shift_da(DynamicArray *const da, void *const output);
+
+/**
+ * Removes the item at the given index from the DynamicArray.
+ * @param da A pointer to the DynamicArray.
+ * @param index The index of the target which is to be removed.
+ * @returns 0 on success. On failure:
+ *
+ * 1 if either of the arguments is NULL.
+ *
+ * 2 if the removal failed due to memory allocation failure - new_dynamic_array returned NULL.
+ *
+ * 3 if the removal failed due to an error status retuned from push_da.
+ */
+GLIB_API int remove_at_da(DynamicArray *const da, const size_t index);
+
+/**
+ * Removes the first matched item from the DynamicArray. The search is done from left to right.
+ * @param da A pointer to the DynamicArray.
+ * @param target A pointer to the target which is to be removed.
+ * If the DynamicArray is of type VOID_PTR the target is used as it is, otherwise it is dereferenced.
+ * @returns 0 on success - the item was removed. -1 if no match was found. On failure:
+ *
+ * 1 if either of the arguments is NULL.
+ *
+ * 2 if the removal failed due to memory allocation failure - new_dynamic_array returned NULL.
+ *
+ * 3 if the removal failed due to an error status retuned from push_da.
+ */
+GLIB_API int remove_first_da(DynamicArray *const da, void *const target);
+
+/**
+ * Applies a function to the item at the given index in the DynamicArray.
+ * @param da A pointer to the DynamicArray.
+ * @param index The index at which the item can be found. The function will be applied to the item at this index.
+ * @param worker The function which will be applied to the item.
+ * @returns 0 on success. On failure:
+ * 
+ * 1 if either of the pointer arguments - da, worker - is NULL.
+ * 
+ * 2 if the item on the given index could not be accessed due to type missmatch (enum DynamicArrayType type) of the DynamicArray. 
+ */
+GLIB_API int apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr));
 
 /**
  * Applies a processor function to every item in the DynamicArray, from left to right.
@@ -177,10 +219,9 @@ GLIB_API int find_last_index_da(DynamicArray *const da, int *const output, int (
 
 /**
  * Finds the index of a specific item in the DynamicArray, without modifing the array, by directly comparing items to the given value.
- * The search is done from left to right.
- * The search stops as soon as the selector chooses one item.
+ * The search is done from left to right and stops as soon as there is a match.
  * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
- * @param output An int pointer, which will receive the index of the item. If NULL, 1 is returned.
+ * @param output An int pointer, which will receive the index of the item.
  * @param value A void pointer to the value, against which the items will be compared. If NULL, 1 is returned.
  * @returns 0 on success. -1 if the item was not found.
  */
