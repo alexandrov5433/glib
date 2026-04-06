@@ -30,6 +30,9 @@ static int _enum_check(enum DynamicArrayType const type)
 
 static int _mem_realloc(DynamicArray *const da, size_t newCapacity)
 {
+    if (da == NULL)
+        return 1;
+    
     switch (da->type)
     {
     case 0:
@@ -68,7 +71,7 @@ static int _mem_realloc(DynamicArray *const da, size_t newCapacity)
         da->voidArr = voidArr;
         break;
     default:
-        return 1;
+        return 3;
     }
     da->capacity = newCapacity;
     return 0;
@@ -462,6 +465,7 @@ void free_dynamic_array(DynamicArray *const da)
 
 // ##################   add items   ##################
 
+/* 
 int push_da(DynamicArray *const da, void *const item)
 {
     if (item == NULL || da == NULL)
@@ -496,6 +500,92 @@ int push_da(DynamicArray *const da, void *const item)
     default:
         return 3;
     }
+
+    return 0;
+}
+ */
+
+int push_int_da(DynamicArray *const da, int const item)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != INT)
+        return 3;
+
+    int err = _expand_da(da);
+    if (err)
+        return err;
+
+    (da->intArr)[(da->count)++] = item;
+
+    return 0;
+}
+
+int push_char_da(DynamicArray *const da, char const item)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != CHAR)
+        return 3;
+
+    int err = _expand_da(da);
+    if (err)
+        return err;
+
+    (da->charArr)[(da->count)++] = item;
+
+    return 0;
+}
+
+int push_float_da(DynamicArray *const da, float const item)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != FLOAT)
+        return 3;
+
+    int err = _expand_da(da);
+    if (err)
+        return err;
+
+    (da->floatArr)[(da->count)++] = item;
+
+    return 0;
+}
+
+int push_double_da(DynamicArray *const da, double const item)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != DOUBLE)
+        return 3;
+
+    int err = _expand_da(da);
+    if (err)
+        return err;
+
+    (da->doubleArr)[(da->count)++] = item;
+
+    return 0;
+}
+
+int push_ptr_da(DynamicArray *const da, void *const item)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != VOID_PTR)
+        return 3;
+
+    int err = _expand_da(da);
+    if (err)
+        return err;
+
+    (da->voidArr)[(da->count)++] = item;
 
     return 0;
 }

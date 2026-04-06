@@ -63,7 +63,77 @@ GLIB_API void free_dynamic_array(DynamicArray *const da);
  * @returns 0 on success. 1 if either of the arguments is NULL. 2 if memory could not be reallocated.
  * 3 if the type (enum) is not recognized.
  */
-GLIB_API int push_da(DynamicArray *const da, void *const item);
+// GLIB_API int push_da(DynamicArray *const da, void *const item);
+
+/**
+ * Adds the integer to the end of the DynamicArray.
+ * @param item The integer to add.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @returns 0 on success. On failure: 
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
+ */
+GLIB_API int push_int_da(DynamicArray *const da, int const item);
+
+/**
+ * Adds the character to the end of the DynamicArray.
+ * @param item The character to add.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @returns 0 on success. On failure: 
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
+ */
+GLIB_API int push_char_da(DynamicArray *const da, char const item);
+
+/**
+ * Adds the floater to the end of the DynamicArray.
+ * @param item The floater to add.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @returns 0 on success. On failure: 
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
+ */
+GLIB_API int push_float_da(DynamicArray *const da, float const item);
+
+/**
+ * Adds the double to the end of the DynamicArray.
+ * @param item The double to add.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @returns 0 on success. On failure: 
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
+ */
+GLIB_API int push_double_da(DynamicArray *const da, double const item);
+
+/**
+ * Adds the pointer to the end of the DynamicArray.
+ * @param item The pointer to add.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @returns 0 on success. On failure: 
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
+ */
+GLIB_API int push_ptr_da(DynamicArray *const da, void *const item);
 
 /**
  * Shifts the items of the DynamicArray to the right and places the given item at the start (index 0).
