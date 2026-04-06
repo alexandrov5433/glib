@@ -57,15 +57,6 @@ GLIB_API DynamicArray *new_dynamic_array(enum DynamicArrayType const type);
 GLIB_API void free_dynamic_array(DynamicArray *const da);
 
 /**
- * Adds an item to the and of the DynamicArray.
- * @param item A ponter to the item, which must be added. If NULL, 1 is returned.
- * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
- * @returns 0 on success. 1 if either of the arguments is NULL. 2 if memory could not be reallocated.
- * 3 if the type (enum) is not recognized.
- */
-// GLIB_API int push_da(DynamicArray *const da, void *const item);
-
-/**
  * Adds the integer to the end of the DynamicArray.
  * @param item The integer to add.
  * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
