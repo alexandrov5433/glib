@@ -197,13 +197,84 @@ GLIB_API int unshift_double_da(DynamicArray *const da, double const item);
 GLIB_API int unshift_ptr_da(DynamicArray *const da, void *const item);
 
 /**
- * Places the last item (index == count - 1) from the DynamicArray at the address of the output pointer. The item is removed from the array.
- * The item is cast to the type of the DynamicArray.
- * @param da A pointer to the DynamicArray. If NULL or the array is empty, 1 is returned.
- * @param output An int pointer, at the address of which the value of the item will be placed.
- * @returns 0 on success. 1 if the type of the DynamicArray is empty. 3 if the type in the DynamicArray is not recognized.
+ * Pops the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @param output A pointer where the item will be placed.
+ * @returns 0 on success. On failure: 
+ * 
+ * -1 if the DynamicArray is empty.
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized.
  */
-GLIB_API int pop_da(DynamicArray *const da, void *const output);
+GLIB_API int pop_int_da(DynamicArray *const da, int *const output);
+
+/**
+ * Pops the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @param output A pointer where the item will be placed.
+ * @returns 0 on success. On failure: 
+ * 
+ * -1 if the DynamicArray is empty.
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized.
+ */
+GLIB_API int pop_char_da(DynamicArray *const da, char *const output);
+
+/**
+ * Pops the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @param output A pointer where the item will be placed.
+ * @returns 0 on success. On failure: 
+ * 
+ * -1 if the DynamicArray is empty.
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized.
+ */
+GLIB_API int pop_float_da(DynamicArray *const da, float *const output);
+
+/**
+ * Pops the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @param output A pointer where the item will be placed.
+ * @returns 0 on success. On failure: 
+ * 
+ * -1 if the DynamicArray is empty.
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized.
+ */
+GLIB_API int pop_double_da(DynamicArray *const da, double *const output);
+
+/**
+ * Pops the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @param output A pointer where the item will be placed.
+ * @returns 0 on success. On failure: 
+ * 
+ * -1 if the DynamicArray is empty.
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized.
+ */
+GLIB_API int pop_ptr_da(DynamicArray *const da, void **const output);
 
 /**
  * Places the first item (index == 0) from the DynamicArray at the address of the output pointer. The item is removed from the array.

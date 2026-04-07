@@ -196,7 +196,7 @@ static int _move_one_left(DynamicArray *const da)
     return 0;
 }
 
-static int _is_empty(const DynamicArray *const da)
+static inline int _is_empty(const DynamicArray *const da)
 {
     return da->count <= 0 ? 1 : 0;
 }
@@ -634,7 +634,7 @@ int unshift_int_da(DynamicArray *const da, int const item)
 {
     if (da == NULL)
         return 1;
-    
+
     if (da->type != INT)
         return 3;
 
@@ -657,7 +657,7 @@ int unshift_char_da(DynamicArray *const da, char const item)
 {
     if (da == NULL)
         return 1;
-    
+
     if (da->type != CHAR)
         return 3;
 
@@ -680,7 +680,7 @@ int unshift_float_da(DynamicArray *const da, float const item)
 {
     if (da == NULL)
         return 1;
-    
+
     if (da->type != FLOAT)
         return 3;
 
@@ -703,7 +703,7 @@ int unshift_double_da(DynamicArray *const da, double const item)
 {
     if (da == NULL)
         return 1;
-    
+
     if (da->type != DOUBLE)
         return 3;
 
@@ -726,7 +726,7 @@ int unshift_ptr_da(DynamicArray *const da, void *const item)
 {
     if (da == NULL)
         return 1;
-    
+
     if (da->type != VOID_PTR)
         return 3;
 
@@ -747,6 +747,7 @@ int unshift_ptr_da(DynamicArray *const da, void *const item)
 
 // ##################   remove items   ##################
 
+/*
 int pop_da(DynamicArray *const da, void *const output)
 {
     if (da == NULL || _is_empty(da))
@@ -780,6 +781,107 @@ int pop_da(DynamicArray *const da, void *const output)
         return 3;
     }
     _shrinkDA(da);
+
+    return 0;
+}
+ */
+
+int pop_int_da(DynamicArray *const da, int *const output)
+{
+    if (da == NULL)
+        return 1;
+        
+    if (da->type != INT)
+        return 3;
+
+    if (_is_empty(da))
+        return -1;
+
+    *output = (int)((da->intArr)[--(da->count)]);
+
+    int shrink_err = _shrinkDA(da);
+    if (shrink_err)
+        return shrink_err;
+
+    return 0;
+}
+
+int pop_char_da(DynamicArray *const da, char *const output)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != CHAR)
+        return 3;
+
+    if (_is_empty(da))
+        return -1;
+
+    *output = (char)((da->charArr)[--(da->count)]);
+
+    int shrink_err = _shrinkDA(da);
+    if (shrink_err)
+        return shrink_err;
+
+    return 0;
+}
+
+int pop_float_da(DynamicArray *const da, float *const output)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != FLOAT)
+        return 3;
+
+    if (_is_empty(da))
+        return -1;
+
+    *output = (float)((da->floatArr)[--(da->count)]);
+
+    int shrink_err = _shrinkDA(da);
+    if (shrink_err)
+        return shrink_err;
+
+    return 0;
+}
+
+int pop_double_da(DynamicArray *const da, double *const output)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != DOUBLE)
+        return 3;
+
+    if (_is_empty(da))
+        return -1;
+
+    *output = (double)((da->doubleArr)[--(da->count)]);
+
+    int shrink_err = _shrinkDA(da);
+    if (shrink_err)
+        return shrink_err;
+
+    return 0;
+}
+
+int pop_ptr_da(DynamicArray *const da, void **const output)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != VOID_PTR)
+        return 3;
+
+    if (_is_empty(da))
+        return -1;
+
+    *output = (void *)((da->voidArr)[--(da->count)]);
+
+    int shrink_err = _shrinkDA(da);
+    if (shrink_err)
+        return shrink_err;
 
     return 0;
 }
