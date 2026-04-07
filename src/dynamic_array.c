@@ -4,7 +4,7 @@
 
 // ##################   static   ##################
 
-static int _enum_check(enum DynamicArrayType const type)
+static inline int _enum_check(enum DynamicArrayType const type)
 {
     switch (type)
     {
@@ -24,7 +24,7 @@ static int _enum_check(enum DynamicArrayType const type)
         // void*
         return 0;
     default:
-        return 1;
+        return 3;
     }
 }
 
@@ -32,7 +32,7 @@ static int _mem_realloc(DynamicArray *const da, size_t newCapacity)
 {
     if (da == NULL)
         return 1;
-    
+
     switch (da->type)
     {
     case 0:
@@ -121,37 +121,27 @@ static int _move_one_right(DynamicArray *const da)
     case 0:
         // int
         for (size_t i = da->count; i > 0; --i)
-        {
             da->intArr[i] = da->intArr[i - 1];
-        }
         break;
     case 1:
         // char
         for (size_t i = da->count; i > 0; --i)
-        {
             da->charArr[i] = da->charArr[i - 1];
-        }
         break;
     case 2:
         // float
         for (size_t i = da->count; i > 0; --i)
-        {
             da->floatArr[i] = da->floatArr[i - 1];
-        }
         break;
     case 3:
         // double
         for (size_t i = da->count; i > 0; --i)
-        {
             da->doubleArr[i] = da->doubleArr[i - 1];
-        }
         break;
     case 4:
         // void**
         for (size_t i = da->count; i > 0; --i)
-        {
             da->voidArr[i] = da->voidArr[i - 1];
-        }
         break;
     default:
         return 1;
@@ -465,7 +455,7 @@ void free_dynamic_array(DynamicArray *const da)
 
 // ##################   add items   ##################
 
-/* 
+/*
 int push_da(DynamicArray *const da, void *const item)
 {
     if (item == NULL || da == NULL)
@@ -590,6 +580,7 @@ int push_ptr_da(DynamicArray *const da, void *const item)
     return 0;
 }
 
+/*
 int unshift_da(DynamicArray *const da, void *const item)
 {
     if (item == NULL || da == NULL)
@@ -632,6 +623,122 @@ int unshift_da(DynamicArray *const da, void *const item)
     default:
         return 3;
     }
+
+    (da->count)++;
+
+    return 0;
+}
+ */
+
+int unshift_int_da(DynamicArray *const da, int const item)
+{
+    if (da == NULL)
+        return 1;
+    
+    if (da->type != INT)
+        return 3;
+
+    int expansion_err = _expand_da(da);
+    if (expansion_err)
+        return expansion_err;
+
+    int move_err = _move_one_right(da);
+    if (move_err)
+        return 3;
+
+    (da->intArr)[0] = item;
+
+    (da->count)++;
+
+    return 0;
+}
+
+int unshift_char_da(DynamicArray *const da, char const item)
+{
+    if (da == NULL)
+        return 1;
+    
+    if (da->type != CHAR)
+        return 3;
+
+    int expansion_err = _expand_da(da);
+    if (expansion_err)
+        return expansion_err;
+
+    int move_err = _move_one_right(da);
+    if (move_err)
+        return 4;
+
+    (da->charArr)[0] = item;
+
+    (da->count)++;
+
+    return 0;
+}
+
+int unshift_float_da(DynamicArray *const da, float const item)
+{
+    if (da == NULL)
+        return 1;
+    
+    if (da->type != FLOAT)
+        return 3;
+
+    int expansion_err = _expand_da(da);
+    if (expansion_err)
+        return expansion_err;
+
+    int move_err = _move_one_right(da);
+    if (move_err)
+        return 4;
+
+    (da->floatArr)[0] = item;
+
+    (da->count)++;
+
+    return 0;
+}
+
+int unshift_double_da(DynamicArray *const da, double const item)
+{
+    if (da == NULL)
+        return 1;
+    
+    if (da->type != DOUBLE)
+        return 3;
+
+    int expansion_err = _expand_da(da);
+    if (expansion_err)
+        return expansion_err;
+
+    int move_err = _move_one_right(da);
+    if (move_err)
+        return 4;
+
+    (da->doubleArr)[0] = item;
+
+    (da->count)++;
+
+    return 0;
+}
+
+int unshift_ptr_da(DynamicArray *const da, void *const item)
+{
+    if (da == NULL)
+        return 1;
+    
+    if (da->type != VOID_PTR)
+        return 3;
+
+    int expansion_err = _expand_da(da);
+    if (expansion_err)
+        return expansion_err;
+
+    int move_err = _move_one_right(da);
+    if (move_err)
+        return 4;
+
+    (da->voidArr)[0] = item;
 
     (da->count)++;
 

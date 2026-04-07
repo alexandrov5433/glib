@@ -127,13 +127,74 @@ GLIB_API int push_double_da(DynamicArray *const da, double const item);
 GLIB_API int push_ptr_da(DynamicArray *const da, void *const item);
 
 /**
- * Shifts the items of the DynamicArray to the right and places the given item at the start (index 0).
- * @param item A ponter to the item, which must be added. If NULL, 1 is returned.
+ * Adds the given integer at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
+ * @param item The integer to add.
  * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
- * @returns 0 on success. 1 if either of the arguments is NULL. 2 if memory could not be reallocated.
- * 3 if the type (enum) is not recognized.
+ * @returns 0 on success. On failure: 
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
  */
-GLIB_API int unshift_da(DynamicArray *const da, void *const item);
+GLIB_API int unshift_int_da(DynamicArray *const da, int const item);
+
+/**
+ * Adds the given character at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
+ * @param item The character to add.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @returns 0 on success. On failure: 
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
+ */
+GLIB_API int unshift_char_da(DynamicArray *const da, char const item);
+
+/**
+ * Adds the given floater at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
+ * @param item The floater to add.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @returns 0 on success. On failure: 
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
+ */
+GLIB_API int unshift_float_da(DynamicArray *const da, float const item);
+
+/**
+ * Adds the given double at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
+ * @param item The double to add.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @returns 0 on success. On failure: 
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
+ */
+GLIB_API int unshift_double_da(DynamicArray *const da, double const item);
+
+/**
+ * Adds the given pointer at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
+ * @param item The pointer to add.
+ * @param da A pointer to the DynamicArray. If NULL, 1 is returned.
+ * @returns 0 on success. On failure: 
+ * 
+ * 1 if the pointer to the DynamicArray is NULL. 
+ * 
+ * 2 if memory could not be reallocated.
+ * 
+ * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
+ */
+GLIB_API int unshift_ptr_da(DynamicArray *const da, void *const item);
 
 /**
  * Places the last item (index == count - 1) from the DynamicArray at the address of the output pointer. The item is removed from the array.
