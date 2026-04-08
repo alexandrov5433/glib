@@ -1,17 +1,17 @@
-#ifndef STRING_H
-#define STRING_H
+#ifndef GALXLIB_STRING_H
+#define GALXLIB_STRING_H
 
 #include <stddef.h>
 #include <stdlib.h>
 
 #ifdef _WIN32
 #ifdef GALXLIB_EXPORTS
-#define GLIB_API __declspec(dllexport)
+#define GALXLIB_API __declspec(dllexport)
 #else
-#define GLIB_API __declspec(dllimport)
+#define GALXLIB_API __declspec(dllimport)
 #endif
 #else
-#define GLIB_API
+#define GALXLIB_API
 #endif
 
 #ifndef STRING_LOOP_MAX_LIMIT
@@ -65,13 +65,13 @@ typedef struct String
  * @returns A pointer to the new String on success.
  * NULL on failure, because of failed memory allocation or failed character coping.
  */
-GLIB_API String *new_string(const char *const char_arr, size_t length);
+GALXLIB_API String *new_string(const char *const char_arr, size_t length);
 
 /**
  * Frees the memory of the String.
  * @param str A pointer to the String, which must be freed. If NULL, nothing is done.
  */
-GLIB_API void free_string(String *str);
+GALXLIB_API void free_string(String *str);
 
 /**
  * Appends the character to the end of the String.
@@ -85,7 +85,7 @@ GLIB_API void free_string(String *str);
  *
  * 3 if the updated size of the String is not sufficient.
  */
-GLIB_API int append_char(char c, String *const str);
+GALXLIB_API int append_char(char c, String *const str);
 
 /**
  * Appends a given count of the characters of a character array to the String.
@@ -100,7 +100,7 @@ GLIB_API int append_char(char c, String *const str);
  *
  * 3 if the updated size of the String is not sufficient.
  */
-GLIB_API int append_char_array(const char *const charArr, size_t copyCount, String *const str);
+GALXLIB_API int append_char_array(const char *const charArr, size_t copyCount, String *const str);
 
 /**
  * Appends all the characters of a character array, until a null-terminator '\0', to the end of the String.
@@ -118,7 +118,7 @@ GLIB_API int append_char_array(const char *const charArr, size_t copyCount, Stri
  *
  * 4 if a null-teminator '\0' was not found among the first STRING_LOOP_MAX_LIMIT characters.
  */
-GLIB_API int append_nt(const char *const charArr, String *const str);
+GALXLIB_API int append_nt(const char *const charArr, String *const str);
 
 /**
  * Appends all the characters from one String to the other.
@@ -132,7 +132,7 @@ GLIB_API int append_nt(const char *const charArr, String *const str);
  *
  * 3 if the updated size of the String is not sufficient.
  */
-GLIB_API int append_str(const String *const source, String *const dest);
+GALXLIB_API int append_str(const String *const source, String *const dest);
 
 /**
  * Prepends the character to the start of the String.
@@ -146,7 +146,7 @@ GLIB_API int append_str(const String *const source, String *const dest);
  *
  * 3 if the updated size of the String is not sufficient.
  */
-GLIB_API int prepend_char(char c, String *const str);
+GALXLIB_API int prepend_char(char c, String *const str);
 
 /**
  * Prepends a given count of the characters of a character array to the start of the String.
@@ -159,7 +159,7 @@ GLIB_API int prepend_char(char c, String *const str);
  *
  * 2 if memory could not be allocated.
  */
-GLIB_API int prepend_char_array(const char *const charArr, size_t copyCount, String *const str);
+GALXLIB_API int prepend_char_array(const char *const charArr, size_t copyCount, String *const str);
 
 /**
  * Prepends all the characters of a character array, until a null-terminator '\0, to the start of the String.
@@ -175,7 +175,7 @@ GLIB_API int prepend_char_array(const char *const charArr, size_t copyCount, Str
  *
  * 4 if a null-teminator '\0' was not found among the first STRING_LOOP_MAX_LIMIT characters.
  */
-GLIB_API int prepend_nt(const char *const charArr, String *const str);
+GALXLIB_API int prepend_nt(const char *const charArr, String *const str);
 
 /**
  * Prepends all the characters from one String to the start of the other.
@@ -187,7 +187,7 @@ GLIB_API int prepend_nt(const char *const charArr, String *const str);
  *
  * 2 if memory could not be allocated.
  */
-GLIB_API int prepend_str(const String *const source, String *const dest);
+GALXLIB_API int prepend_str(const String *const source, String *const dest);
 
 /**
  * Duplicates a String.
@@ -199,7 +199,7 @@ GLIB_API int prepend_str(const String *const source, String *const dest);
  *
  * 2 if memory could not be allocated.
  */
-GLIB_API int duplicate_str(const String *const source, String **const output);
+GALXLIB_API int duplicate_str(const String *const source, String **const output);
 
 /**
  * Gives a copy of the character array found in the String.
@@ -211,7 +211,7 @@ GLIB_API int duplicate_str(const String *const source, String **const output);
  *
  * 2 if memory could not be allocated.
  */
-GLIB_API int get_raw(const String *const source, char **const output);
+GALXLIB_API int get_raw(const String *const source, char **const output);
 
 /**
  * Gives a null-terminated copy of the character array found in the String. String->str = "abc"; output = "abc\0"
@@ -225,7 +225,7 @@ GLIB_API int get_raw(const String *const source, char **const output);
  * 
  * 3 if the updated size of the String is not sufficient.
  */
-GLIB_API int get_raw_nt(const String *const source, char **const output);
+GALXLIB_API int get_raw_nt(const String *const source, char **const output);
 
 /**
  * Filters the characters in the String.
@@ -238,7 +238,7 @@ GLIB_API int get_raw_nt(const String *const source, char **const output);
  *
  * 2 if memory could not be allocated.
  */
-GLIB_API int filter_str(String *const str, int (*filter)(char c));
+GALXLIB_API int filter_str(String *const str, int (*filter)(char c));
 
 /**
  * Replaces all characters in the String, which match, with the given character. 
@@ -251,7 +251,7 @@ GLIB_API int filter_str(String *const str, int (*filter)(char c));
  * 
  * 1 if the str argument is NULL.
  */
-GLIB_API int replace_char(String *const str, const char to_replace, const char replacement);
+GALXLIB_API int replace_char(String *const str, const char to_replace, const char replacement);
 
 /**
  * Removes all instances of the character from the String. 
@@ -267,6 +267,6 @@ GLIB_API int replace_char(String *const str, const char to_replace, const char r
  * 
  * 3 if memory could not be reallocated (realloc). 
  */
-GLIB_API int remove_char(String *const str, const char to_remove);
+GALXLIB_API int remove_char(String *const str, const char to_remove);
 
 #endif

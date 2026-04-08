@@ -5,6 +5,16 @@
 #include <regex.h>
 #include "./gstring.h"
 
+#ifdef _WIN32
+#ifdef GALXLIB_EXPORTS
+#define GALXLIB_API __declspec(dllexport)
+#else
+#define GALXLIB_API __declspec(dllimport)
+#endif
+#else
+#define GALXLIB_API
+#endif
+
 /*
 Documentation for regex.h
 https://pubs.opengroup.org/onlinepubs/009696899/functions/regcomp.html
@@ -40,7 +50,7 @@ typedef struct RegexContainer
  * @param output_status An integer pointer where an eventual error code will be placed. If NULL, it is not used.
  * @return A pointer to the new RegexContainer.
  */
-RegexContainer *new_regex_container(
+GALXLIB_API RegexContainer *new_regex_container(
     const char *const pattern,
     const size_t max_groups,
     const int flag,
@@ -50,7 +60,7 @@ RegexContainer *new_regex_container(
  * Frees the memory for the RegexContainer.
  * @param container The pointer to the RegexContainer, which is to be freed. If a NULL pointer is given, nothing is done.
  */
-void free_regex_container(RegexContainer *container);
+GALXLIB_API void free_regex_container(RegexContainer *container);
 
 /**
  * Attempts to match the given string against the ragex in the RegexContainer.
@@ -70,7 +80,7 @@ void free_regex_container(RegexContainer *container);
  *
  * 2. the matched_input property of the container is set to NULL.
  */
-int match(char *const input, RegexContainer *const container);
+GALXLIB_API int match(char *const input, RegexContainer *const container);
 
 /**
  * Get the matched string from a group as a character array. This is the raw match, without adding a null-terminator.
@@ -83,7 +93,7 @@ int match(char *const input, RegexContainer *const container);
  * @returns The pointer to the string, selected by the group.
  * The returned pointer may be used in the free function, as it's memory is manualy allocated.
  */
-char *get_group_value(const int n, const RegexContainer *const container, int *const output_match_length);
+GALXLIB_API char *get_group_value(const int n, const RegexContainer *const container, int *const output_match_length);
 
 /**
  * Get the matched string from a group as a null-terminated character array.
@@ -96,7 +106,7 @@ char *get_group_value(const int n, const RegexContainer *const container, int *c
  * @returns The pointer to the string, selected by the group.
  * The returned pointer may be used in the free function, as it's memory is manualy allocated.
  */
-char *get_group_value_nt(const int n, const RegexContainer *const container, int *const output_match_length);
+GALXLIB_API char *get_group_value_nt(const int n, const RegexContainer *const container, int *const output_match_length);
 
 /**
  * Get the matched string from a group as a String (from gstring.h).
@@ -107,6 +117,6 @@ char *get_group_value_nt(const int n, const RegexContainer *const container, int
  * @returns The pointer to the String containing the string, selected by the group.
  * If a new String instance could not be created (new_string returned NULL), NULL is returned.
  */
-String *get_group_value_str(const int n, const RegexContainer *const container);
+GALXLIB_API String *get_group_value_str(const int n, const RegexContainer *const container);
 
 #endif
