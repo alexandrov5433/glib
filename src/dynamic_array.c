@@ -317,27 +317,27 @@ static int _remove_at(DynamicArray *const da, const size_t index)
         {
         case 0:
             // int
-            if (push_da(tmp, &((da->intArr)[i])))
+            if (push_int_da(tmp, (da->intArr)[i]))
                 goto _error_case;
             break;
         case 1:
             // char
-            if (push_da(tmp, &((da->charArr)[i])))
+            if (push_char_da(tmp, (da->charArr)[i]))
                 goto _error_case;
             break;
         case 2:
             // float
-            if (push_da(tmp, &((da->floatArr)[i])))
+            if (push_float_da(tmp, (da->floatArr)[i]))
                 goto _error_case;
             break;
         case 3:
             // double
-            if (push_da(tmp, &((da->doubleArr)[i])))
+            if (push_double_da(tmp, (da->doubleArr)[i]))
                 goto _error_case;
             break;
         case 4:
             // void*
-            if (push_da(tmp, (da->voidArr)[i]))
+            if (push_ptr_da(tmp, (da->voidArr)[i]))
                 goto _error_case;
             break;
         default:
@@ -1143,7 +1143,31 @@ int filter_da(DynamicArray *const da, int (*filter)(void *item_ptr))
             return 2;
 
         if (filter(ptr) == 1)
-            push_da(tempDA, ptr);
+        {
+            switch (da->type)
+            {
+            case 0:
+                // int
+                push_int_da(tempDA, *(int *)ptr);
+                break;
+            case 1:
+                // char
+                push_char_da(tempDA, *(char *)ptr);
+                break;
+            case 2:
+                // float
+                push_float_da(tempDA, *(float *)ptr);
+                break;
+            case 3:
+                // double
+                push_double_da(tempDA, *(double *)ptr);
+                break;
+            case 4:
+                // void**
+                push_ptr_da(tempDA, ptr);
+                break;
+            }
+        }
     }
 
     /*
@@ -1203,15 +1227,12 @@ int find_da(DynamicArray *const da, void **const output, int (*selector)(void *i
     if (da == NULL || output == NULL || selector == NULL)
         return 1;
 
-    void *ptr = (void *)malloc(sizeof(void *));
+    void *ptr = NULL;
     for (size_t i = 0; i < da->count; ++i)
     {
         int err = _get_pointer_at_index(da, i, &ptr);
         if (err)
-        {
-            free(ptr);
             return 2;
-        }
 
         if (selector(ptr) == 1)
         {
@@ -1219,7 +1240,7 @@ int find_da(DynamicArray *const da, void **const output, int (*selector)(void *i
             return 0;
         }
     }
-    free(ptr);
+
     return -1;
 }
 
@@ -1228,15 +1249,12 @@ int find_last_da(DynamicArray *const da, void **const output, int (*selector)(vo
     if (da == NULL || output == NULL || selector == NULL)
         return 1;
 
-    void *ptr = (void *)malloc(sizeof(void *));
+    void *ptr = NULL;
     for (size_t i = da->count - 1; i >= 0; --i)
     {
         int err = _get_pointer_at_index(da, i, &ptr);
         if (err)
-        {
-            free(ptr);
             return 2;
-        }
 
         if (selector(ptr) == 1)
         {
@@ -1244,7 +1262,7 @@ int find_last_da(DynamicArray *const da, void **const output, int (*selector)(vo
             return 0;
         }
     }
-    free(ptr);
+
     return -1;
 }
 
@@ -1253,24 +1271,20 @@ int find_index_da(DynamicArray *const da, int *const output, int (*selector)(voi
     if (da == NULL || output == NULL || selector == NULL)
         return 1;
 
-    void *ptr = (void *)malloc(sizeof(void *));
+    void *ptr = NULL;
     for (size_t i = 0; i < da->count; ++i)
     {
         int err = _get_pointer_at_index(da, i, &ptr);
         if (err)
-        {
-            free(ptr);
             return 2;
-        }
 
         if (selector(ptr) == 1)
         {
             *output = i;
-            free(ptr);
             return 0;
         }
     }
-    free(ptr);
+
     return -1;
 }
 
@@ -1279,24 +1293,20 @@ int find_last_index_da(DynamicArray *const da, int *const output, int (*selector
     if (da == NULL || output == NULL || selector == NULL)
         return 1;
 
-    void *ptr = (void *)malloc(sizeof(void *));
+    void *ptr = NULL;
     for (size_t i = da->count - 1; i >= 0; --i)
     {
         int err = _get_pointer_at_index(da, i, &ptr);
         if (err)
-        {
-            free(ptr);
             return 2;
-        }
 
         if (selector(ptr) == 1)
         {
             *output = i;
-            free(ptr);
             return 0;
         }
     }
-    free(ptr);
+
     return -1;
 }
 

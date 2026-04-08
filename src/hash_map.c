@@ -363,12 +363,12 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
 
         if (selector(e))
         {
-            int pushErr = push_da(entryBucket, e);
-            if (pushErr > 0)
+            int push_err = push_ptr_da(entryBucket, e);
+            if (push_err > 0)
             {
                 free_dynamic_array(entryBucket);
                 free_dynamic_array(entreisToDestroy);
-                return 30 + pushErr;
+                return 30 + push_err;
             }
         }
         else
@@ -376,12 +376,12 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
             if (map->value_destructor == NULL)
                 continue;
 
-            int pushErr = push_da(entreisToDestroy, e);
-            if (pushErr > 0)
+            int push_err = push_ptr_da(entreisToDestroy, e);
+            if (push_err > 0)
             {
                 free_dynamic_array(entryBucket);
                 free_dynamic_array(entreisToDestroy);
-                return 30 + pushErr;
+                return 30 + push_err;
             }
         }
     }
