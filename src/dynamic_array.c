@@ -157,37 +157,27 @@ static int _move_one_left(DynamicArray *const da)
     case 0:
         // int
         for (size_t i = 0; i < da->count - 1; ++i)
-        {
             da->intArr[i] = da->intArr[i + 1];
-        }
         break;
     case 1:
         // char
         for (size_t i = 0; i < da->count - 1; ++i)
-        {
             da->charArr[i] = da->charArr[i - 1];
-        }
         break;
     case 2:
         // float
         for (size_t i = 0; i < da->count - 1; ++i)
-        {
             da->floatArr[i] = da->floatArr[i - 1];
-        }
         break;
     case 3:
         // double
         for (size_t i = 0; i < da->count - 1; ++i)
-        {
             da->doubleArr[i] = da->doubleArr[i - 1];
-        }
         break;
     case 4:
-        // void**
+        // void*
         for (size_t i = 0; i < da->count - 1; ++i)
-        {
             da->voidArr[i] = da->voidArr[i - 1];
-        }
         break;
     default:
         return 1;
@@ -411,7 +401,14 @@ DynamicArray *new_dynamic_array(enum DynamicArrayType const type)
     da->count = 0;
     da->capacity = DYNAMIC_ARRAY_INIT_CAPACITY;
     da->type = type;
-    da->singleItemSize = _single_item_size(type);
+
+    size_t item_size = _single_item_size(type);
+    if (item_size == -1)
+    {
+        free(da);
+        return NULL;
+    }
+    da->singleItemSize = item_size;
 
     int err = _new_items_array(da);
     if (err)
@@ -790,7 +787,7 @@ int pop_int_da(DynamicArray *const da, int *const output)
 {
     if (da == NULL)
         return 1;
-        
+
     if (da->type != INT)
         return 3;
 
@@ -886,6 +883,7 @@ int pop_ptr_da(DynamicArray *const da, void **const output)
     return 0;
 }
 
+/*
 int shift_da(DynamicArray *const da, void *const output)
 {
     if (da == NULL || _is_empty(da))
@@ -921,6 +919,137 @@ int shift_da(DynamicArray *const da, void *const output)
     _move_one_left(da);
     (da->count)--;
     _shrinkDA(da);
+
+    return 0;
+}
+ */
+
+int shift_int_da(DynamicArray *const da, int *const output)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != INT)
+        return 3;
+
+    if (_is_empty(da))
+        return -1;
+
+    *output = (int)((da->intArr)[0]);
+
+    int move_err = _move_one_left(da);
+    if (move_err)
+        return 3;
+
+    (da->count)--;
+
+    int shrink_err = _shrinkDA(da);
+    if (shrink_err)
+        return shrink_err;
+
+    return 0;
+}
+
+int shift_char_da(DynamicArray *const da, char *const output)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != CHAR)
+        return 3;
+
+    if (_is_empty(da))
+        return -1;
+
+    *output = (char)((da->charArr)[0]);
+
+    int move_err = _move_one_left(da);
+    if (move_err)
+        return 3;
+
+    (da->count)--;
+
+    int shrink_err = _shrinkDA(da);
+    if (shrink_err)
+        return shrink_err;
+
+    return 0;
+}
+
+int shift_float_da(DynamicArray *const da, float *const output)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != FLOAT)
+        return 3;
+
+    if (_is_empty(da))
+        return -1;
+
+    *output = (float)((da->floatArr)[0]);
+
+    int move_err = _move_one_left(da);
+    if (move_err)
+        return 3;
+
+    (da->count)--;
+
+    int shrink_err = _shrinkDA(da);
+    if (shrink_err)
+        return shrink_err;
+
+    return 0;
+}
+
+int shift_double_da(DynamicArray *const da, double *const output)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != DOUBLE)
+        return 3;
+
+    if (_is_empty(da))
+        return -1;
+
+    *output = (double)((da->doubleArr)[0]);
+
+    int move_err = _move_one_left(da);
+    if (move_err)
+        return 3;
+
+    (da->count)--;
+
+    int shrink_err = _shrinkDA(da);
+    if (shrink_err)
+        return shrink_err;
+
+    return 0;
+}
+
+int shift_ptr_da(DynamicArray *const da, void **const output)
+{
+    if (da == NULL)
+        return 1;
+
+    if (da->type != VOID_PTR)
+        return 3;
+
+    if (_is_empty(da))
+        return -1;
+
+    *output = (void *)((da->voidArr)[0]);
+
+    int move_err = _move_one_left(da);
+    if (move_err)
+        return 3;
+
+    (da->count)--;
+
+    int shrink_err = _shrinkDA(da);
+    if (shrink_err)
+        return shrink_err;
 
     return 0;
 }
