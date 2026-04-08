@@ -1,5 +1,5 @@
-#ifndef HASH_MAP_H
-#define HASH_MAP_H
+#ifndef GALXLIB_HASH_MAP_H
+#define GALXLIB_HASH_MAP_H
 
 #include <stddef.h>
 
@@ -7,12 +7,12 @@
 // Must NOT be defined manually! More notes in CMakeLists.txt
 #ifdef _WIN32
 #ifdef GALXLIB_EXPORTS
-#define GLIB_API __declspec(dllexport)
+#define GALXLIB_API __declspec(dllexport)
 #else
-#define GLIB_API __declspec(dllimport)
+#define GALXLIB_API __declspec(dllimport)
 #endif
 #else
-#define GLIB_API
+#define GALXLIB_API
 #endif
 
 #ifndef HASH_MAP_INIT_CAPACITY
@@ -47,7 +47,7 @@ typedef struct HashMap
  * Creates a new HashMap. The HashMap starts with an initial capacity of 10.
  * @returns A pointer to the HashMap. If memory could not be allocated, NULL is returned.
  */
-GLIB_API HashMap *new_hash_map();
+GALXLIB_API HashMap *new_hash_map();
 
 /**
  * Adds a destructor function to the HashMap. If one is already present, the old one is replaced with the new one. 
@@ -58,13 +58,13 @@ GLIB_API HashMap *new_hash_map();
  * @param map A pointer to the HashMap, in which the destructor must be added.
  * @returns 0 on success. 1 on failure, if either of the arguments are NULL.
  */
-GLIB_API int add_destructor_hm(void (*value_destructor)(const Entry *const entry), HashMap *map);
+GALXLIB_API int add_destructor_hm(void (*value_destructor)(const Entry *const entry), HashMap *map);
 
 /**
  * Frees the HashMap. The pointer of the keys and values are not freed.
  * @param map A pointer to the HashMap, which must be freed.
  */
-GLIB_API void free_hash_map(HashMap *map);
+GALXLIB_API void free_hash_map(HashMap *map);
 
 /**
  * Adds a new entry (key-value pair) to the HashMap.
@@ -80,7 +80,7 @@ GLIB_API void free_hash_map(HashMap *map);
  * 
  * 3 on failure to create a new Entry from the given key-value pair; 
  */
-GLIB_API int put_hm(char *key, void *value, HashMap *map);
+GALXLIB_API int put_hm(char *key, void *value, HashMap *map);
 
 /**
  * Returns the value for the given key in the HashMap.
@@ -88,7 +88,7 @@ GLIB_API int put_hm(char *key, void *value, HashMap *map);
  * @param map A pointer to the HashMap, from which to find the value.
  * @returns The pointer for the given key. If not found, NULL is returned.
  */
-GLIB_API void *get_hm(char *key, HashMap *map);
+GALXLIB_API void *get_hm(char *key, HashMap *map);
 
 /**
  * Removes an entry from the HashMap.
@@ -101,7 +101,7 @@ GLIB_API void *get_hm(char *key, HashMap *map);
  * 
  * 22 on failure due to lack of free space after shrinking it;
  */
-GLIB_API int remove_hm(char *key, HashMap *map);
+GALXLIB_API int remove_hm(char *key, HashMap *map);
 
 /**
  * Applies a processor function to every Entry in the HashMap.
@@ -109,7 +109,7 @@ GLIB_API int remove_hm(char *key, HashMap *map);
  * @param map A pointer to the HashMap, the Entries of which must be processed.
  * @returns 0 on success; 1 if either of the arguments are null pointers.
  */
-GLIB_API int process_hm(void (*processor)(Entry *const ptr), HashMap *const map);
+GALXLIB_API int process_hm(void (*processor)(Entry *const ptr), HashMap *const map);
 
 /**
  * Filters the Entries of the HashMap, leaving only the selected ones.
@@ -131,6 +131,6 @@ GLIB_API int process_hm(void (*processor)(Entry *const ptr), HashMap *const map)
  * 
  * 5 if the selected Entry could not be incerted in the new Entries array due to lacking capacity;
  */
-GLIB_API int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map);
+GALXLIB_API int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map);
 
 #endif
