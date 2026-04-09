@@ -37,38 +37,38 @@ static int _mem_realloc(DynamicArray *const da, size_t newCapacity)
     {
     case 0:
         // int
-        int *intArr = realloc(da->intArr, newCapacity * da->single_item_size);
-        if (intArr == NULL)
+        int *int_arr = realloc(da->int_arr, newCapacity * da->single_item_size);
+        if (int_arr == NULL)
             return 2;
-        da->intArr = intArr;
+        da->int_arr = int_arr;
         break;
     case 1:
         // char
-        char *charArr = realloc(da->charArr, newCapacity * da->single_item_size);
-        if (charArr == NULL)
+        char *char_arr = realloc(da->char_arr, newCapacity * da->single_item_size);
+        if (char_arr == NULL)
             return 2;
-        da->charArr = charArr;
+        da->char_arr = char_arr;
         break;
     case 2:
         // float
-        float *floatArr = realloc(da->floatArr, newCapacity * da->single_item_size);
-        if (floatArr == NULL)
+        float *float_arr = realloc(da->float_arr, newCapacity * da->single_item_size);
+        if (float_arr == NULL)
             return 2;
-        da->floatArr = floatArr;
+        da->float_arr = float_arr;
         break;
     case 3:
         // double
-        double *doubleArr = realloc(da->doubleArr, newCapacity * da->single_item_size);
-        if (doubleArr == NULL)
+        double *double_arr = realloc(da->double_arr, newCapacity * da->single_item_size);
+        if (double_arr == NULL)
             return 2;
-        da->doubleArr = doubleArr;
+        da->double_arr = double_arr;
         break;
     case 4:
         // void*
-        void **voidArr = realloc(da->voidArr, newCapacity * da->single_item_size);
-        if (voidArr == NULL)
+        void **void_arr = realloc(da->void_arr, newCapacity * da->single_item_size);
+        if (void_arr == NULL)
             return 2;
-        da->voidArr = voidArr;
+        da->void_arr = void_arr;
         break;
     default:
         return 3;
@@ -121,27 +121,27 @@ static int _move_one_right(DynamicArray *const da)
     case 0:
         // int
         for (size_t i = da->count; i > 0; --i)
-            da->intArr[i] = da->intArr[i - 1];
+            da->int_arr[i] = da->int_arr[i - 1];
         break;
     case 1:
         // char
         for (size_t i = da->count; i > 0; --i)
-            da->charArr[i] = da->charArr[i - 1];
+            da->char_arr[i] = da->char_arr[i - 1];
         break;
     case 2:
         // float
         for (size_t i = da->count; i > 0; --i)
-            da->floatArr[i] = da->floatArr[i - 1];
+            da->float_arr[i] = da->float_arr[i - 1];
         break;
     case 3:
         // double
         for (size_t i = da->count; i > 0; --i)
-            da->doubleArr[i] = da->doubleArr[i - 1];
+            da->double_arr[i] = da->double_arr[i - 1];
         break;
     case 4:
         // void**
         for (size_t i = da->count; i > 0; --i)
-            da->voidArr[i] = da->voidArr[i - 1];
+            da->void_arr[i] = da->void_arr[i - 1];
         break;
     default:
         return 1;
@@ -157,27 +157,27 @@ static int _move_one_left(DynamicArray *const da)
     case 0:
         // int
         for (size_t i = 0; i < da->count - 1; ++i)
-            da->intArr[i] = da->intArr[i + 1];
+            da->int_arr[i] = da->int_arr[i + 1];
         break;
     case 1:
         // char
         for (size_t i = 0; i < da->count - 1; ++i)
-            da->charArr[i] = da->charArr[i - 1];
+            da->char_arr[i] = da->char_arr[i - 1];
         break;
     case 2:
         // float
         for (size_t i = 0; i < da->count - 1; ++i)
-            da->floatArr[i] = da->floatArr[i - 1];
+            da->float_arr[i] = da->float_arr[i - 1];
         break;
     case 3:
         // double
         for (size_t i = 0; i < da->count - 1; ++i)
-            da->doubleArr[i] = da->doubleArr[i - 1];
+            da->double_arr[i] = da->double_arr[i - 1];
         break;
     case 4:
         // void*
         for (size_t i = 0; i < da->count - 1; ++i)
-            da->voidArr[i] = da->voidArr[i - 1];
+            da->void_arr[i] = da->void_arr[i - 1];
         break;
     default:
         return 1;
@@ -226,38 +226,38 @@ static int _new_items_array(DynamicArray *const da)
     {
     case 0:
         // int
-        int *intArr = malloc(da->capacity * da->single_item_size);
-        if (intArr == NULL)
+        int *int_arr = malloc(da->capacity * da->single_item_size);
+        if (int_arr == NULL)
             return 2;
-        da->intArr = intArr;
+        da->int_arr = int_arr;
         break;
     case 1:
         // char
-        char *charArr = malloc(da->capacity * da->single_item_size);
-        if (charArr == NULL)
+        char *char_arr = malloc(da->capacity * da->single_item_size);
+        if (char_arr == NULL)
             return 2;
-        da->charArr = charArr;
+        da->char_arr = char_arr;
         break;
     case 2:
         // float
-        float *floatArr = malloc(da->capacity * da->single_item_size);
-        if (floatArr == NULL)
+        float *float_arr = malloc(da->capacity * da->single_item_size);
+        if (float_arr == NULL)
             return 2;
-        da->floatArr = floatArr;
+        da->float_arr = float_arr;
         break;
     case 3:
         // double
-        double *doubleArr = malloc(da->capacity * da->single_item_size);
-        if (doubleArr == NULL)
+        double *double_arr = malloc(da->capacity * da->single_item_size);
+        if (double_arr == NULL)
             return 2;
-        da->doubleArr = doubleArr;
+        da->double_arr = double_arr;
         break;
     case 4:
         // void**
-        void **voidArr = malloc(da->capacity * da->single_item_size);
-        if (voidArr == NULL)
+        void **void_arr = malloc(da->capacity * da->single_item_size);
+        if (void_arr == NULL)
             return 2;
-        da->voidArr = voidArr;
+        da->void_arr = void_arr;
         break;
     default:
         return 1;
@@ -271,23 +271,23 @@ static int _get_pointer_at_index(const DynamicArray *const da, const size_t inde
     {
     case 0:
         // int
-        *output = (void *)&((da->intArr)[index]);
+        *output = (void *)&((da->int_arr)[index]);
         return 0;
     case 1:
         // char
-        *output = (void *)&((da->charArr)[index]);
+        *output = (void *)&((da->char_arr)[index]);
         return 0;
     case 2:
         // float
-        *output = (void *)&((da->floatArr)[index]);
+        *output = (void *)&((da->float_arr)[index]);
         return 0;
     case 3:
         // double
-        *output = (void *)&((da->doubleArr)[index]);
+        *output = (void *)&((da->double_arr)[index]);
         return 0;
     case 4:
         // void**
-        *output = (void *)(da->voidArr)[index];
+        *output = (void *)(da->void_arr)[index];
         return 0;
     }
     return 1;
@@ -317,27 +317,27 @@ static int _remove_at(DynamicArray *const da, const size_t index)
         {
         case 0:
             // int
-            if (push_int_da(tmp, (da->intArr)[i]))
+            if (push_int_da(tmp, (da->int_arr)[i]))
                 goto _error_case;
             break;
         case 1:
             // char
-            if (push_char_da(tmp, (da->charArr)[i]))
+            if (push_char_da(tmp, (da->char_arr)[i]))
                 goto _error_case;
             break;
         case 2:
             // float
-            if (push_float_da(tmp, (da->floatArr)[i]))
+            if (push_float_da(tmp, (da->float_arr)[i]))
                 goto _error_case;
             break;
         case 3:
             // double
-            if (push_double_da(tmp, (da->doubleArr)[i]))
+            if (push_double_da(tmp, (da->double_arr)[i]))
                 goto _error_case;
             break;
         case 4:
             // void*
-            if (push_ptr_da(tmp, (da->voidArr)[i]))
+            if (push_ptr_da(tmp, (da->void_arr)[i]))
                 goto _error_case;
             break;
         default:
@@ -349,28 +349,28 @@ static int _remove_at(DynamicArray *const da, const size_t index)
     {
     case 0:
         // int
-        free(da->intArr);
-        da->intArr = tmp->intArr;
+        free(da->int_arr);
+        da->int_arr = tmp->int_arr;
         break;
     case 1:
         // char
-        free(da->charArr);
-        da->charArr = tmp->charArr;
+        free(da->char_arr);
+        da->char_arr = tmp->char_arr;
         break;
     case 2:
         // float
-        free(da->floatArr);
-        da->floatArr = tmp->floatArr;
+        free(da->float_arr);
+        da->float_arr = tmp->float_arr;
         break;
     case 3:
         // double
-        free(da->doubleArr);
-        da->doubleArr = tmp->doubleArr;
+        free(da->double_arr);
+        da->double_arr = tmp->double_arr;
         break;
     case 4:
         // void*
-        free(da->voidArr);
-        da->voidArr = tmp->voidArr;
+        free(da->void_arr);
+        da->void_arr = tmp->void_arr;
         break;
     }
 
@@ -428,23 +428,23 @@ void free_dynamic_array(DynamicArray *const da)
     {
     case 0:
         // int
-        free(da->intArr);
+        free(da->int_arr);
         break;
     case 1:
         // char
-        free(da->charArr);
+        free(da->char_arr);
         break;
     case 2:
         // float
-        free(da->floatArr);
+        free(da->float_arr);
         break;
     case 3:
         // double
-        free(da->doubleArr);
+        free(da->double_arr);
         break;
     case 4:
         // void*
-        free(da->voidArr);
+        free(da->void_arr);
         break;
     }
     free(da);
@@ -466,23 +466,23 @@ int push_da(DynamicArray *const da, void *const item)
     {
     case 0:
         // int
-        (da->intArr)[(da->count)++] = *(int *)item;
+        (da->int_arr)[(da->count)++] = *(int *)item;
         break;
     case 1:
         // char
-        (da->charArr)[(da->count)++] = *(char *)item;
+        (da->char_arr)[(da->count)++] = *(char *)item;
         break;
     case 2:
         // float
-        (da->floatArr)[(da->count)++] = *(float *)item;
+        (da->float_arr)[(da->count)++] = *(float *)item;
         break;
     case 3:
         // double
-        (da->doubleArr)[(da->count)++] = *(double *)item;
+        (da->double_arr)[(da->count)++] = *(double *)item;
         break;
     case 4:
         // void*
-        (da->voidArr)[(da->count)++] = item;
+        (da->void_arr)[(da->count)++] = item;
         break;
     default:
         return 3;
@@ -504,7 +504,7 @@ int push_int_da(DynamicArray *const da, int const item)
     if (err)
         return err;
 
-    (da->intArr)[(da->count)++] = item;
+    (da->int_arr)[(da->count)++] = item;
 
     return 0;
 }
@@ -521,7 +521,7 @@ int push_char_da(DynamicArray *const da, char const item)
     if (err)
         return err;
 
-    (da->charArr)[(da->count)++] = item;
+    (da->char_arr)[(da->count)++] = item;
 
     return 0;
 }
@@ -538,7 +538,7 @@ int push_float_da(DynamicArray *const da, float const item)
     if (err)
         return err;
 
-    (da->floatArr)[(da->count)++] = item;
+    (da->float_arr)[(da->count)++] = item;
 
     return 0;
 }
@@ -555,7 +555,7 @@ int push_double_da(DynamicArray *const da, double const item)
     if (err)
         return err;
 
-    (da->doubleArr)[(da->count)++] = item;
+    (da->double_arr)[(da->count)++] = item;
 
     return 0;
 }
@@ -572,7 +572,7 @@ int push_ptr_da(DynamicArray *const da, void *const item)
     if (err)
         return err;
 
-    (da->voidArr)[(da->count)++] = item;
+    (da->void_arr)[(da->count)++] = item;
 
     return 0;
 }
@@ -599,23 +599,23 @@ int unshift_da(DynamicArray *const da, void *const item)
     {
     case 0:
         // int
-        (da->intArr)[0] = *(int *)item;
+        (da->int_arr)[0] = *(int *)item;
         break;
     case 1:
         // char
-        (da->charArr)[0] = *(char *)item;
+        (da->char_arr)[0] = *(char *)item;
         break;
     case 2:
         // float
-        (da->floatArr)[0] = *(float *)item;
+        (da->float_arr)[0] = *(float *)item;
         break;
     case 3:
         // double
-        (da->doubleArr)[0] = *(double *)item;
+        (da->double_arr)[0] = *(double *)item;
         break;
     case 4:
         // void*
-        (da->voidArr)[0] = item;
+        (da->void_arr)[0] = item;
         break;
     default:
         return 3;
@@ -643,7 +643,7 @@ int unshift_int_da(DynamicArray *const da, int const item)
     if (move_err)
         return 3;
 
-    (da->intArr)[0] = item;
+    (da->int_arr)[0] = item;
 
     (da->count)++;
 
@@ -666,7 +666,7 @@ int unshift_char_da(DynamicArray *const da, char const item)
     if (move_err)
         return 4;
 
-    (da->charArr)[0] = item;
+    (da->char_arr)[0] = item;
 
     (da->count)++;
 
@@ -689,7 +689,7 @@ int unshift_float_da(DynamicArray *const da, float const item)
     if (move_err)
         return 4;
 
-    (da->floatArr)[0] = item;
+    (da->float_arr)[0] = item;
 
     (da->count)++;
 
@@ -712,7 +712,7 @@ int unshift_double_da(DynamicArray *const da, double const item)
     if (move_err)
         return 4;
 
-    (da->doubleArr)[0] = item;
+    (da->double_arr)[0] = item;
 
     (da->count)++;
 
@@ -735,7 +735,7 @@ int unshift_ptr_da(DynamicArray *const da, void *const item)
     if (move_err)
         return 4;
 
-    (da->voidArr)[0] = item;
+    (da->void_arr)[0] = item;
 
     (da->count)++;
 
@@ -756,23 +756,23 @@ int pop_da(DynamicArray *const da, void *const output)
     {
     case 0:
         // int
-        *(int *)output = (int)((da->intArr)[--(da->count)]);
+        *(int *)output = (int)((da->int_arr)[--(da->count)]);
         break;
     case 1:
         // char
-        *(char *)output = (char)((da->charArr)[--(da->count)]);
+        *(char *)output = (char)((da->char_arr)[--(da->count)]);
         break;
     case 2:
         // float
-        *(float *)output = (float)((da->floatArr)[--(da->count)]);
+        *(float *)output = (float)((da->float_arr)[--(da->count)]);
         break;
     case 3:
         // double
-        *(double *)output = (double)((da->doubleArr)[--(da->count)]);
+        *(double *)output = (double)((da->double_arr)[--(da->count)]);
         break;
     case 4:
         // void**
-        *(void **)output = (void *)((da->voidArr)[--(da->count)]);
+        *(void **)output = (void *)((da->void_arr)[--(da->count)]);
         break;
     default:
         return 3;
@@ -794,7 +794,7 @@ int pop_int_da(DynamicArray *const da, int *const output)
     if (_is_empty(da))
         return -1;
 
-    *output = (int)((da->intArr)[--(da->count)]);
+    *output = (int)((da->int_arr)[--(da->count)]);
 
     int shrink_err = _shrinkDA(da);
     if (shrink_err)
@@ -814,7 +814,7 @@ int pop_char_da(DynamicArray *const da, char *const output)
     if (_is_empty(da))
         return -1;
 
-    *output = (char)((da->charArr)[--(da->count)]);
+    *output = (char)((da->char_arr)[--(da->count)]);
 
     int shrink_err = _shrinkDA(da);
     if (shrink_err)
@@ -834,7 +834,7 @@ int pop_float_da(DynamicArray *const da, float *const output)
     if (_is_empty(da))
         return -1;
 
-    *output = (float)((da->floatArr)[--(da->count)]);
+    *output = (float)((da->float_arr)[--(da->count)]);
 
     int shrink_err = _shrinkDA(da);
     if (shrink_err)
@@ -854,7 +854,7 @@ int pop_double_da(DynamicArray *const da, double *const output)
     if (_is_empty(da))
         return -1;
 
-    *output = (double)((da->doubleArr)[--(da->count)]);
+    *output = (double)((da->double_arr)[--(da->count)]);
 
     int shrink_err = _shrinkDA(da);
     if (shrink_err)
@@ -874,7 +874,7 @@ int pop_ptr_da(DynamicArray *const da, void **const output)
     if (_is_empty(da))
         return -1;
 
-    *output = (void *)((da->voidArr)[--(da->count)]);
+    *output = (void *)((da->void_arr)[--(da->count)]);
 
     int shrink_err = _shrinkDA(da);
     if (shrink_err)
@@ -895,23 +895,23 @@ int shift_da(DynamicArray *const da, void *const output)
     {
     case 0:
         // int
-        *(int *)output = (int)((da->intArr)[0]);
+        *(int *)output = (int)((da->int_arr)[0]);
         break;
     case 1:
         // char
-        *(char *)output = (char)((da->charArr)[0]);
+        *(char *)output = (char)((da->char_arr)[0]);
         break;
     case 2:
         // float
-        *(float *)output = (float)((da->floatArr)[0]);
+        *(float *)output = (float)((da->float_arr)[0]);
         break;
     case 3:
         // double
-        *(double *)output = (double)((da->doubleArr)[0]);
+        *(double *)output = (double)((da->double_arr)[0]);
         break;
     case 4:
         // void**
-        *(void **)output = (void *)((da->voidArr)[0]);
+        *(void **)output = (void *)((da->void_arr)[0]);
         break;
     default:
         return 3;
@@ -935,7 +935,7 @@ int shift_int_da(DynamicArray *const da, int *const output)
     if (_is_empty(da))
         return -1;
 
-    *output = (int)((da->intArr)[0]);
+    *output = (int)((da->int_arr)[0]);
 
     int move_err = _move_one_left(da);
     if (move_err)
@@ -961,7 +961,7 @@ int shift_char_da(DynamicArray *const da, char *const output)
     if (_is_empty(da))
         return -1;
 
-    *output = (char)((da->charArr)[0]);
+    *output = (char)((da->char_arr)[0]);
 
     int move_err = _move_one_left(da);
     if (move_err)
@@ -987,7 +987,7 @@ int shift_float_da(DynamicArray *const da, float *const output)
     if (_is_empty(da))
         return -1;
 
-    *output = (float)((da->floatArr)[0]);
+    *output = (float)((da->float_arr)[0]);
 
     int move_err = _move_one_left(da);
     if (move_err)
@@ -1013,7 +1013,7 @@ int shift_double_da(DynamicArray *const da, double *const output)
     if (_is_empty(da))
         return -1;
 
-    *output = (double)((da->doubleArr)[0]);
+    *output = (double)((da->double_arr)[0]);
 
     int move_err = _move_one_left(da);
     if (move_err)
@@ -1039,7 +1039,7 @@ int shift_ptr_da(DynamicArray *const da, void **const output)
     if (_is_empty(da))
         return -1;
 
-    *output = (void *)((da->voidArr)[0]);
+    *output = (void *)((da->void_arr)[0]);
 
     int move_err = _move_one_left(da);
     if (move_err)
@@ -1183,23 +1183,23 @@ int filter_da(DynamicArray *const da, int (*filter)(void *item_ptr))
     {
     case 0:
         // int
-        free(da->intArr);
+        free(da->int_arr);
         break;
     case 1:
         // char
-        free(da->charArr);
+        free(da->char_arr);
         break;
     case 2:
         // float
-        free(da->floatArr);
+        free(da->float_arr);
         break;
     case 3:
         // double
-        free(da->doubleArr);
+        free(da->double_arr);
         break;
     case 4:
         // void**
-        free(da->voidArr);
+        free(da->void_arr);
         break;
     }
     memcpy(da, tempDA, sizeof(DynamicArray));
@@ -1322,23 +1322,23 @@ int index_of_da(DynamicArray *const da, int *const output, void *const value)
         {
         case 0:
             // int
-            isEqual = ((int)(da->intArr)[i]) == *(int *)value ? 1 : 0;
+            isEqual = ((int)(da->int_arr)[i]) == *(int *)value ? 1 : 0;
             break;
         case 1:
             // char
-            isEqual = ((char)(da->charArr)[i]) == *(char *)value ? 1 : 0;
+            isEqual = ((char)(da->char_arr)[i]) == *(char *)value ? 1 : 0;
             break;
         case 2:
             // float
-            isEqual = ((float)(da->floatArr)[i]) == *(float *)value ? 1 : 0;
+            isEqual = ((float)(da->float_arr)[i]) == *(float *)value ? 1 : 0;
             break;
         case 3:
             // double
-            isEqual = ((double)(da->doubleArr)[i]) == *(double *)value ? 1 : 0;
+            isEqual = ((double)(da->double_arr)[i]) == *(double *)value ? 1 : 0;
             break;
         case 4:
             // void*
-            isEqual = ((void *)(da->voidArr)[i]) == (void *)value ? 1 : 0;
+            isEqual = ((void *)(da->void_arr)[i]) == (void *)value ? 1 : 0;
             break;
         }
 

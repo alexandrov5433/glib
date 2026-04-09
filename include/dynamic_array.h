@@ -30,11 +30,11 @@ typedef struct DynamicArray
 {
     union
     {
-        int *intArr;
-        char *charArr;
-        float *floatArr;
-        double *doubleArr;
-        void **voidArr;
+        int *int_arr;
+        char *char_arr;
+        float *float_arr;
+        double *double_arr;
+        void **void_arr;
     };
     size_t count;
     size_t capacity;
