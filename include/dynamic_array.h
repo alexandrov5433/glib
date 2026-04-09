@@ -38,7 +38,7 @@ typedef struct DynamicArray
     };
     size_t count;
     size_t capacity;
-    size_t singleItemSize;
+    size_t single_item_size;
     enum DynamicArrayType type;
 } DynamicArray;
 

@@ -37,35 +37,35 @@ static int _mem_realloc(DynamicArray *const da, size_t newCapacity)
     {
     case 0:
         // int
-        int *intArr = realloc(da->intArr, newCapacity * da->singleItemSize);
+        int *intArr = realloc(da->intArr, newCapacity * da->single_item_size);
         if (intArr == NULL)
             return 2;
         da->intArr = intArr;
         break;
     case 1:
         // char
-        char *charArr = realloc(da->charArr, newCapacity * da->singleItemSize);
+        char *charArr = realloc(da->charArr, newCapacity * da->single_item_size);
         if (charArr == NULL)
             return 2;
         da->charArr = charArr;
         break;
     case 2:
         // float
-        float *floatArr = realloc(da->floatArr, newCapacity * da->singleItemSize);
+        float *floatArr = realloc(da->floatArr, newCapacity * da->single_item_size);
         if (floatArr == NULL)
             return 2;
         da->floatArr = floatArr;
         break;
     case 3:
         // double
-        double *doubleArr = realloc(da->doubleArr, newCapacity * da->singleItemSize);
+        double *doubleArr = realloc(da->doubleArr, newCapacity * da->single_item_size);
         if (doubleArr == NULL)
             return 2;
         da->doubleArr = doubleArr;
         break;
     case 4:
         // void*
-        void **voidArr = realloc(da->voidArr, newCapacity * da->singleItemSize);
+        void **voidArr = realloc(da->voidArr, newCapacity * da->single_item_size);
         if (voidArr == NULL)
             return 2;
         da->voidArr = voidArr;
@@ -226,35 +226,35 @@ static int _new_items_array(DynamicArray *const da)
     {
     case 0:
         // int
-        int *intArr = malloc(da->capacity * da->singleItemSize);
+        int *intArr = malloc(da->capacity * da->single_item_size);
         if (intArr == NULL)
             return 2;
         da->intArr = intArr;
         break;
     case 1:
         // char
-        char *charArr = malloc(da->capacity * da->singleItemSize);
+        char *charArr = malloc(da->capacity * da->single_item_size);
         if (charArr == NULL)
             return 2;
         da->charArr = charArr;
         break;
     case 2:
         // float
-        float *floatArr = malloc(da->capacity * da->singleItemSize);
+        float *floatArr = malloc(da->capacity * da->single_item_size);
         if (floatArr == NULL)
             return 2;
         da->floatArr = floatArr;
         break;
     case 3:
         // double
-        double *doubleArr = malloc(da->capacity * da->singleItemSize);
+        double *doubleArr = malloc(da->capacity * da->single_item_size);
         if (doubleArr == NULL)
             return 2;
         da->doubleArr = doubleArr;
         break;
     case 4:
         // void**
-        void **voidArr = malloc(da->capacity * da->singleItemSize);
+        void **voidArr = malloc(da->capacity * da->single_item_size);
         if (voidArr == NULL)
             return 2;
         da->voidArr = voidArr;
@@ -408,7 +408,7 @@ DynamicArray *new_dynamic_array(enum DynamicArrayType const type)
         free(da);
         return NULL;
     }
-    da->singleItemSize = item_size;
+    da->single_item_size = item_size;
 
     int err = _new_items_array(da);
     if (err)
