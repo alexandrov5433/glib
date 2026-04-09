@@ -191,7 +191,7 @@ static inline int _is_empty(const DynamicArray *const da)
 	return da->count <= 0 ? 1 : 0;
 }
 
-static int _is_out_of_bounds(const DynamicArray *const da, size_t index)
+static inline int _is_out_of_bounds(const DynamicArray *const da, size_t index)
 {
 	return index < 0 || index >= da->count ? 1 : 0;
 }
