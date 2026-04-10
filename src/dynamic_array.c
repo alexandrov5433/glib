@@ -1071,9 +1071,9 @@ int remove_first_da(DynamicArray *const da, void *const target)
 	if (da == NULL || target == NULL)
 		return 1;
 
-	int target_index = -1;
+	size_t target_index = 0;
 	int status = index_of_da(da, &target_index, target);
-	if (status == -1 || target_index <= -1)
+	if (status == -1)
 	{
 		// not found
 		return -1;
@@ -1266,7 +1266,7 @@ int find_last_da(DynamicArray *const da, void **const output, int (*selector)(vo
 	return -1;
 }
 
-int find_index_da(DynamicArray *const da, int *const output, int (*selector)(void *itemPtr))
+int find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr))
 {
 	if (da == NULL || output == NULL || selector == NULL)
 		return 1;
@@ -1288,7 +1288,7 @@ int find_index_da(DynamicArray *const da, int *const output, int (*selector)(voi
 	return -1;
 }
 
-int find_last_index_da(DynamicArray *const da, int *const output, int (*selector)(void *itemPtr))
+int find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr))
 {
 	if (da == NULL || output == NULL || selector == NULL)
 		return 1;
@@ -1310,7 +1310,7 @@ int find_last_index_da(DynamicArray *const da, int *const output, int (*selector
 	return -1;
 }
 
-int index_of_da(DynamicArray *const da, int *const output, void *const value)
+int index_of_da(DynamicArray *const da, size_t *const output, void *const value)
 {
 	if (da == NULL || output == NULL || value == NULL)
 		return 1;
@@ -1340,6 +1340,8 @@ int index_of_da(DynamicArray *const da, int *const output, void *const value)
 			// void*
 			isEqual = ((void *)(da->void_arr)[i]) == (void *)value ? 1 : 0;
 			break;
+		default:
+			return 2;
 		}
 
 		if (isEqual)

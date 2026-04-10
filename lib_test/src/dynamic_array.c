@@ -502,7 +502,7 @@ void dynamicArrayTest()
 	assert(res == 0 || res == -1);
 
 	/* --- Find Index --- */
-	int idx;
+	size_t idx;
 	res = find_index_da(da, &idx, greater_than_three);
 	assert(res == 0 || res == -1);
 
