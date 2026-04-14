@@ -340,17 +340,18 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
 	if (map == NULL || selector == NULL)
 		return 1;
 
-	DynamicArray *entryBucket = new_dynamic_array(VOID_PTR);
-	if (entryBucket == NULL)
+	DynamicArray *entries_to_keep = NULL;
+	int err_entries_to_keep = new_dynamic_array(VOID_PTR, &entries_to_keep);
+	if (err_entries_to_keep)
 		return 2;
 
-	DynamicArray *entreisToDestroy = NULL;
+	DynamicArray *entreis_to_estroy = NULL;
 	if (map->value_destructor != NULL)
 	{
-		entreisToDestroy = new_dynamic_array(VOID_PTR);
-		if (entreisToDestroy == NULL)
+		int err_entries_to_destroy = new_dynamic_array(VOID_PTR, &entreis_to_estroy);
+		if (err_entries_to_destroy)
 		{
-			free_dynamic_array(entryBucket);
+			free_dynamic_array(entries_to_keep);
 			return 2;
 		}
 	}
@@ -363,11 +364,11 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
 
 		if (selector(e))
 		{
-			int push_err = push_ptr_da(entryBucket, e);
+			int push_err = push_ptr_da(entries_to_keep, e);
 			if (push_err > 0)
 			{
-				free_dynamic_array(entryBucket);
-				free_dynamic_array(entreisToDestroy);
+				free_dynamic_array(entries_to_keep);
+				free_dynamic_array(entreis_to_estroy);
 				return 30 + push_err;
 			}
 		}
@@ -376,54 +377,54 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
 			if (map->value_destructor == NULL)
 				continue;
 
-			int push_err = push_ptr_da(entreisToDestroy, e);
+			int push_err = push_ptr_da(entreis_to_estroy, e);
 			if (push_err > 0)
 			{
-				free_dynamic_array(entryBucket);
-				free_dynamic_array(entreisToDestroy);
+				free_dynamic_array(entries_to_keep);
+				free_dynamic_array(entreis_to_estroy);
 				return 30 + push_err;
 			}
 		}
 	}
 
-	size_t newEntriesCapacity = entryBucket->count + HASH_MAP_INIT_CAPACITY;
+	size_t newEntriesCapacity = entries_to_keep->count + HASH_MAP_INIT_CAPACITY;
 	Entry **newEntries = _new_entries_array(newEntriesCapacity);
 	if (newEntries == NULL)
 	{
-		free_dynamic_array(entryBucket);
-		free_dynamic_array(entreisToDestroy);
+		free_dynamic_array(entries_to_keep);
+		free_dynamic_array(entreis_to_estroy);
 		return 2;
 	}
 
 	// Case: all Entries must be removed from the HashMap.
-	if (entryBucket->count == 0)
+	if (entries_to_keep->count == 0)
 		goto _hashmap_manipulation_stage;
 
 	// Case: leave selected Entries.
-	for (size_t i = 0; i < entryBucket->count; ++i)
+	for (size_t i = 0; i < entries_to_keep->count; ++i)
 	{
 		Entry *currentEntry = NULL;
 
-		int atErr = at_da(entryBucket, i, (void **)&currentEntry);
+		int atErr = at_da(entries_to_keep, i, (void **)&currentEntry);
 		if (atErr)
 		{
-			free_dynamic_array(entryBucket);
-			free_dynamic_array(entreisToDestroy);
+			free_dynamic_array(entries_to_keep);
+			free_dynamic_array(entreis_to_estroy);
 			return 3;
 		}
 
 		if (currentEntry == NULL)
 		{
-			free_dynamic_array(entryBucket);
-			free_dynamic_array(entreisToDestroy);
+			free_dynamic_array(entries_to_keep);
+			free_dynamic_array(entreis_to_estroy);
 			return 4;
 		}
 
 		int incertErr = _incert_entry(currentEntry, newEntriesCapacity, newEntries);
 		if (incertErr)
 		{
-			free_dynamic_array(entryBucket);
-			free_dynamic_array(entreisToDestroy);
+			free_dynamic_array(entries_to_keep);
+			free_dynamic_array(entreis_to_estroy);
 			return 5;
 		}
 	}
@@ -431,15 +432,15 @@ int filter_hm(int (*selector)(Entry *const ptr), HashMap *const map)
 _hashmap_manipulation_stage:
 	if (map->value_destructor != NULL)
 	{
-		for (size_t i = 0; i < entreisToDestroy->count; ++i)
+		for (size_t i = 0; i < entreis_to_estroy->count; ++i)
 		{
 			Entry *currentEntry = NULL;
 
-			int atErr = at_da(entreisToDestroy, i, (void **)&currentEntry);
+			int atErr = at_da(entreis_to_estroy, i, (void **)&currentEntry);
 			if (atErr)
 			{
-				free_dynamic_array(entryBucket);
-				free_dynamic_array(entreisToDestroy);
+				free_dynamic_array(entries_to_keep);
+				free_dynamic_array(entreis_to_estroy);
 				free(newEntries);
 				return 3;
 			}
@@ -454,10 +455,10 @@ _hashmap_manipulation_stage:
 	free(map->entries);
 	map->entries = newEntries;
 	map->capacity = newEntriesCapacity;
-	map->n_ent = entryBucket->count;
+	map->n_ent = entries_to_keep->count;
 
-	free_dynamic_array(entryBucket);
-	free_dynamic_array(entreisToDestroy);
+	free_dynamic_array(entries_to_keep);
+	free_dynamic_array(entreis_to_estroy);
 
 	return 0;
 }
