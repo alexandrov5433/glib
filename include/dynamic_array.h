@@ -72,6 +72,7 @@ typedef struct DynamicArray
 /**
  * Creates a new DynamicArray.
  * @param type The type of values the array will hold, according to the DynamicArrayType enum.
+ * @param output A pointer, which will be updated with the adress of the new DynamicArray. 
  * @return A value of the @ref DynamicArrayError:
  * 
  * - DA_SUCCESS
