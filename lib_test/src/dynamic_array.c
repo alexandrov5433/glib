@@ -401,55 +401,62 @@ void dynamicArrayTest()
 	printf("Running DynamicArray tests...\n");
 
 	/* --- Creation --- */
-	DynamicArray *da = new_dynamic_array(INT);
+	DynamicArray *da = NULL;
+	int err_da = new_dynamic_array(INT, &da);
 	assert(da != NULL);
 	assert(da->count == 0);
 
-	DynamicArray *invalid = new_dynamic_array((enum DynamicArrayType)999);
+	DynamicArray *invalid = NULL;
+	int err_da_invalid = new_dynamic_array((enum DynamicArrayType)999, &invalid);
+	assert(err_da_invalid == DA_ERR_TYPE_UNKNOWN);
 	assert(invalid == NULL);
-
+	
 	/* --- Push --- */
-	assert(push_int_da(NULL, 1) == 1);
-
+	assert(push_int_da(NULL, 1) == DA_ERR_NULL_ARGUMENT);
+	
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_int_da(da, i) == 0);
+		assert(push_int_da(da, i) == DA_SUCCESS);
 	}
 	assert(da->count == 10);
-
-	DynamicArray *char_da = new_dynamic_array(CHAR);
-	assert(push_int_da(char_da, 5) == 3);
-
+	
+	DynamicArray *char_da = NULL;
+	int err_da_char = new_dynamic_array(CHAR, &char_da);
+	assert(err_da_char == DA_SUCCESS);
+	assert(push_int_da(char_da, 5) == DA_ERR_TYPE_MISMATCH);
+	
 	/* --- Unshift --- */
-	assert(unshift_int_da(da, 100) == 0);
+	assert(unshift_int_da(da, 100) == DA_SUCCESS);
 	assert(da->count == 11);
-
+	
 	int tmp;
-	assert(shift_int_da(da, &tmp) == 0);
+	assert(shift_int_da(da, &tmp) == DA_SUCCESS);
 	assert(tmp == 100);
-
+	
 	/* --- Pop --- */
 	int val;
-	assert(pop_int_da(NULL, &val) == 1);
-
+	assert(pop_int_da(NULL, &val) == DA_ERR_NULL_ARGUMENT);
+	
 	size_t prev_count = da->count;
-	assert(pop_int_da(da, &val) == 0);
+	assert(pop_int_da(da, &val) == DA_SUCCESS);
 	assert(da->count == prev_count - 1);
-
-	DynamicArray *empty = new_dynamic_array(INT);
-	assert(pop_int_da(empty, &val) == -1);
-
+	
+	DynamicArray *empty = NULL;
+	int err_da_empty = new_dynamic_array(INT, &empty);
+	assert(err_da_empty == DA_SUCCESS);
+	assert(pop_int_da(empty, &val) == DA_ARRAY_EMPTY);
+	
 	/* --- Shift --- */
-	assert(shift_int_da(NULL, &val) == 1);
-	assert(shift_int_da(empty, &val) == -1);
-
+	assert(shift_int_da(NULL, &val) == DA_ERR_NULL_ARGUMENT);
+	assert(shift_int_da(empty, &val) == DA_ARRAY_EMPTY);
+	
 	/* --- Remove at --- */
 	push_int_da(da, 1);
 	push_int_da(da, 2);
 	push_int_da(da, 3);
 
 	size_t before = da->count;
-	assert(remove_at_da(da, 1) == 0);
+	assert(remove_at_da(da, 1) == DA_SUCCESS);
 	assert(da->count == before - 1);
 
 	/* --- Remove first --- */
@@ -458,65 +465,65 @@ void dynamicArrayTest()
 	assert(rf == 0 || rf == -1);
 
 	/* --- Apply --- */
-	assert(apply_at_da(NULL, 0, increment_int) == 1);
-	assert(apply_at_da(da, 0, NULL) == 1);
+	assert(apply_at_da(NULL, 0, increment_int) == DA_ERR_NULL_ARGUMENT);
+	assert(apply_at_da(da, 0, NULL) == DA_ERR_NULL_ARGUMENT);
 
 	push_int_da(da, 1);
-	assert(apply_at_da(da, 0, increment_int) == 0);
+	assert(apply_at_da(da, 0, increment_int) == DA_SUCCESS);
 
 	/* --- Process --- */
-	assert(process_da(NULL, increment_int) == 1);
-	assert(process_da(da, NULL) == 1);
-	assert(process_da(da, increment_int) == 0);
+	assert(process_da(NULL, increment_int) == DA_ERR_NULL_ARGUMENT);
+	assert(process_da(da, NULL) == DA_ERR_NULL_ARGUMENT);
+	assert(process_da(da, increment_int) == DA_SUCCESS);
 
 	/* --- Filter --- */
-	assert(filter_da(NULL, is_even) == 1);
-	assert(filter_da(da, NULL) == 1);
-	assert(filter_da(da, is_even) == 0);
+	assert(filter_da(NULL, is_even) == DA_ERR_NULL_ARGUMENT);
+	assert(filter_da(da, NULL) == DA_ERR_NULL_ARGUMENT);
+	assert(filter_da(da, is_even) == DA_SUCCESS);
 
 	/* --- At --- */
 	void *out = NULL;
-	assert(at_da(NULL, 0, &out) == 1);
+	assert(at_da(NULL, 0, &out) == DA_ERR_NULL_ARGUMENT);
 
 	if (da->count > 0)
 	{
-		assert(at_da(da, 0, &out) == 0);
+		assert(at_da(da, 0, &out) == DA_SUCCESS);
 		assert(out != NULL);
 	}
 
-	assert(at_da(da, 9999, &out) == 1);
+	assert(at_da(da, 9999, &out) == DA_ERR_INDEX_OUT_OF_BOUNDS);
 
 	/* --- Find --- */
 	push_int_da(da, 5);
 
 	void *found = NULL;
-	assert(find_da(NULL, &found, equals_five) == 1);
-	assert(find_da(da, NULL, equals_five) == 1);
-	assert(find_da(da, &found, NULL) == 1);
+	assert(find_da(NULL, &found, equals_five) == DA_ERR_NULL_ARGUMENT);
+	assert(find_da(da, NULL, equals_five) == DA_ERR_NULL_ARGUMENT);
+	assert(find_da(da, &found, NULL) == DA_ERR_NULL_ARGUMENT);
 
 	int res = find_da(da, &found, equals_five);
-	assert(res == 0 || res == -1);
+	assert(res == DA_SUCCESS || res == DA_ITEM_NOT_FOUND);
 
 	/* --- Find Last --- */
 	res = find_last_da(da, &found, equals_five);
-	assert(res == 0 || res == -1);
+	assert(res == DA_SUCCESS || res == DA_ITEM_NOT_FOUND);
 
 	/* --- Find Index --- */
 	size_t idx;
 	res = find_index_da(da, &idx, greater_than_three);
-	assert(res == 0 || res == -1);
+	assert(res == DA_SUCCESS || res == DA_ITEM_NOT_FOUND);
 
 	res = find_last_index_da(da, &idx, greater_than_three);
-	assert(res == 0 || res == -1);
+	assert(res == DA_SUCCESS || res == DA_ITEM_NOT_FOUND);
 
 	/* --- Index Of --- */
 	int value = 5;
 	res = index_of_da(da, &idx, &value);
-	assert(res == 0 || res == -1);
+	assert(res == DA_SUCCESS || res == DA_ITEM_NOT_FOUND);
 
-	assert(index_of_da(NULL, &idx, &value) == 1);
-	assert(index_of_da(da, NULL, &value) == 1);
-	assert(index_of_da(da, &idx, NULL) == 1);
+	assert(index_of_da(NULL, &idx, &value) == DA_ERR_NULL_ARGUMENT);
+	assert(index_of_da(da, NULL, &value) == DA_ERR_NULL_ARGUMENT);
+	assert(index_of_da(da, &idx, NULL) == DA_ERR_NULL_ARGUMENT);
 
 	/* --- Cleanup --- */
 	free_dynamic_array(da);
