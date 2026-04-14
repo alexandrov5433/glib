@@ -210,18 +210,23 @@ static int _single_item_size(enum DynamicArrayType type, size_t *const output)
 	case 0:
 		// int
 		*output = sizeof(int);
+		break;
 	case 1:
 		// char
 		*output = sizeof(char);
+		break;
 	case 2:
 		// float
 		*output = sizeof(float);
+		break;
 	case 3:
 		// double
 		*output = sizeof(double);
+		break;
 	case 4:
 		// void*
 		*output = sizeof(void *);
+		break;
 	default:
 		return DA_ERR_TYPE_UNKNOWN;
 	}
