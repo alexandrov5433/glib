@@ -18,6 +18,30 @@
 #endif
 
 /**
+ * @param DA_ARRAY_EMPTY (-2) The array does not include any items.
+ * @param DA_ITEM_NOT_FOUND (-1) The searched for item was not found among the items in the array.
+ * @param DA_SUCCESS (0) Successful execution of the called function.
+ * @param DA_ERR_NULL_ARGUMENT (1) One or more arguments are NULL pointers.
+ * @param DA_ERR_MEMORY_ALLOCATION (2) Failed to allocate or reallocate memory.
+ * @param DA_ERR_TYPE_MISMATCH (3) The type (DynamicArrayType) of the DynamicArray does not match the type, which the called function processes.
+ * @param DA_ERR_TYPE_UNKNOWN (4) The type (DynamicArrayType) is unknown and not supported.
+ * @param DA_ERR_INDEX_OUT_OF_BOUNDS (5) The targeted index is outside of the boundaries of the DynamicArray: target < 0 or target > count - 1.
+ * @param DA_ERR_ITEM_SIZE_DETERMINATION (6) The size in bytes of a single item could not be determined, based on the given type argument.
+ */
+enum DynamicArrayError
+{
+    DA_ARRAY_EMPTY = -2,
+    DA_ITEM_NOT_FOUND = -1,
+    DA_SUCCESS = 0,
+    DA_ERR_NULL_ARGUMENT = 1,
+    DA_ERR_MEMORY_ALLOCATION = 2,
+    DA_ERR_TYPE_MISMATCH = 3,
+    DA_ERR_TYPE_UNKNOWN = 4,
+    DA_ERR_INDEX_OUT_OF_BOUNDS = 5,
+    DA_ERR_ITEM_SIZE_DETERMINATION = 6
+};
+
+/**
  * The enumeration of the types, which are allowed in the array. 
  */
 enum DynamicArrayType
@@ -65,13 +89,13 @@ typedef struct DynamicArray
  * 
  * 3) the size in bytes of a single item could not be determined, based on the given type argument;
  */
-GALXLIB_API DynamicArray *new_dynamic_array(enum DynamicArrayType const type);
+GALXLIB_API int new_dynamic_array(enum DynamicArrayType const type, DynamicArray **const output);
 
 /**
  * Frees the memory used by the DynamicArray. The items contained in the array are not freed.
  * @param da A pointer to the DynamicArray, which must be freed. If NULL, nothing is done.
  */
-GALXLIB_API void free_dynamic_array(DynamicArray *const da);
+GALXLIB_API int free_dynamic_array(DynamicArray *const da);
 
 /**
  * Adds the integer to the end of the DynamicArray.
