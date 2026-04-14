@@ -18,31 +18,24 @@
 #endif
 
 /**
- * @param DA_ARRAY_EMPTY (-2) The array does not include any items.
- * @param DA_ITEM_NOT_FOUND (-1) The searched for item was not found among the items in the array.
- * @param DA_SUCCESS (0) Successful execution of the called function.
- * @param DA_ERR_NULL_ARGUMENT (1) One or more arguments are NULL pointers.
- * @param DA_ERR_MEMORY_ALLOCATION (2) Failed to allocate or reallocate memory.
- * @param DA_ERR_TYPE_MISMATCH (3) The type (DynamicArrayType) of the DynamicArray does not match the type, which the called function processes.
- * @param DA_ERR_TYPE_UNKNOWN (4) The type (DynamicArrayType) is unknown and not supported.
- * @param DA_ERR_INDEX_OUT_OF_BOUNDS (5) The targeted index is outside of the boundaries of the DynamicArray: target < 0 or target > count - 1.
- * @param DA_ERR_ITEM_SIZE_DETERMINATION (6) The size in bytes of a single item could not be determined, based on the given type argument.
+ * @enum DynamicArrayError
+ * @brief The error codes returned by the DynamicArray functions.
  */
 enum DynamicArrayError
 {
-    DA_ARRAY_EMPTY = -2,
-    DA_ITEM_NOT_FOUND = -1,
-    DA_SUCCESS = 0,
-    DA_ERR_NULL_ARGUMENT = 1,
-    DA_ERR_MEMORY_ALLOCATION = 2,
-    DA_ERR_TYPE_MISMATCH = 3,
-    DA_ERR_TYPE_UNKNOWN = 4,
-    DA_ERR_INDEX_OUT_OF_BOUNDS = 5,
-    DA_ERR_ITEM_SIZE_DETERMINATION = 6
+    DA_ARRAY_EMPTY = -2,               /**< (-2) The array does not include any items. */
+    DA_ITEM_NOT_FOUND = -1,            /**< (-1) The searched item was not found among the items in the array. */
+    DA_SUCCESS = 0,                    /**< (0) Successful execution of the called function. */
+    DA_ERR_NULL_ARGUMENT = 1,          /**< (1) One or more arguments are NULL. */
+    DA_ERR_MEMORY_ALLOCATION = 2,      /**< (2) Failed to allocate or reallocate memory. */
+    DA_ERR_TYPE_MISMATCH = 3,          /**< (3) The type (DynamicArrayType) of the DynamicArray does not match the type, which the called function processes. */
+    DA_ERR_TYPE_UNKNOWN = 4,           /**< (4) The type (DynamicArrayType) is unknown and not supported. */
+    DA_ERR_INDEX_OUT_OF_BOUNDS = 5,    /**< (5) The targeted index is outside of the boundaries of the DynamicArray. */
+    DA_ERR_ITEM_SIZE_DETERMINATION = 6 /**< (6) The size in bytes of a single item could not be determined, based on the given type argument. */
 };
 
 /**
- * The enumeration of the types, which are allowed in the array. 
+ * The enumeration of the types, which are allowed in the array.
  */
 enum DynamicArrayType
 {
@@ -58,7 +51,7 @@ enum DynamicArrayType
  * @param count The current number of items in the array.
  * @param capacity The total number of places (indexes) in the array. This is not the total allocated memory.
  * @param single_item_size The size in bytes of a singe item contained in the array.
- * @param type Indicates the type of items contained in the array. 
+ * @param type Indicates the type of items contained in the array.
  */
 typedef struct DynamicArray
 {
@@ -79,17 +72,17 @@ typedef struct DynamicArray
 /**
  * Creates a new DynamicArray.
  * @param type The type of values the array will hold, according to the DynamicArrayType enum.
- * @returns The pointer to the new DynamicArray.
+ * @return A value of the @ref DynamicArrayError:
  * 
- * NULL if: 
+ * - DA_SUCCESS
  * 
- * 1) an invalid value is given for the type argument;
- *  
- * 2) memory could not be allocated;
+ * - DA_ERR_TYPE_UNKNOWN
  * 
- * 3) the size in bytes of a single item could not be determined, based on the given type argument;
+ * - DA_ERR_MEMORY_ALLOCATION
+ * 
+ * - DA_ERR_ITEM_SIZE_DETERMINATION
  */
-GALXLIB_API int new_dynamic_array(enum DynamicArrayType const type, DynamicArray **const output);
+GALXLIB_API enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const type, DynamicArray **const output);
 
 /**
  * Frees the memory used by the DynamicArray. The items contained in the array are not freed.
@@ -102,11 +95,11 @@ GALXLIB_API int free_dynamic_array(DynamicArray *const da);
  * @param item The integer to add.
  * @param da A pointer to the DynamicArray.
  * @returns 0 on success.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
  */
 GALXLIB_API int push_int_da(DynamicArray *const da, int const item);
@@ -116,11 +109,11 @@ GALXLIB_API int push_int_da(DynamicArray *const da, int const item);
  * @param item The character to add.
  * @param da A pointer to the DynamicArray.
  * @returns 0 on success.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
  */
 GALXLIB_API int push_char_da(DynamicArray *const da, char const item);
@@ -130,11 +123,11 @@ GALXLIB_API int push_char_da(DynamicArray *const da, char const item);
  * @param item The float to add.
  * @param da A pointer to the DynamicArray.
  * @returns 0 on success.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
  */
 GALXLIB_API int push_float_da(DynamicArray *const da, float const item);
@@ -143,12 +136,12 @@ GALXLIB_API int push_float_da(DynamicArray *const da, float const item);
  * Adds the double to the end of the DynamicArray.
  * @param item The double to add.
  * @param da A pointer to the DynamicArray.
- * @returns 0 on success. 
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ * @returns 0 on success.
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
  */
 GALXLIB_API int push_double_da(DynamicArray *const da, double const item);
@@ -157,12 +150,12 @@ GALXLIB_API int push_double_da(DynamicArray *const da, double const item);
  * Adds the pointer to the end of the DynamicArray.
  * @param item The pointer to add.
  * @param da A pointer to the DynamicArray.
- * @returns 0 on success.  
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ * @returns 0 on success.
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
  */
 GALXLIB_API int push_ptr_da(DynamicArray *const da, void *const item);
@@ -171,12 +164,12 @@ GALXLIB_API int push_ptr_da(DynamicArray *const da, void *const item);
  * Adds the given integer at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
  * @param item The integer to add.
  * @param da A pointer to the DynamicArray.
- * @returns 0 on success.  
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ * @returns 0 on success.
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
  */
 GALXLIB_API int unshift_int_da(DynamicArray *const da, int const item);
@@ -185,12 +178,12 @@ GALXLIB_API int unshift_int_da(DynamicArray *const da, int const item);
  * Adds the given character at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
  * @param item The character to add.
  * @param da A pointer to the DynamicArray.
- * @returns 0 on success.  
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ * @returns 0 on success.
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
  */
 GALXLIB_API int unshift_char_da(DynamicArray *const da, char const item);
@@ -199,12 +192,12 @@ GALXLIB_API int unshift_char_da(DynamicArray *const da, char const item);
  * Adds the given float at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
  * @param item The float to add.
  * @param da A pointer to the DynamicArray.
- * @returns 0 on success.  
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ * @returns 0 on success.
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
  */
 GALXLIB_API int unshift_float_da(DynamicArray *const da, float const item);
@@ -213,12 +206,12 @@ GALXLIB_API int unshift_float_da(DynamicArray *const da, float const item);
  * Adds the given double at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
  * @param item The double to add.
  * @param da A pointer to the DynamicArray.
- * @returns 0 on success.  
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ * @returns 0 on success.
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
  */
 GALXLIB_API int unshift_double_da(DynamicArray *const da, double const item);
@@ -227,12 +220,12 @@ GALXLIB_API int unshift_double_da(DynamicArray *const da, double const item);
  * Adds the given pointer at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
  * @param item The pointer to add.
  * @param da A pointer to the DynamicArray.
- * @returns 0 on success.  
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ * @returns 0 on success.
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized or does not match the type of the item argument.
  */
 GALXLIB_API int unshift_ptr_da(DynamicArray *const da, void *const item);
@@ -241,14 +234,14 @@ GALXLIB_API int unshift_ptr_da(DynamicArray *const da, void *const item);
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
  * @param da A pointer to the DynamicArray.
  * @param output A pointer where the item will be placed.
- * @returns 0 on success.  
- * 
+ * @returns 0 on success.
+ *
  * -1 if the DynamicArray is empty.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int pop_int_da(DynamicArray *const da, int *const output);
@@ -257,14 +250,14 @@ GALXLIB_API int pop_int_da(DynamicArray *const da, int *const output);
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
  * @param da A pointer to the DynamicArray.
  * @param output A pointer where the item will be placed.
- * @returns 0 on success.  
- * 
+ * @returns 0 on success.
+ *
  * -1 if the DynamicArray is empty.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int pop_char_da(DynamicArray *const da, char *const output);
@@ -273,14 +266,14 @@ GALXLIB_API int pop_char_da(DynamicArray *const da, char *const output);
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
  * @param da A pointer to the DynamicArray.
  * @param output A pointer where the item will be placed.
- * @returns 0 on success.  
- * 
+ * @returns 0 on success.
+ *
  * -1 if the DynamicArray is empty.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int pop_float_da(DynamicArray *const da, float *const output);
@@ -289,14 +282,14 @@ GALXLIB_API int pop_float_da(DynamicArray *const da, float *const output);
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
  * @param da A pointer to the DynamicArray.
  * @param output A pointer where the item will be placed.
- * @returns 0 on success.  
- * 
+ * @returns 0 on success.
+ *
  * -1 if the DynamicArray is empty.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int pop_double_da(DynamicArray *const da, double *const output);
@@ -305,14 +298,14 @@ GALXLIB_API int pop_double_da(DynamicArray *const da, double *const output);
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
  * @param da A pointer to the DynamicArray.
  * @param output A pointer where the item will be placed.
- * @returns 0 on success.  
- * 
+ * @returns 0 on success.
+ *
  * -1 if the DynamicArray is empty.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int pop_ptr_da(DynamicArray *const da, void **const output);
@@ -321,14 +314,14 @@ GALXLIB_API int pop_ptr_da(DynamicArray *const da, void **const output);
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
  * @param da A pointer to the DynamicArray.
  * @param output A pointer the item will be placed.
- * @returns 0 on success.  
- * 
+ * @returns 0 on success.
+ *
  * -1 if the DynamicArray is empty.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int shift_int_da(DynamicArray *const da, int *const output);
@@ -337,14 +330,14 @@ GALXLIB_API int shift_int_da(DynamicArray *const da, int *const output);
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
  * @param da A pointer to the DynamicArray.
  * @param output A pointer the item will be placed.
- * @returns 0 on success.  
- * 
+ * @returns 0 on success.
+ *
  * -1 if the DynamicArray is empty.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int shift_char_da(DynamicArray *const da, char *const output);
@@ -353,14 +346,14 @@ GALXLIB_API int shift_char_da(DynamicArray *const da, char *const output);
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
  * @param da A pointer to the DynamicArray.
  * @param output A pointer the item will be placed.
- * @returns 0 on success.  
- * 
+ * @returns 0 on success.
+ *
  * -1 if the DynamicArray is empty.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int shift_float_da(DynamicArray *const da, float *const output);
@@ -369,14 +362,14 @@ GALXLIB_API int shift_float_da(DynamicArray *const da, float *const output);
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
  * @param da A pointer to the DynamicArray.
  * @param output A pointer the item will be placed.
- * @returns 0 on success.  
- * 
+ * @returns 0 on success.
+ *
  * -1 if the DynamicArray is empty.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int shift_double_da(DynamicArray *const da, double *const output);
@@ -385,14 +378,14 @@ GALXLIB_API int shift_double_da(DynamicArray *const da, double *const output);
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
  * @param da A pointer to the DynamicArray.
  * @param output A pointer the item will be placed.
- * @returns 0 on success.  
- * 
+ * @returns 0 on success.
+ *
  * -1 if the DynamicArray is empty.
- * 
- * 1 if the pointer to the DynamicArray is NULL. 
- * 
+ *
+ * 1 if the pointer to the DynamicArray is NULL.
+ *
  * 2 if memory could not be reallocated.
- * 
+ *
  * 3 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int shift_ptr_da(DynamicArray *const da, void **const output);
@@ -401,7 +394,7 @@ GALXLIB_API int shift_ptr_da(DynamicArray *const da, void **const output);
  * Removes the item at the given index from the DynamicArray.
  * @param da A pointer to the DynamicArray.
  * @param index The index of the target which is to be removed.
- * @returns 0 on success. 
+ * @returns 0 on success.
  *
  * 1 if either of the arguments is NULL.
  *
@@ -416,9 +409,9 @@ GALXLIB_API int remove_at_da(DynamicArray *const da, const size_t index);
  * @param da A pointer to the DynamicArray.
  * @param target A pointer to the target which is to be removed.
  * If the DynamicArray is of type VOID_PTR the target is used as it is, otherwise it is dereferenced.
- * @returns 0 on success 
- * 
- * -1 if no match was found. 
+ * @returns 0 on success
+ *
+ * -1 if no match was found.
  *
  * 1 if either of the arguments is NULL.
  *
@@ -434,23 +427,23 @@ GALXLIB_API int remove_first_da(DynamicArray *const da, void *const target);
  * @param index The index at which the item can be found. The function will be applied to the item at this index.
  * @param worker The function which will be applied to the item.
  * @returns 0 on success.
- * 
+ *
  * 1 if either of the pointer arguments - da, worker - is NULL.
- * 
- * 2 if the item on the given index could not be accessed due to type missmatch (enum DynamicArrayType type) of the DynamicArray. 
+ *
+ * 2 if the item on the given index could not be accessed due to type missmatch (enum DynamicArrayType type) of the DynamicArray.
  */
 GALXLIB_API int apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr));
 
 /**
  * Applies a processor function to every item in the DynamicArray, from left to right.
  * @param da A pointer to the DynamicArray.
- * @param processor A function pointer to the function, which will process the items. 
+ * @param processor A function pointer to the function, which will process the items.
  * If the type of the array is VOID_PTR, the processor receives the item directly.
  * For any other type, the processor receives a pointer to the item, regardless of the type of the array.
- * @returns 0 on success. 
- * 
- * 1 if either of the pointer arguments is NULL. 
- * 
+ * @returns 0 on success.
+ *
+ * 1 if either of the pointer arguments is NULL.
+ *
  * 2 if the pointer to the item in the array could not be retrieved.
  */
 GALXLIB_API int process_da(DynamicArray *const da, void (*processor)(void *item_ptr));
@@ -460,12 +453,12 @@ GALXLIB_API int process_da(DynamicArray *const da, void (*processor)(void *item_
  * @param da A pointer to the DynamicArray.
  * @param filter A function pointer to the function, which will select the wanted items.
  * If the type of the array is VOID_PTR, the filter receives the item directly.
- * For any other type, the filter receives a pointer to the item, regardless of the type of the array. 
+ * For any other type, the filter receives a pointer to the item, regardless of the type of the array.
  * The filter must return 1 if the item is to stay in the array. Any other value will lead to the removal of the item.
- * @returns 0 on success. 
- * 
- * 1 if either of the pointer arguments is NULL. 
- * 
+ * @returns 0 on success.
+ *
+ * 1 if either of the pointer arguments is NULL.
+ *
  * 2 if the pointer to the item in the array could not be retrieved.
  */
 GALXLIB_API int filter_da(DynamicArray *const da, int (*filter)(void *item_ptr));
@@ -476,10 +469,10 @@ GALXLIB_API int filter_da(DynamicArray *const da, int (*filter)(void *item_ptr))
  * @param output A double void pointer, which will receive the address of the item.
  * If the type of the array is VOID_PTR, the item it self (which is a void pointer) is placed in the output.
  * For any other type, the address of the item, cast to void pointer regardless of the type of the array, is placed in output.
- * @returns 0 on success. 
- * 
+ * @returns 0 on success.
+ *
  * 1 if the pointer to the DynamicArray is NULL or the given index is out of bounds.
- * 
+ *
  * 2 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int at_da(DynamicArray *const da, size_t index, void **output);
@@ -492,14 +485,14 @@ GALXLIB_API int at_da(DynamicArray *const da, size_t index, void **output);
  * If the type of the array is VOID_PTR, the item it self (which is a void pointer) is placed in the output.
  * @param selector A function pointer to the function, which will select the item.
  * If the type of the array is VOID_PTR, the selector receives the item directly.
- * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array. 
+ * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array.
  * The selector must return 1 to indicate the desired item. Any other value is treated as false.
- * @returns 0 on success. 
- * 
+ * @returns 0 on success.
+ *
  * -1 if the item was not found.
- * 
- *  1 if either of the pointer arguments is NULL. 
- * 
+ *
+ *  1 if either of the pointer arguments is NULL.
+ *
  *  2 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
@@ -512,14 +505,14 @@ GALXLIB_API int find_da(DynamicArray *const da, void **const output, int (*selec
  * If the type of the array is VOID_PTR, the item it self (which is a void pointer) is placed in the output.
  * @param selector A function pointer to the function, which will select the item.
  * If the type of the array is VOID_PTR, the selector receives the item directly.
- * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array. 
+ * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array.
  * The selector must return 1 to indicate the desired item. Any other value is treated as false.
- * @returns 0 on success. 
- *  
+ * @returns 0 on success.
+ *
  *  -1 if the item was not found.
- * 
- *  1 if either of the pointer arguments is NULL. 
- * 
+ *
+ *  1 if either of the pointer arguments is NULL.
+ *
  *  2 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
@@ -532,14 +525,14 @@ GALXLIB_API int find_last_da(DynamicArray *const da, void **const output, int (*
  * @param output An int pointer, which will receive the index of the item.
  * @param selector A function pointer to the function, which will select the item.
  * If the type of the array is VOID_PTR, the selector receives the item directly.
- * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array. 
+ * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array.
  * The selector must return 1 to indicate the desired item. Any other value is treated as false.
  * @returns 0 on success.
- *  
+ *
  *  -1 if the item was not found.
- * 
- *  1 if either of the pointer arguments is NULL. 
- * 
+ *
+ *  1 if either of the pointer arguments is NULL.
+ *
  *  2 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
@@ -553,12 +546,12 @@ GALXLIB_API int find_index_da(DynamicArray *const da, size_t *const output, int 
  * @param selector A function pointer to the function, which will select the item.
  * If the type of the array is VOID_PTR, the selector receives the item directly.
  * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array. The selector must return 1 to indicate the desired item. Any other value is treated as false.
- * @returns 0 on success. 
- * 
+ * @returns 0 on success.
+ *
  *  -1 if the item was not found.
- * 
- *  1 if either of the pointer arguments is NULL. 
- * 
+ *
+ *  1 if either of the pointer arguments is NULL.
+ *
  *  2 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
@@ -569,12 +562,12 @@ GALXLIB_API int find_last_index_da(DynamicArray *const da, size_t *const output,
  * @param da A pointer to the DynamicArray.
  * @param output An int pointer, which will receive the index of the item.
  * @param value A void pointer to the value, against which the items will be compared.
- * @returns 0 on success. 
- * 
+ * @returns 0 on success.
+ *
  *  -1 if the item was not found.
- * 
- *  1 if either of the pointer arguments is NULL. 
- * 
+ *
+ *  1 if either of the pointer arguments is NULL.
+ *
  *  2 if the type (enum) of the DynamicArray is not recognized.
  */
 GALXLIB_API int index_of_da(DynamicArray *const da, size_t *const output, void *const value);
