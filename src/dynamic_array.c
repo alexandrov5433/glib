@@ -4,7 +4,7 @@
 
 // ##################   static   ##################
 
-static inline enum DynamicArrayError _enum_check(enum DynamicArrayType const type)
+static inline enum DynamicArrayError _type_check(enum DynamicArrayType const type)
 {
 	switch (type)
 	{
@@ -28,7 +28,7 @@ static inline enum DynamicArrayError _enum_check(enum DynamicArrayType const typ
 	}
 }
 
-static enum DynamicArrayError _mem_realloc(DynamicArray *const da, size_t newCapacity)
+static enum DynamicArrayError _mem_realloc(DynamicArray *const da, size_t new_capcity)
 {
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
@@ -37,35 +37,35 @@ static enum DynamicArrayError _mem_realloc(DynamicArray *const da, size_t newCap
 	{
 	case 0:
 		// int
-		int *int_arr = realloc(da->int_arr, newCapacity * da->single_item_size);
+		int *int_arr = realloc(da->int_arr, new_capcity * da->single_item_size);
 		if (int_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->int_arr = int_arr;
 		break;
 	case 1:
 		// char
-		char *char_arr = realloc(da->char_arr, newCapacity * da->single_item_size);
+		char *char_arr = realloc(da->char_arr, new_capcity * da->single_item_size);
 		if (char_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->char_arr = char_arr;
 		break;
 	case 2:
 		// float
-		float *float_arr = realloc(da->float_arr, newCapacity * da->single_item_size);
+		float *float_arr = realloc(da->float_arr, new_capcity * da->single_item_size);
 		if (float_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->float_arr = float_arr;
 		break;
 	case 3:
 		// double
-		double *double_arr = realloc(da->double_arr, newCapacity * da->single_item_size);
+		double *double_arr = realloc(da->double_arr, new_capcity * da->single_item_size);
 		if (double_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->double_arr = double_arr;
 		break;
 	case 4:
 		// void*
-		void **void_arr = realloc(da->void_arr, newCapacity * da->single_item_size);
+		void **void_arr = realloc(da->void_arr, new_capcity * da->single_item_size);
 		if (void_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->void_arr = void_arr;
@@ -73,7 +73,7 @@ static enum DynamicArrayError _mem_realloc(DynamicArray *const da, size_t newCap
 	default:
 		return DA_ERR_TYPE_UNKNOWN;
 	}
-	da->capacity = newCapacity;
+	da->capacity = new_capcity;
 	return DA_SUCCESS;
 }
 
@@ -85,8 +85,11 @@ static enum DynamicArrayError _expand_da(DynamicArray *const da)
 	size_t freeSpace = da->capacity - da->count;
 	if (freeSpace < DYNAMIC_ARRAY_INIT_CAPACITY * 0.25)
 	{
-		size_t newCapacity = da->capacity + DYNAMIC_ARRAY_INIT_CAPACITY;
-		int err = _mem_realloc(da, newCapacity); // new_capcity is set in _mem_realloc
+		size_t new_capcity = da->capacity + DYNAMIC_ARRAY_INIT_CAPACITY;
+		/**
+		 * new_capcity is set in _mem_realloc.
+		 */
+		int err = _mem_realloc(da, new_capcity);
 		if (err)
 			return err;
 	}
@@ -439,7 +442,7 @@ _error_case:
 
 enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const type, DynamicArray **const output)
 {
-	if (_enum_check(type))
+	if (_type_check(type))
 		return DA_ERR_TYPE_UNKNOWN;
 
 	DynamicArray *da = (DynamicArray *)malloc(sizeof(DynamicArray));
