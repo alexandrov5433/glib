@@ -513,46 +513,6 @@ enum DynamicArrayError free_dynamic_array(DynamicArray *const da)
 
 // ##################   add items   ##################
 
-/*
-int push_da(DynamicArray *const da, void *const item)
-{
-    if (item == NULL || da == NULL)
-	return 1;
-
-    int err = _expand_da(da);
-    if (err)
-	return err;
-
-    switch (da->type)
-    {
-    case 0:
-	// int
-	(da->int_arr)[(da->count)++] = *(int *)item;
-	break;
-    case 1:
-	// char
-	(da->char_arr)[(da->count)++] = *(char *)item;
-	break;
-    case 2:
-	// float
-	(da->float_arr)[(da->count)++] = *(float *)item;
-	break;
-    case 3:
-	// double
-	(da->double_arr)[(da->count)++] = *(double *)item;
-	break;
-    case 4:
-	// void*
-	(da->void_arr)[(da->count)++] = item;
-	break;
-    default:
-	return 3;
-    }
-
-    return 0;
-}
- */
-
 enum DynamicArrayError push_int_da(DynamicArray *const da, int const item)
 {
 	if (da == NULL)
@@ -637,56 +597,6 @@ enum DynamicArrayError push_ptr_da(DynamicArray *const da, void *const item)
 
 	return DA_SUCCESS;
 }
-
-/*
-int unshift_da(DynamicArray *const da, void *const item)
-{
-    if (item == NULL || da == NULL)
-	return 1;
-
-    int err = _expand_da(da);
-    if (err)
-	return err;
-
-    err = _enum_check(da->type);
-    if (err)
-	return 3;
-
-    err = _move_one_right(da);
-    if (err)
-	return 4;
-
-    switch (da->type)
-    {
-    case 0:
-	// int
-	(da->int_arr)[0] = *(int *)item;
-	break;
-    case 1:
-	// char
-	(da->char_arr)[0] = *(char *)item;
-	break;
-    case 2:
-	// float
-	(da->float_arr)[0] = *(float *)item;
-	break;
-    case 3:
-	// double
-	(da->double_arr)[0] = *(double *)item;
-	break;
-    case 4:
-	// void*
-	(da->void_arr)[0] = item;
-	break;
-    default:
-	return 3;
-    }
-
-    (da->count)++;
-
-    return 0;
-}
- */
 
 enum DynamicArrayError unshift_int_da(DynamicArray *const da, int const item)
 {
