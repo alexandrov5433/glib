@@ -4,7 +4,7 @@
 
 // ##################   static   ##################
 
-static inline enum DynamicArrayError _type_check(enum DynamicArrayType const type)
+static inline enum DynamicArrayError _is_type_invalid(enum DynamicArrayType const type)
 {
 	switch (type)
 	{
@@ -444,7 +444,7 @@ _error_case:
 
 enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const type, DynamicArray **const output)
 {
-	if (_type_check(type))
+	if (_is_type_invalid(type))
 		return DA_ERR_TYPE_UNKNOWN;
 
 	DynamicArray *da = (DynamicArray *)malloc(sizeof(DynamicArray));
