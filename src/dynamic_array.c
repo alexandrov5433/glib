@@ -186,10 +186,13 @@ static enum DynamicArrayError _move_one_left(DynamicArray *const da)
 	return DA_SUCCESS;
 }
 
-static inline int _is_empty(const DynamicArray *const da)
+static inline enum DynamicArrayError _is_empty(const DynamicArray *const da, int *const output)
 {
-	// TODO: add NULL check
-	return da->count <= 0 ? 1 : 0;
+	if (da == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	*output = da->count <= 0 ? 1 : 0;
+	return DA_SUCCESS;
 }
 
 static inline enum DynamicArrayError _is_out_of_bounds(const DynamicArray *const da, size_t index)
@@ -337,7 +340,7 @@ static enum DynamicArrayError _remove_at(DynamicArray *const da, const size_t in
 
 	DynamicArray *tmp = NULL;
 	int err_new_da_init = new_dynamic_array(da->type, &tmp);
-	if (err_new_da_init)	
+	if (err_new_da_init)
 		return err_new_da_init;
 	if (tmp == NULL)
 		return DA_ERR_MEMORY_ALLOCATION;
@@ -844,7 +847,11 @@ enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const output)
 	if (da->type != INT)
 		return DA_ERR_TYPE_MISMATCH;
 
-	if (_is_empty(da))
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
 		return DA_ARRAY_EMPTY;
 
 	*output = (int)((da->int_arr)[--(da->count)]);
@@ -864,7 +871,11 @@ enum DynamicArrayError pop_char_da(DynamicArray *const da, char *const output)
 	if (da->type != CHAR)
 		return DA_ERR_TYPE_MISMATCH;
 
-	if (_is_empty(da))
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
 		return DA_ARRAY_EMPTY;
 
 	*output = (char)((da->char_arr)[--(da->count)]);
@@ -884,7 +895,11 @@ enum DynamicArrayError pop_float_da(DynamicArray *const da, float *const output)
 	if (da->type != FLOAT)
 		return DA_ERR_TYPE_MISMATCH;
 
-	if (_is_empty(da))
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
 		return DA_ARRAY_EMPTY;
 
 	*output = (float)((da->float_arr)[--(da->count)]);
@@ -904,7 +919,11 @@ enum DynamicArrayError pop_double_da(DynamicArray *const da, double *const outpu
 	if (da->type != DOUBLE)
 		return DA_ERR_TYPE_MISMATCH;
 
-	if (_is_empty(da))
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
 		return DA_ARRAY_EMPTY;
 
 	*output = (double)((da->double_arr)[--(da->count)]);
@@ -924,7 +943,11 @@ enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **const output)
 	if (da->type != VOID_PTR)
 		return DA_ERR_TYPE_MISMATCH;
 
-	if (_is_empty(da))
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
 		return DA_ARRAY_EMPTY;
 
 	*output = (void *)((da->void_arr)[--(da->count)]);
@@ -985,7 +1008,11 @@ enum DynamicArrayError shift_int_da(DynamicArray *const da, int *const output)
 	if (da->type != INT)
 		return DA_ERR_TYPE_MISMATCH;
 
-	if (_is_empty(da))
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
 		return DA_ARRAY_EMPTY;
 
 	*output = (int)((da->int_arr)[0]);
@@ -1011,7 +1038,11 @@ enum DynamicArrayError shift_char_da(DynamicArray *const da, char *const output)
 	if (da->type != CHAR)
 		return DA_ERR_TYPE_MISMATCH;
 
-	if (_is_empty(da))
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
 		return DA_ARRAY_EMPTY;
 
 	*output = (char)((da->char_arr)[0]);
@@ -1037,7 +1068,11 @@ enum DynamicArrayError shift_float_da(DynamicArray *const da, float *const outpu
 	if (da->type != FLOAT)
 		return DA_ERR_TYPE_MISMATCH;
 
-	if (_is_empty(da))
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
 		return DA_ARRAY_EMPTY;
 
 	*output = (float)((da->float_arr)[0]);
@@ -1063,7 +1098,11 @@ enum DynamicArrayError shift_double_da(DynamicArray *const da, double *const out
 	if (da->type != DOUBLE)
 		return DA_ERR_TYPE_MISMATCH;
 
-	if (_is_empty(da))
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
 		return DA_ARRAY_EMPTY;
 
 	*output = (double)((da->double_arr)[0]);
@@ -1089,7 +1128,11 @@ enum DynamicArrayError shift_ptr_da(DynamicArray *const da, void **const output)
 	if (da->type != VOID_PTR)
 		return DA_ERR_TYPE_MISMATCH;
 
-	if (_is_empty(da))
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
 		return DA_ARRAY_EMPTY;
 
 	*output = (void *)((da->void_arr)[0]);
@@ -1112,6 +1155,13 @@ enum DynamicArrayError remove_at_da(DynamicArray *const da, const size_t index)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
+		return DA_ARRAY_EMPTY;
+
 	int err_remove = _remove_at(da, index);
 	if (err_remove)
 		return err_remove;
@@ -1123,6 +1173,13 @@ enum DynamicArrayError remove_first_da(DynamicArray *const da, void *const targe
 {
 	if (da == NULL || target == NULL)
 		return DA_ERR_NULL_ARGUMENT;
+
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
+		return DA_ARRAY_EMPTY;
 
 	size_t target_index = 0;
 	int err_index_of = index_of_da(da, &target_index, target);
@@ -1143,6 +1200,13 @@ enum DynamicArrayError apply_at_da(const DynamicArray *const da, const size_t in
 	if (da == NULL || worker == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
+		return DA_ARRAY_EMPTY;
+
 	void *ptr = NULL;
 	int err_get_pointer = _get_pointer_at_index(da, index, &ptr);
 	if (err_get_pointer)
@@ -1158,6 +1222,9 @@ enum DynamicArrayError process_da(DynamicArray *const da, void (*processor)(void
 		return DA_ERR_NULL_ARGUMENT;
 
 	void *ptr = NULL;
+	/**
+	 * Empty check is done indirectly by the for-cicle.
+	 */
 	for (size_t i = 0; i < da->count; ++i)
 	{
 		int err_get_pointer = _get_pointer_at_index(da, i, &ptr);
@@ -1174,6 +1241,16 @@ enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *ite
 {
 	if (da == NULL || filter == NULL)
 		return DA_ERR_NULL_ARGUMENT;
+
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	/**
+	 * If the array is empty there is nothing to filter. A success error code must be returned.
+	 */
+	if (output_is_empty == 1)
+		return DA_SUCCESS;
 
 	DynamicArray *tempDA = NULL;
 	int err_new_da_init = new_dynamic_array(da->type, &tempDA);
@@ -1283,6 +1360,13 @@ enum DynamicArrayError at_da(DynamicArray *const da, size_t index, void **output
 {
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
+
+	int output_is_empty = 0;
+	int err_is_empty = _is_empty(da, &output_is_empty);
+	if (err_is_empty)
+		return err_is_empty;
+	if (output_is_empty == 1)
+		return DA_ARRAY_EMPTY;
 
 	int err_get_pointer = _get_pointer_at_index(da, index, output);
 	if (err_get_pointer)

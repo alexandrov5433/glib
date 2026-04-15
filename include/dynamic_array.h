@@ -286,11 +286,11 @@ GALXLIB_API int unshift_ptr_da(DynamicArray *const da, void *const item);
  *
  * - DA_SUCCESS
  * 
+ * - DA_ARRAY_EMPTY
+ * 
  * - DA_ERR_NULL_ARGUMENT
  * 
  * - DA_ERR_TYPE_MISMATCH
- * 
- * - DA_ARRAY_EMPTY
  * 
  * - DA_ERR_MEMORY_ALLOCATION
  * 
@@ -306,11 +306,11 @@ GALXLIB_API int pop_int_da(DynamicArray *const da, int *const output);
  *
  * - DA_SUCCESS
  * 
+ * - DA_ARRAY_EMPTY
+ * 
  * - DA_ERR_NULL_ARGUMENT
  * 
  * - DA_ERR_TYPE_MISMATCH
- * 
- * - DA_ARRAY_EMPTY
  * 
  * - DA_ERR_MEMORY_ALLOCATION
  * 
@@ -326,11 +326,11 @@ GALXLIB_API int pop_char_da(DynamicArray *const da, char *const output);
  *
  * - DA_SUCCESS
  * 
+ * - DA_ARRAY_EMPTY
+ * 
  * - DA_ERR_NULL_ARGUMENT
  * 
  * - DA_ERR_TYPE_MISMATCH
- * 
- * - DA_ARRAY_EMPTY
  * 
  * - DA_ERR_MEMORY_ALLOCATION
  * 
@@ -366,11 +366,11 @@ GALXLIB_API int pop_double_da(DynamicArray *const da, double *const output);
  *
  * - DA_SUCCESS
  * 
+ * - DA_ARRAY_EMPTY
+ * 
  * - DA_ERR_NULL_ARGUMENT
  * 
  * - DA_ERR_TYPE_MISMATCH
- * 
- * - DA_ARRAY_EMPTY
  * 
  * - DA_ERR_MEMORY_ALLOCATION
  * 
@@ -386,11 +386,11 @@ GALXLIB_API int pop_ptr_da(DynamicArray *const da, void **const output);
  *
  * - DA_SUCCESS
  * 
+ * - DA_ARRAY_EMPTY
+ * 
  * - DA_ERR_NULL_ARGUMENT
  * 
  * - DA_ERR_TYPE_MISMATCH
- * 
- * - DA_ARRAY_EMPTY
  * 
  * - DA_ERR_MEMORY_ALLOCATION
  * 
@@ -406,11 +406,11 @@ GALXLIB_API int shift_int_da(DynamicArray *const da, int *const output);
  *
  * - DA_SUCCESS
  * 
+ * - DA_ARRAY_EMPTY
+ * 
  * - DA_ERR_NULL_ARGUMENT
  * 
  * - DA_ERR_TYPE_MISMATCH
- * 
- * - DA_ARRAY_EMPTY
  * 
  * - DA_ERR_MEMORY_ALLOCATION
  * 
@@ -426,11 +426,11 @@ GALXLIB_API int shift_char_da(DynamicArray *const da, char *const output);
  *
  * - DA_SUCCESS
  * 
+ * - DA_ARRAY_EMPTY
+ * 
  * - DA_ERR_NULL_ARGUMENT
  * 
  * - DA_ERR_TYPE_MISMATCH
- * 
- * - DA_ARRAY_EMPTY
  * 
  * - DA_ERR_MEMORY_ALLOCATION
  * 
@@ -466,11 +466,11 @@ GALXLIB_API int shift_double_da(DynamicArray *const da, double *const output);
  *
  * - DA_SUCCESS
  * 
+ * - DA_ARRAY_EMPTY
+ * 
  * - DA_ERR_NULL_ARGUMENT
  * 
  * - DA_ERR_TYPE_MISMATCH
- * 
- * - DA_ARRAY_EMPTY
  * 
  * - DA_ERR_MEMORY_ALLOCATION
  * 
@@ -485,6 +485,8 @@ GALXLIB_API int shift_ptr_da(DynamicArray *const da, void **const output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
+ * 
+ * - DA_ARRAY_EMPTY
  * 
  * - DA_ERR_NULL_ARGUMENT
  * 
@@ -509,6 +511,10 @@ GALXLIB_API int remove_at_da(DynamicArray *const da, const size_t index);
  *
  * - DA_SUCCESS
  * 
+ * - DA_ITEM_NOT_FOUND
+ * 
+ * - DA_ARRAY_EMPTY
+ * 
  * - DA_ERR_NULL_ARGUMENT
  * 
  * - DA_ERR_ITEM_SIZE_DETERMINATION
@@ -520,8 +526,6 @@ GALXLIB_API int remove_at_da(DynamicArray *const da, const size_t index);
  * - DA_ERR_TYPE_MISMATCH
  * 
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
- * 
- * - DA_ITEM_NOT_FOUND
  */
 GALXLIB_API int remove_first_da(DynamicArray *const da, void *const target);
 
@@ -534,6 +538,8 @@ GALXLIB_API int remove_first_da(DynamicArray *const da, void *const target);
  *
  * - DA_SUCCESS
  * 
+ * - DA_ARRAY_EMPTY
+ * 
  * - DA_ERR_NULL_ARGUMENT
  * 
  * - DA_ERR_TYPE_UNKNOWN
@@ -543,7 +549,8 @@ GALXLIB_API int remove_first_da(DynamicArray *const da, void *const target);
 GALXLIB_API int apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr));
 
 /**
- * Applies a processor function to every item in the DynamicArray, from left to right.
+ * Applies a processor function to every item in the DynamicArray, from left to right. 
+ * If the DynamicArray is empty, nothing is done and DA_SUCCESS is returned.
  * @param da A pointer to the DynamicArray.
  * @param processor A function pointer to the function, which will process the items.
  * If the type of the array is VOID_PTR, the processor receives the item directly.
@@ -561,7 +568,8 @@ GALXLIB_API int apply_at_da(const DynamicArray *const da, const size_t index, co
 GALXLIB_API int process_da(DynamicArray *const da, void (*processor)(void *item_ptr));
 
 /**
- * Filters the given DynamicArray, leaving only the items selected by the filter function.
+ * Filters the given DynamicArray, leaving only the items selected by the filter function. 
+ * If the DynamicArray is empty, nothing is done and DA_SUCCESS is returned.
  * @param da A pointer to the DynamicArray.
  * @param filter A function pointer to the function, which will select the wanted items.
  * If the type of the array is VOID_PTR, the filter receives the item directly.
@@ -594,6 +602,8 @@ GALXLIB_API int filter_da(DynamicArray *const da, int (*filter)(void *item_ptr))
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
+ * 
+ * - DA_ARRAY_EMPTY
  * 
  * - DA_ERR_NULL_ARGUMENT
  * 
