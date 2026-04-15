@@ -82,8 +82,8 @@ static enum DynamicArrayError _expand_da(DynamicArray *const da)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	size_t freeSpace = da->capacity - da->count;
-	if (freeSpace < DYNAMIC_ARRAY_INIT_CAPACITY * 0.25)
+	size_t free_space = da->capacity - da->count;
+	if (free_space < DYNAMIC_ARRAY_INIT_CAPACITY * 0.25)
 	{
 		size_t new_capcity = da->capacity + DYNAMIC_ARRAY_INIT_CAPACITY;
 		/**
@@ -96,21 +96,23 @@ static enum DynamicArrayError _expand_da(DynamicArray *const da)
 	return DA_SUCCESS;
 }
 
-static enum DynamicArrayError _shrinkDA(DynamicArray *const da)
+static enum DynamicArrayError _shrink_da(DynamicArray *const da)
 {
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	size_t freeSpace = da->capacity - da->count;
-	if (freeSpace > DYNAMIC_ARRAY_INIT_CAPACITY * 2)
+	size_t free_space = da->capacity - da->count;
+	if (free_space > DYNAMIC_ARRAY_INIT_CAPACITY * 2)
 	{
-		size_t newCapacity = da->capacity - freeSpace * 0.5;
+		size_t new_capacity = da->capacity - free_space * 0.5;
 
 		// safe guard
-		if (newCapacity <= da->count)
-			newCapacity += da->count;
-
-		int err = _mem_realloc(da, newCapacity); // new_capcity is set in _mem_realloc
+		if (new_capacity <= da->count)
+			new_capacity += da->count;
+		/**
+		 * new_capcity is set in _mem_realloc.
+		 */
+		int err = _mem_realloc(da, new_capacity);
 		if (err)
 			return err;
 	}
@@ -337,7 +339,7 @@ static enum DynamicArrayError _remove_at(DynamicArray *const da, const size_t in
 	if (err_bounds_check)
 		return err_bounds_check;
 
-	int err_shrink = _shrinkDA(da);
+	int err_shrink = _shrink_da(da);
 	if (err_shrink)
 		return err_shrink;
 
@@ -836,7 +838,7 @@ int pop_da(DynamicArray *const da, void *const output)
     default:
 	return 3;
     }
-    _shrinkDA(da);
+    _shrink_da(da);
 
     return 0;
 }
@@ -859,7 +861,7 @@ enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const output)
 
 	*output = (int)((da->int_arr)[--(da->count)]);
 
-	int shrink_err = _shrinkDA(da);
+	int shrink_err = _shrink_da(da);
 	if (shrink_err)
 		return shrink_err;
 
@@ -883,7 +885,7 @@ enum DynamicArrayError pop_char_da(DynamicArray *const da, char *const output)
 
 	*output = (char)((da->char_arr)[--(da->count)]);
 
-	int shrink_err = _shrinkDA(da);
+	int shrink_err = _shrink_da(da);
 	if (shrink_err)
 		return shrink_err;
 
@@ -907,7 +909,7 @@ enum DynamicArrayError pop_float_da(DynamicArray *const da, float *const output)
 
 	*output = (float)((da->float_arr)[--(da->count)]);
 
-	int shrink_err = _shrinkDA(da);
+	int shrink_err = _shrink_da(da);
 	if (shrink_err)
 		return shrink_err;
 
@@ -931,7 +933,7 @@ enum DynamicArrayError pop_double_da(DynamicArray *const da, double *const outpu
 
 	*output = (double)((da->double_arr)[--(da->count)]);
 
-	int shrink_err = _shrinkDA(da);
+	int shrink_err = _shrink_da(da);
 	if (shrink_err)
 		return shrink_err;
 
@@ -955,7 +957,7 @@ enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **const output)
 
 	*output = (void *)((da->void_arr)[--(da->count)]);
 
-	int shrink_err = _shrinkDA(da);
+	int shrink_err = _shrink_da(da);
 	if (shrink_err)
 		return shrink_err;
 
@@ -997,7 +999,7 @@ int shift_da(DynamicArray *const da, void *const output)
     }
     _move_one_left(da);
     (da->count)--;
-    _shrinkDA(da);
+    _shrink_da(da);
 
     return 0;
 }
@@ -1026,7 +1028,7 @@ enum DynamicArrayError shift_int_da(DynamicArray *const da, int *const output)
 
 	(da->count)--;
 
-	int shrink_err = _shrinkDA(da);
+	int shrink_err = _shrink_da(da);
 	if (shrink_err)
 		return shrink_err;
 
@@ -1056,7 +1058,7 @@ enum DynamicArrayError shift_char_da(DynamicArray *const da, char *const output)
 
 	(da->count)--;
 
-	int shrink_err = _shrinkDA(da);
+	int shrink_err = _shrink_da(da);
 	if (shrink_err)
 		return shrink_err;
 
@@ -1086,7 +1088,7 @@ enum DynamicArrayError shift_float_da(DynamicArray *const da, float *const outpu
 
 	(da->count)--;
 
-	int shrink_err = _shrinkDA(da);
+	int shrink_err = _shrink_da(da);
 	if (shrink_err)
 		return shrink_err;
 
@@ -1116,7 +1118,7 @@ enum DynamicArrayError shift_double_da(DynamicArray *const da, double *const out
 
 	(da->count)--;
 
-	int shrink_err = _shrinkDA(da);
+	int shrink_err = _shrink_da(da);
 	if (shrink_err)
 		return shrink_err;
 
@@ -1146,7 +1148,7 @@ enum DynamicArrayError shift_ptr_da(DynamicArray *const da, void **const output)
 
 	(da->count)--;
 
-	int shrink_err = _shrinkDA(da);
+	int shrink_err = _shrink_da(da);
 	if (shrink_err)
 		return shrink_err;
 
