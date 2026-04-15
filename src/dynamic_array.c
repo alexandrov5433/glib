@@ -327,6 +327,10 @@ static enum DynamicArrayError _remove_at(DynamicArray *const da, const size_t in
 	if (da->count <= 0)
 		return DA_SUCCESS;
 
+	int err_bounds_check = _is_out_of_bounds(da, index);
+	if (err_bounds_check)
+		return err_bounds_check;
+
 	int err_shrink = _shrinkDA(da);
 	if (err_shrink)
 		return err_shrink;
@@ -1279,10 +1283,6 @@ enum DynamicArrayError at_da(DynamicArray *const da, size_t index, void **output
 {
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
-
-	int err_bounds_check = _is_out_of_bounds(da, index);
-	if (err_bounds_check)
-		return err_bounds_check;
 
 	int err_get_pointer = _get_pointer_at_index(da, index, output);
 	if (err_get_pointer)
