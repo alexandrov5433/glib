@@ -805,45 +805,6 @@ enum DynamicArrayError unshift_ptr_da(DynamicArray *const da, void *const item)
 
 // ##################   remove items   ##################
 
-/*
-int pop_da(DynamicArray *const da, void *const output)
-{
-    if (da == NULL || _is_empty(da))
-    {
-	return 1;
-    }
-
-    switch (da->type)
-    {
-    case 0:
-	// int
-	*(int *)output = (int)((da->int_arr)[--(da->count)]);
-	break;
-    case 1:
-	// char
-	*(char *)output = (char)((da->char_arr)[--(da->count)]);
-	break;
-    case 2:
-	// float
-	*(float *)output = (float)((da->float_arr)[--(da->count)]);
-	break;
-    case 3:
-	// double
-	*(double *)output = (double)((da->double_arr)[--(da->count)]);
-	break;
-    case 4:
-	// void**
-	*(void **)output = (void *)((da->void_arr)[--(da->count)]);
-	break;
-    default:
-	return 3;
-    }
-    _shrink_da(da);
-
-    return 0;
-}
- */
-
 enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const output)
 {
 	if (da == NULL)
@@ -963,47 +924,6 @@ enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **const output)
 
 	return DA_SUCCESS;
 }
-
-/*
-int shift_da(DynamicArray *const da, void *const output)
-{
-    if (da == NULL || _is_empty(da))
-    {
-	return 1;
-    }
-
-    switch (da->type)
-    {
-    case 0:
-	// int
-	*(int *)output = (int)((da->int_arr)[0]);
-	break;
-    case 1:
-	// char
-	*(char *)output = (char)((da->char_arr)[0]);
-	break;
-    case 2:
-	// float
-	*(float *)output = (float)((da->float_arr)[0]);
-	break;
-    case 3:
-	// double
-	*(double *)output = (double)((da->double_arr)[0]);
-	break;
-    case 4:
-	// void**
-	*(void **)output = (void *)((da->void_arr)[0]);
-	break;
-    default:
-	return 3;
-    }
-    _move_one_left(da);
-    (da->count)--;
-    _shrink_da(da);
-
-    return 0;
-}
- */
 
 enum DynamicArrayError shift_int_da(DynamicArray *const da, int *const output)
 {
