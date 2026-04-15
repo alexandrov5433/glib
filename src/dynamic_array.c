@@ -1386,34 +1386,34 @@ enum DynamicArrayError index_of_da(DynamicArray *const da, size_t *const output,
 
 	for (size_t i = 0; i < da->count; ++i)
 	{
-		int isEqual = 0;
+		int is_equal = 0;
 		switch (da->type)
 		{
 		case 0:
 			// int
-			isEqual = ((int)(da->int_arr)[i]) == *(int *)value ? 1 : 0;
+			is_equal = ((int)(da->int_arr)[i]) == *(int *)value ? 1 : 0;
 			break;
 		case 1:
 			// char
-			isEqual = ((char)(da->char_arr)[i]) == *(char *)value ? 1 : 0;
+			is_equal = ((char)(da->char_arr)[i]) == *(char *)value ? 1 : 0;
 			break;
 		case 2:
 			// float
-			isEqual = ((float)(da->float_arr)[i]) == *(float *)value ? 1 : 0;
+			is_equal = ((float)(da->float_arr)[i]) == *(float *)value ? 1 : 0;
 			break;
 		case 3:
 			// double
-			isEqual = ((double)(da->double_arr)[i]) == *(double *)value ? 1 : 0;
+			is_equal = ((double)(da->double_arr)[i]) == *(double *)value ? 1 : 0;
 			break;
 		case 4:
 			// void*
-			isEqual = ((void *)(da->void_arr)[i]) == (void *)value ? 1 : 0;
+			is_equal = ((void *)(da->void_arr)[i]) == (void *)value ? 1 : 0;
 			break;
 		default:
 			return DA_ERR_TYPE_UNKNOWN;
 		}
 
-		if (isEqual)
+		if (is_equal)
 		{
 			*output = i;
 			return DA_SUCCESS;
