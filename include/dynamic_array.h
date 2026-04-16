@@ -35,6 +35,7 @@ enum DynamicArrayError
 };
 
 /**
+ * @enum DynamicArrayType
  * @brief The enumeration of the types, which are allowed in the array.
  */
 enum DynamicArrayType
@@ -47,6 +48,7 @@ enum DynamicArrayType
 };
 
 /**
+ * @struct DynamicArray
  * @brief The stucture containing the actual array and all other required data.
  */
 typedef struct DynamicArray
