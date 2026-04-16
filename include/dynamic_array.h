@@ -48,10 +48,6 @@ enum DynamicArrayType
 
 /**
  * @brief The stucture containing the actual array and all other required data.
- * @param count The current number of items in the array.
- * @param capacity The total number of places (indexes) in the array. This is not the total allocated memory.
- * @param single_item_size The size in bytes of a singe item contained in the array.
- * @param type Indicates the type of items contained in the array.
  */
 typedef struct DynamicArray
 {
@@ -63,24 +59,24 @@ typedef struct DynamicArray
         double *double_arr;
         void **void_arr;
     };
-    size_t count;
-    size_t capacity;
-    size_t single_item_size;
-    enum DynamicArrayType type;
+    size_t count;               /**< The current number of items in the array. */
+    size_t capacity;            /**< The total number of places (indexes) in the array. This is not the total allocated memory. */
+    size_t single_item_size;    /**< The size in bytes of a singe item contained in the array. */
+    enum DynamicArrayType type; /**< Indicates the type of items contained in the array. */
 } DynamicArray;
 
 /**
  * Creates a new DynamicArray.
  * @param type The type of values the array will hold, according to the DynamicArrayType enum.
- * @param output A pointer, which will be updated with the adress of the new DynamicArray. 
+ * @param output A pointer, which will be updated with the adress of the new DynamicArray.
  * @return A value of the @ref DynamicArrayError:
- * 
+ *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_ITEM_SIZE_DETERMINATION
  */
 GALXLIB_API enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const type, DynamicArray **const output);
@@ -89,11 +85,11 @@ GALXLIB_API enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const
  * Frees the memory used by the DynamicArray. The items contained in the array are not freed.
  * @param da A pointer to the DynamicArray, which must be freed.
  * @return A value of the @ref DynamicArrayError:
- * 
+ *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API enum DynamicArrayError free_dynamic_array(DynamicArray *const da);
@@ -105,13 +101,13 @@ GALXLIB_API enum DynamicArrayError free_dynamic_array(DynamicArray *const da);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int push_int_da(DynamicArray *const da, int const item);
@@ -123,13 +119,13 @@ GALXLIB_API int push_int_da(DynamicArray *const da, int const item);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int push_char_da(DynamicArray *const da, char const item);
@@ -141,13 +137,13 @@ GALXLIB_API int push_char_da(DynamicArray *const da, char const item);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int push_float_da(DynamicArray *const da, float const item);
@@ -159,13 +155,13 @@ GALXLIB_API int push_float_da(DynamicArray *const da, float const item);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int push_double_da(DynamicArray *const da, double const item);
@@ -177,13 +173,13 @@ GALXLIB_API int push_double_da(DynamicArray *const da, double const item);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int push_ptr_da(DynamicArray *const da, void *const item);
@@ -195,13 +191,13 @@ GALXLIB_API int push_ptr_da(DynamicArray *const da, void *const item);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int unshift_int_da(DynamicArray *const da, int const item);
@@ -213,13 +209,13 @@ GALXLIB_API int unshift_int_da(DynamicArray *const da, int const item);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int unshift_char_da(DynamicArray *const da, char const item);
@@ -231,13 +227,13 @@ GALXLIB_API int unshift_char_da(DynamicArray *const da, char const item);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int unshift_float_da(DynamicArray *const da, float const item);
@@ -249,13 +245,13 @@ GALXLIB_API int unshift_float_da(DynamicArray *const da, float const item);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int unshift_double_da(DynamicArray *const da, double const item);
@@ -267,13 +263,13 @@ GALXLIB_API int unshift_double_da(DynamicArray *const da, double const item);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int unshift_ptr_da(DynamicArray *const da, void *const item);
@@ -285,15 +281,15 @@ GALXLIB_API int unshift_ptr_da(DynamicArray *const da, void *const item);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int pop_int_da(DynamicArray *const da, int *const output);
@@ -305,15 +301,15 @@ GALXLIB_API int pop_int_da(DynamicArray *const da, int *const output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int pop_char_da(DynamicArray *const da, char *const output);
@@ -325,15 +321,15 @@ GALXLIB_API int pop_char_da(DynamicArray *const da, char *const output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int pop_float_da(DynamicArray *const da, float *const output);
@@ -345,15 +341,15 @@ GALXLIB_API int pop_float_da(DynamicArray *const da, float *const output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int pop_double_da(DynamicArray *const da, double *const output);
@@ -365,15 +361,15 @@ GALXLIB_API int pop_double_da(DynamicArray *const da, double *const output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int pop_ptr_da(DynamicArray *const da, void **const output);
@@ -385,15 +381,15 @@ GALXLIB_API int pop_ptr_da(DynamicArray *const da, void **const output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int shift_int_da(DynamicArray *const da, int *const output);
@@ -405,15 +401,15 @@ GALXLIB_API int shift_int_da(DynamicArray *const da, int *const output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int shift_char_da(DynamicArray *const da, char *const output);
@@ -425,15 +421,15 @@ GALXLIB_API int shift_char_da(DynamicArray *const da, char *const output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int shift_float_da(DynamicArray *const da, float *const output);
@@ -445,15 +441,15 @@ GALXLIB_API int shift_float_da(DynamicArray *const da, float *const output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int shift_double_da(DynamicArray *const da, double *const output);
@@ -465,15 +461,15 @@ GALXLIB_API int shift_double_da(DynamicArray *const da, double *const output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API int shift_ptr_da(DynamicArray *const da, void **const output);
@@ -485,19 +481,19 @@ GALXLIB_API int shift_ptr_da(DynamicArray *const da, void **const output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_ITEM_SIZE_DETERMINATION
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API int remove_at_da(DynamicArray *const da, const size_t index);
@@ -510,21 +506,21 @@ GALXLIB_API int remove_at_da(DynamicArray *const da, const size_t index);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ITEM_NOT_FOUND
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_ITEM_SIZE_DETERMINATION
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API int remove_first_da(DynamicArray *const da, void *const target);
@@ -537,19 +533,19 @@ GALXLIB_API int remove_first_da(DynamicArray *const da, void *const target);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API int apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr));
 
 /**
- * Applies a processor function to every item in the DynamicArray, from left to right. 
+ * Applies a processor function to every item in the DynamicArray, from left to right.
  * If the DynamicArray is empty, nothing is done and DA_SUCCESS is returned.
  * @param da A pointer to the DynamicArray.
  * @param processor A function pointer to the function, which will process the items.
@@ -558,17 +554,17 @@ GALXLIB_API int apply_at_da(const DynamicArray *const da, const size_t index, co
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API int process_da(DynamicArray *const da, void (*processor)(void *item_ptr));
 
 /**
- * Filters the given DynamicArray, leaving only the items selected by the filter function. 
+ * Filters the given DynamicArray, leaving only the items selected by the filter function.
  * If the DynamicArray is empty, nothing is done and DA_SUCCESS is returned.
  * @param da A pointer to the DynamicArray.
  * @param filter A function pointer to the function, which will select the wanted items.
@@ -578,17 +574,17 @@ GALXLIB_API int process_da(DynamicArray *const da, void (*processor)(void *item_
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
- * 
+ *
  * - DA_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - DA_ERR_ITEM_SIZE_DETERMINATION
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
  */
 GALXLIB_API int filter_da(DynamicArray *const da, int (*filter)(void *item_ptr));
@@ -602,13 +598,13 @@ GALXLIB_API int filter_da(DynamicArray *const da, int (*filter)(void *item_ptr))
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ARRAY_EMPTY
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API int at_da(DynamicArray *const da, size_t index, void **output);
@@ -626,13 +622,13 @@ GALXLIB_API int at_da(DynamicArray *const da, size_t index, void **output);
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ITEM_NOT_FOUND
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API int find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
@@ -650,13 +646,13 @@ GALXLIB_API int find_da(DynamicArray *const da, void **const output, int (*selec
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ITEM_NOT_FOUND
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API int find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
@@ -674,13 +670,13 @@ GALXLIB_API int find_last_da(DynamicArray *const da, void **const output, int (*
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ITEM_NOT_FOUND
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API int find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
@@ -697,13 +693,13 @@ GALXLIB_API int find_index_da(DynamicArray *const da, size_t *const output, int 
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ITEM_NOT_FOUND
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API int find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
@@ -717,13 +713,13 @@ GALXLIB_API int find_last_index_da(DynamicArray *const da, size_t *const output,
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
- * 
+ *
  * - DA_ITEM_NOT_FOUND
- * 
+ *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_UNKNOWN
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API int index_of_da(DynamicArray *const da, size_t *const output, void *const value);
