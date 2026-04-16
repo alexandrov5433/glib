@@ -35,7 +35,7 @@ enum DynamicArrayError
 };
 
 /**
- * The enumeration of the types, which are allowed in the array.
+ * @brief The enumeration of the types, which are allowed in the array.
  */
 enum DynamicArrayType
 {
