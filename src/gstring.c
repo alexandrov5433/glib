@@ -96,7 +96,7 @@ static int _shift_count_right(size_t count, String *const str)
 
 static long _index_of_nt(const char *const charArr)
 {
-	for (long i = 0L; i <= STRING_LOOP_MAX_LIMIT; ++i)
+	for (long i = 0L; i <= GSTRING_LOOP_MAX_LIMIT; ++i)
 	{
 		if (charArr[i] == '\0')
 			return i;
