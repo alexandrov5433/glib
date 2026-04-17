@@ -3,184 +3,207 @@
 
 // ##################   static   ##################
 
-static char *_new_char_array(size_t length)
+static enum StringError _new_char_array(size_t length, char **const output)
 {
-	return (char *)malloc(sizeof(char) * length);
+	if (output == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+
+	char *arr = (char *)malloc(sizeof(char) * length);
+	if (arr == NULL)
+		return STR_ERR_MEMORY_ALLOCATION;
+
+	*output = arr;
+	return STR_SUCCESS;
 }
 
-static int _extend(size_t extraCharsCount, String *const str)
+static enum StringError _extend(String *const str_to_extend, size_t const extend_count)
 {
-	if (str == NULL)
-		return 1;
+	if (str_to_extend == NULL)
+		return STR_ERR_NULL_ARGUMENT;
 
-	size_t newSize = extraCharsCount + str->length;
-	if (newSize < str->length || newSize < 0)
-		return 3;
+	if (extend_count <= 0)
+		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
 
-	char *newStr = realloc(str->str, newSize);
-	if (newStr == NULL)
-		return 2;
+	size_t new_length = extend_count + str_to_extend->length;
 
-	str->str = newStr;
-	str->length = newSize;
-	return 0;
+	char *new_str = realloc(str_to_extend->str, new_length);
+	if (new_str == NULL)
+		return STR_ERR_MEMORY_ALLOCATION;
+
+	str_to_extend->str = new_str;
+	str_to_extend->length = new_length;
+	return STR_SUCCESS;
 }
 
-static int _shrink(size_t charCountToRemove, String *const str)
+static enum StringError _shrink(String *const str_to_shrink, size_t const shrink_count)
 {
-	if (str == NULL)
-		return 1;
+	if (str_to_shrink == NULL)
+		return STR_ERR_NULL_ARGUMENT;
 
-	if (str->length < charCountToRemove)
-		charCountToRemove = str->length;
+	if (str_to_shrink->length < shrink_count)
+		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
 
-	int newSize = str->length - charCountToRemove;
+	size_t new_size = str_to_shrink->length - shrink_count;
 
-	char *newStr = realloc(str->str, newSize);
-	if (newStr == NULL)
-		return 2;
+	char *new_str = realloc(str_to_shrink->str, new_size);
+	if (new_str == NULL)
+		return STR_ERR_MEMORY_ALLOCATION;
 
-	str->str = newStr;
-	str->length = newSize;
-	return 0;
+	str_to_shrink->str = new_str;
+	str_to_shrink->length = new_size;
+	return STR_SUCCESS;
 }
 
-static int _shift_one_right(String *const str)
+static enum StringError _shift_one_right(String *const str)
 {
 	if (str == NULL)
-		return 1;
+		return STR_ERR_NULL_ARGUMENT;
 
-	int err = _extend(1, str);
+	int err = _extend(str, 1);
 	if (err)
 		return err;
 
-	for (int i = str->length - 1; i > 0; --i)
-	{
+	for (size_t i = str->length - 1; i > 0; --i)
 		(str->str)[i] = (str->str)[i - 1];
-	}
 
 	return 0;
 }
 
 /**
- * Also extends memory and modifies the length property of String.
+ * @brief Eextends memory, modifies the length property of the String and shifts all characters to the right.
  */
-static int _shift_count_right(size_t count, String *const str)
+static enum StringError _shift_count_right(String *const str, size_t const count)
 {
 	if (str == NULL)
-		return 1;
+		return STR_ERR_NULL_ARGUMENT;
 
-	size_t newLength = count + str->length;
+	if (count <= 0)
+		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
 
-	char *newArr = _new_char_array(newLength);
-	if (newArr == NULL)
-		return 2;
+	size_t new_length = count + str->length;
 
-	for (size_t i = 0; i < count; ++i)
-	{
-		newArr[i] = '#';
-	}
+	char *new_arr = NULL;
+	int err_new_arr = _new_char_array(new_length, &new_arr);
+	if (err_new_arr)
+		return err_new_arr;
 
 	size_t j = 0;
-	for (size_t i = count; i < newLength; ++i)
+	for (size_t i = count; i < new_length; ++i)
 	{
-		newArr[i] = (str->str)[j++];
+		new_arr[i] = (str->str)[j++];
 	}
 
 	free(str->str);
-	str->str = newArr;
-	str->length = newLength;
+	str->str = new_arr;
+	str->length = new_length;
 
-	return 0;
+	return STR_SUCCESS;
 }
 
-static long _index_of_nt(const char *const charArr)
+static enum StringError _index_of_nt(const char *const char_arr, size_t *const output)
 {
-	for (long i = 0L; i <= GSTRING_LOOP_MAX_LIMIT; ++i)
+	if (char_arr == NULL || output == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+
+	for (size_t i = 0L; i <= GSTRING_LOOP_MAX_LIMIT; ++i)
 	{
-		if (charArr[i] == '\0')
-			return i;
+		if (char_arr[i] == '\0')
+		{
+			*output = i;
+			return STR_SUCCESS;
+		}
 	}
-	return -1L;
+	return STR_ERR_LOOP_MAX_LIMIT;
 }
 
 /**
- * Copies count characters from source to dest.
+ * @brief Copies count characters from source to dest.
  * The process starts from index 0 for both source and dest.
  */
-static int _copy_chars(const char *const source, char *const dest, size_t count)
+static enum StringError _copy_chars(const char *const source, char *const dest, size_t const length)
 {
 	if (source == NULL || dest == NULL)
-		return 1;
+		return STR_ERR_NULL_ARGUMENT;
 
-	for (size_t i = 0; i < count; ++i)
-	{
+	for (size_t i = 0; i < length; ++i)
 		dest[i] = source[i];
-	}
-	return 0;
+
+	return STR_SUCCESS;
 }
 
-static int _duplicate_char_array(const char *const charArr, size_t length, char **const output)
+static int _duplicate_char_array(const char *const char_arr, size_t const length, char **const output)
 {
-	if (charArr == NULL)
-		return 1;
+	if (char_arr == NULL || output == NULL)
+		return STR_ERR_NULL_ARGUMENT;
 
-	char *newArr = _new_char_array(length);
-	if (newArr == NULL)
-		return 2;
+	char *new_arr = NULL;
+	int err_new_arr = _new_char_array(length, &new_arr);
+	if (err_new_arr)
+		return err_new_arr;
 
-	if (_copy_chars(charArr, newArr, length))
+	int err_copy = _copy_chars(char_arr, new_arr, length);
+	if (err_copy)
 	{
-		free(newArr);
-		return 1;
+		free(new_arr);
+		return err_copy;
 	}
 
-	*output = newArr;
-	return 0;
+	*output = new_arr;
+	return STR_SUCCESS;
 }
 
 // ##################   public   ##################
 
-String *new_string(const char *const char_arr, size_t length)
+enum StringError new_string(const char *const char_arr, size_t length, String **const output)
 {
-	String *newString = malloc(sizeof(String));
-	if (newString == NULL)
-		return NULL;
+	if (output == NULL)
+		return STR_ERR_NULL_ARGUMENT;
 
-	char *str = _new_char_array(length);
-	if (str == NULL)
+	if (char_arr == NULL && length != 0)
+		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
+	if (char_arr != NULL && length == 0)
+		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
+
+	String *new_str = malloc(sizeof(String));
+	if (new_str == NULL)
+		return STR_ERR_MEMORY_ALLOCATION;
+
+	char *str = NULL;
+	int err_arr_init = _new_char_array(length, &str);
+	if (err_arr_init)
 	{
-		free(newString);
-		return NULL;
+		free(new_str);
+		return err_arr_init;
 	}
 
-	if (str == NULL || length == 0)
-	{
-		newString->str = str;
-		newString->length = 0;
-		return newString;
-	}
+	if (char_arr == NULL && length == 0)
+		goto _end_stage;
 
-	if (_copy_chars(char_arr, str, length))
+	int err_copy = _copy_chars(char_arr, str, length);
+	if (err_copy)
 	{
-		free(newString);
+		free(new_str);
 		free(str);
-		return NULL;
+		return err_copy;
 	}
 
-	newString->str = str;
-	newString->length = length;
+_end_stage:
+	new_str->str = str;
+	new_str->length = length;
+	*output = new_str;
 
-	return newString;
+	return STR_SUCCESS;
 }
 
-void free_string(String *str)
+enum StringError free_string(String *str)
 {
 	if (str == NULL)
-		return;
+		return STR_ERR_NULL_ARGUMENT;
 
 	free(str->str);
 	free(str);
+
+	return STR_SUCCESS;
 }
 
 int append_char(char c, String *const str)

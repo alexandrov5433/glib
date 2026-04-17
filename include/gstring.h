@@ -2,7 +2,7 @@
 #define GALXLIB_STRING_H
 
 #include <stddef.h>
-#include <stdlib.h>
+#include <stdint.h>
 
 #ifdef _WIN32
 #ifdef GALXLIB_EXPORTS
@@ -15,7 +15,7 @@
 #endif
 
 #ifndef GSTRING_LOOP_MAX_LIMIT
-#define GSTRING_LOOP_MAX_LIMIT 2100000000L
+#define GSTRING_LOOP_MAX_LIMIT 2000000000UL
 #endif
 
 #ifndef ANSI_COLOR_RED
@@ -47,31 +47,57 @@
 #endif
 
 /**
- * @param str An array of characters.
- * @param length The number of characters.
+ * @enum StringError
+ * @brief The error codes returned by the String functions.
+ */
+enum StringError
+{
+    STR_SUCCESS = 0,                         /**< (0) Successful execution of the called function. */
+    STR_ERR_NULL_ARGUMENT = 1,               /**< (1) One or more arguments are NULL. */
+    STR_ERR_MEMORY_ALLOCATION = 2,           /**< (2) Failed to allocate or reallocate memory. */
+    STR_ERR_INDEX_OUT_OF_BOUNDS = 3,         /**< (3) The targeted index is outside of the boundaries of the String. */
+    STR_ERR_INVALID_ARGUMENT_DIMENTIONS = 4, /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
+    STR_ERR_LOOP_MAX_LIMIT = 5,              /**< (5) A null-terminator character '\0' was not found among the first GSTRING_LOOP_MAX_LIMIT characters of the given character array. */
+};
+
+/**
+ * @struct String
+ * @brief The structure containing the actual character array and number of elements contained in it.
  */
 typedef struct String
 {
-    size_t length;
-    char *str;
+    size_t length; /**< The number of characters in the array. */
+    char *str;     /**< The character array. */
 } String;
 
 /**
  * Creates a new String.
- * @param char_arr A pointer to a character array. If NULL, a String with 0 length will be created.
- * The content of the array is copied, therefore it can be freed.
+ * @param char_arr A pointer to a character array. The content of the character array is copied, therefore it can be freed.
+ * If NULL, length argument must be 0 and a String with 0 length will be created.
  * @param length The number of characters, which will be copied to the String.
- * If 0, a String with 0 length will be created and nothing is copied.
- * @returns A pointer to the new String on success.
- * NULL on failure, because of failed memory allocation or failed character coping.
+ * If 0, char_arr argument must be NULL and a String with 0 length will be created.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_NULL_ARGUMENT
  */
-GALXLIB_API String *new_string(const char *const char_arr, size_t length);
+GALXLIB_API enum StringError new_string(const char *const char_arr, size_t length, String **const output);
 
 /**
  * Frees the memory of the String.
- * @param str A pointer to the String, which must be freed. If NULL, nothing is done.
+ * @param str A pointer to the String, which must be freed.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
  */
-GALXLIB_API void free_string(String *str);
+GALXLIB_API enum StringError free_string(String *str);
 
 /**
  * Appends the character to the end of the String.
@@ -206,7 +232,7 @@ GALXLIB_API int duplicate_str(const String *const source, String **const output)
  * @param source A pointer to the String, from which the character array will be copied.
  * @param output A double character array pointer, where the copy will be placed.
  * @returns 0 on success. On failure:
- * 
+ *
  * 1 if the source argument is NULL.
  *
  * 2 if memory could not be allocated.
@@ -218,11 +244,11 @@ GALXLIB_API int get_raw(const String *const source, char **const output);
  * @param source A pointer to the String, from which the character array will be copied.
  * @param output A double character array pointer, where the copy will be placed.
  * @returns 0 on success. On failure:
- * 
+ *
  * 1 if the source argument is NULL.
  *
  * 2 if memory could not be allocated.
- * 
+ *
  * 3 if the updated size of the String is not sufficient.
  */
 GALXLIB_API int get_raw_nt(const String *const source, char **const output);
@@ -230,10 +256,10 @@ GALXLIB_API int get_raw_nt(const String *const source, char **const output);
 /**
  * Filters the characters in the String.
  * @param str A pointer to the String, which must be filtered.
- * @param filter A function pointer to the function, which will select which characters are to stay. 
+ * @param filter A function pointer to the function, which will select which characters are to stay.
  * The filter returns 1 if the character is to STAY, 0 otherwise.
  * @returns 0 on success. On failure:
- * 
+ *
  * 1 if the source argument is NULL.
  *
  * 2 if memory could not be allocated.
@@ -241,31 +267,31 @@ GALXLIB_API int get_raw_nt(const String *const source, char **const output);
 GALXLIB_API int filter_str(String *const str, int (*filter)(char c));
 
 /**
- * Replaces all characters in the String, which match, with the given character. 
- * If the length property of the String is 0, nothing is done an 0 is returned. 
+ * Replaces all characters in the String, which match, with the given character.
+ * If the length property of the String is 0, nothing is done an 0 is returned.
  * The length property of the String is not changed.
  * @param str A pointer to the String, which must be processed.
  * @param to_replace The character which must be replaced.
  * @param replacement The character which will be placed on the index of the character to_replace.
  * @returns 0 on success. On failure:
- * 
+ *
  * 1 if the str argument is NULL.
  */
 GALXLIB_API int replace_char(String *const str, const char to_replace, const char replacement);
 
 /**
- * Removes all instances of the character from the String. 
- * If the length property of the String is 0, nothing is done an 0 is returned. 
+ * Removes all instances of the character from the String.
+ * If the length property of the String is 0, nothing is done an 0 is returned.
  * The new length property of the String is equal to the original length minus the count of the removed character instances.
  * @param str A pointer to the String, which must be processed.
  * @param to_remove The character which must be removed. All instances are removed.
  * @returns 0 on success. On failure:
- * 
+ *
  * 1 if the str argument is NULL.
- * 
+ *
  * 2 if memory for a new character array could not be allocated (malloc).
- * 
- * 3 if memory could not be reallocated (realloc). 
+ *
+ * 3 if memory could not be reallocated (realloc).
  */
 GALXLIB_API int remove_char(String *const str, const char to_remove);
 
