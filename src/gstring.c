@@ -59,14 +59,10 @@ static enum StringError _shift_one_right(String *const str)
 	if (str == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
-	int err = _extend(str, 1);
-	if (err)
-		return err;
-
 	for (size_t i = str->length - 1; i > 0; --i)
 		(str->str)[i] = (str->str)[i - 1];
 
-	return 0;
+	return STR_SUCCESS;
 }
 
 /**
@@ -131,7 +127,7 @@ static enum StringError _copy_chars(const char *const source, char *const dest, 
 	return STR_SUCCESS;
 }
 
-static int _duplicate_char_array(const char *const char_arr, size_t const length, char **const output)
+static enum StringError _duplicate_char_array(const char *const char_arr, size_t const length, char **const output)
 {
 	if (char_arr == NULL || output == NULL)
 		return STR_ERR_NULL_ARGUMENT;
@@ -206,106 +202,123 @@ enum StringError free_string(String *str)
 	return STR_SUCCESS;
 }
 
-int append_char(char c, String *const str)
+enum StringError append_char(String *const str, const char c)
 {
 	if (str == NULL)
-		return 1;
+		return STR_ERR_NULL_ARGUMENT;
 
-	int err = _extend(1, str);
+	int err = _extend(str, 1);
 	if (err)
 		return err;
 
 	(str->str)[str->length - 1] = c;
 
-	return 0;
+	return STR_SUCCESS;
 }
 
-int append_char_array(const char *const charArr, size_t copyCount, String *const str)
+enum StringError append_char_array(String *const str_dest, const char *const source, const size_t source_length)
 {
-	if (charArr == NULL || str == NULL)
-		return 1;
+	if (source == NULL || str_dest == NULL)
+		return STR_ERR_NULL_ARGUMENT;
 
-	int err = _extend(copyCount, str);
+	int err = _extend(str_dest, source_length);
 	if (err)
 		return err;
 
-	for (size_t i = 0; i < copyCount; ++i)
-	{
-		(str->str)[str->length - copyCount + i] = charArr[i];
-	}
+	for (size_t i = 0; i < source_length; ++i)
+		(str_dest->str)[str_dest->length - source_length + i] = source[i];
 
-	return 0;
+	return STR_SUCCESS;
 }
 
-int append_nt(const char *const charArr, String *const str)
+enum StringError append_nt(String *const str_dest, const char *const source)
 {
-	if (charArr == NULL || str == NULL)
-		return 1;
+	if (str_dest == NULL || source == NULL)
+		return STR_ERR_NULL_ARGUMENT;
 
-	long ntIndex = _index_of_nt(charArr);
-	if (ntIndex < 0)
-		return 4;
+	size_t nt_index = 0;
+	int err_index = _index_of_nt(source, &nt_index);
+	if (err_index)
+		return err_index;
 
-	// ntIndex is the length of the actual characters, because it is the index of the null-terminator
-	size_t extraSpace = ntIndex;
-	int err = _extend(extraSpace, str);
+	/**
+	 * nt_index is the length of source, because it is the index of the null-terminator.
+	 */
+	int err_extend = _extend(str_dest, nt_index);
+	if (err_extend)
+		return err_extend;
+
+	for (size_t i = 0; i < nt_index; ++i)
+		(str_dest->str)[str_dest->length - nt_index + i] = source[i];
+
+	return STR_SUCCESS;
+}
+
+enum StringError append_str(const String *const str_source, String *const str_dest)
+{
+	if (str_source == NULL || str_dest == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+
+	size_t old_dest_length = str_dest->length;
+
+	int err = _extend(str_dest, str_source->length);
 	if (err)
 		return err;
 
-	for (size_t i = 0; i < ntIndex; ++i)
+	for (size_t i = 0; i < str_source->length; ++i)
 	{
-		(str->str)[str->length - ntIndex + i] = charArr[i];
+		(str_dest->str)[old_dest_length + i] = (str_source->str)[i];
 	}
 
-	return 0;
+	return STR_SUCCESS;
 }
 
-int append_str(const String *const source, String *const dest)
-{
-	if (source == NULL || dest == NULL)
-		return 1;
-
-	size_t oldDestLength = dest->length;
-
-	int err = _extend(source->length, dest);
-	if (err)
-		return err;
-
-	for (size_t i = 0; i < source->length; ++i)
-	{
-		(dest->str)[oldDestLength + i] = (source->str)[i];
-	}
-
-	return 0;
-}
-
-int prepend_char(char c, String *const str)
+enum StringError prepend_char(String *const str, const char c)
 {
 	if (str == NULL)
-		return 1;
+		return STR_ERR_NULL_ARGUMENT;
 
-	int err = _shift_one_right(str);
-	if (err)
-		return err;
+	int err_extend = _extend(str, 1);
+	if (err_extend)
+		return err_extend;
+
+	int err_shift = _shift_one_right(str);
+	if (err_shift)
+		return err_shift;
 
 	(str->str)[0] = c;
 
-	return 0;
+	return STR_SUCCESS;
 }
 
-int prepend_char_array(const char *const charArr, size_t copyCount, String *const str)
+enum StringError prepend_char_array(String *const str_dest, const char *const source, const size_t source_length)
 {
-	if (charArr == NULL || str == NULL)
-		return 1;
+	if (str_dest == NULL || source == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+/* 
+	TODO: implement a String back-up system
+	String *str_backup = NULL;
+	int err_duplication  = duplicate_str(str_dest, &str_backup);
+	if (err_duplication)
+		return err_duplication;
+ */
+	int err_extend = _extend(str_dest, source_length);
+	if (err_extend)
+		return err_extend;
 
-	// TODO: on error revert and restore before returning
-	int err = _shift_count_right(copyCount, str);
-	if (err)
-		return err;
+	int err_shift = _shift_count_right(str_dest, source_length);
+	if (err_shift)
+	{
 
-	_copy_chars(charArr, str->str, copyCount);
+		// free_string(str_backup);
+		return err_shift;
+	}
 
-	return 0;
+	int err_copy = _copy_chars(source, str_dest->str, source_length);
+	if (err_copy)
+		return err_copy;
+
+	return STR_SUCCESS;
 }
 
 int prepend_nt(const char *const charArr, String *const str)
@@ -342,28 +355,28 @@ int prepend_str(const String *const source, String *const dest)
 	return 0;
 }
 
-int duplicate_str(const String *const source, String **const output)
+enum StringError duplicate_str(const String *const str_source, String **const output)
 {
-	if (source == NULL)
-		return 1;
+	if (str_source == NULL)
+		return STR_ERR_NULL_ARGUMENT;
 
-	String *newStr = malloc(sizeof(String));
-	if (newStr == NULL)
-		return 2;
+	String *str_duplicate = malloc(sizeof(String));
+	if (str_duplicate == NULL)
+		return STR_ERR_MEMORY_ALLOCATION;
 
-	char *str = NULL;
-	int err = _duplicate_char_array(source->str, source->length, &str);
-	if (err)
+	char *str_char_arr_duplicate = NULL;
+	int err_duplicate = _duplicate_char_array(str_source->str, str_source->length, &str_char_arr_duplicate);
+	if (err_duplicate)
 	{
-		free(newStr);
-		return err;
+		free(str_duplicate);
+		return err_duplicate;
 	}
 
-	newStr->str = str;
-	newStr->length = source->length;
-	*output = newStr;
+	str_duplicate->str = str_char_arr_duplicate;
+	str_duplicate->length = str_source->length;
+	*output = str_duplicate;
 
-	return 0;
+	return STR_SUCCESS;
 }
 
 int get_raw(const String *const source, char **const output)

@@ -101,91 +101,105 @@ GALXLIB_API enum StringError free_string(String *str);
 
 /**
  * Appends the character to the end of the String.
- * @param c The character to append.
  * @param str A pointer to the String, to which the character must be appended.
- * @returns 0 on success. On failure:
+ * @param c The character to append.
+ * @return A value of the @ref StringError:
  *
- * 1 if the str argument is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
- *
- * 3 if the updated size of the String is not sufficient.
+ * - STR_ERR_NULL_ARGUMENT
+ * 
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * 
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int append_char(char c, String *const str);
+GALXLIB_API enum StringError append_char(String *const str, const char c);
 
 /**
  * Appends a given count of the characters of a character array to the String.
- * @param charArr A character array containig the characters, which will be appended.
- * @param copyCount This is the number of characters, which will be copied, starting from index 0.
- * @param str A pointer to the String, to which the characters will be appended.
- * @returns 0 on success. On failure:
+ * @param str_dest A pointer to the String, to which the characters will be appended.
+ * @param source A character array containig the characters, which will be appended.
+ * @param source_length This is the number of characters, which will be copied, starting from index 0.
+ * @return A value of the @ref StringError:
  *
- * 1 if either of the charArr or str arguments is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
- *
- * 3 if the updated size of the String is not sufficient.
+ * - STR_ERR_NULL_ARGUMENT
+ * 
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * 
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int append_char_array(const char *const charArr, size_t copyCount, String *const str);
+GALXLIB_API enum StringError append_char_array(String *const str_dest, const char *const source, size_t source_length);
 
 /**
- * Appends all the characters of a character array, until a null-terminator '\0', to the end of the String.
- * @param charArr A character array containig the characters, which will be appended.
- * The charArr must be null-terminated.
- * If a null-terminator '\0' is not found among the first STRING_LOOP_MAX_LIMIT characters, error code 4 is returned.
- * @param str A pointer to the String, to which the characters will be appended.
- * @returns 0 on success. On failure:
+ * Appends all characters from a character array, until a null-terminator '\0', to the end of the String.
+ * @param str_dest A pointer to the String, to which the characters will be appended.
+ * @param source A character array containig the characters, which will be appended.
+ * The source must be a null-terminated character array.
+ * The null-terminator '\0' must be among the first GSTRING_LOOP_MAX_LIMIT characters.
+ * @return A value of the @ref StringError:
  *
- * 1 if either of the arguments is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
- *
- * 3 if the updated size of the String is not sufficient.
- *
- * 4 if a null-teminator '\0' was not found among the first STRING_LOOP_MAX_LIMIT characters.
+ * - STR_ERR_NULL_ARGUMENT
+ * 
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * 
+ * - STR_ERR_MEMORY_ALLOCATION
+ * 
+ * - STR_ERR_LOOP_MAX_LIMIT
  */
-GALXLIB_API int append_nt(const char *const charArr, String *const str);
+GALXLIB_API enum StringError append_nt(String *const str_dest, const char *const source);
 
 /**
- * Appends all the characters from one String to the other.
- * @param source A pointer to the String, from which the characters will copied.
- * @param dest A pointer to the String, to which the characters will be appended.
- * @returns 0 on success. On failure:
+ * Appends all the characters from one String to an other.
+ * @param str_source A pointer to the String, from which the characters will copied.
+ * @param str_dest A pointer to the String, to which the characters will be appended.
+ * @return A value of the @ref StringError:
  *
- * 1 if either of the arguments is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
- *
- * 3 if the updated size of the String is not sufficient.
+ * - STR_ERR_NULL_ARGUMENT
+ * 
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * 
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int append_str(const String *const source, String *const dest);
+GALXLIB_API enum StringError append_str(const String *const str_source, String *const str_dest);
 
 /**
  * Prepends the character to the start of the String.
- * @param c The character to prepend.
  * @param str A pointer to the String, to which the character must be prepended.
- * @returns 0 on success. On failure:
+ * @param c The character to prepend.
+ * @return A value of the @ref StringError:
  *
- * 1 if the str argument is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
- *
- * 3 if the updated size of the String is not sufficient.
+ * - STR_ERR_NULL_ARGUMENT
+ * 
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * 
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int prepend_char(char c, String *const str);
+GALXLIB_API enum StringError prepend_char(String *const str, const char c);
 
 /**
  * Prepends a given count of the characters of a character array to the start of the String.
- * @param charArr A character array containig the characters, which will be prepended.
- * @param copyCount This is the number of characters, which will be copied, starting from index 0.
- * @param str A pointer to the String, to which the characters will be prepended.
- * @returns 0 on success. On failure:
+ * @param str_dest A pointer to the String, to which the characters will be prepended.
+ * @param source A character array containig the characters, which will be prepended.
+ * @param source_length This is the number of characters, which will be copied, starting from index 0.
+ * @return A value of the @ref StringError:
  *
- * 1 if either of the charArr or str arguments is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
+ * - STR_ERR_NULL_ARGUMENT
+ * 
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * 
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int prepend_char_array(const char *const charArr, size_t copyCount, String *const str);
+GALXLIB_API enum StringError prepend_char_array(String *const str_dest, const char *const source, const size_t source_length);
 
 /**
  * Prepends all the characters of a character array, until a null-terminator '\0, to the start of the String.
@@ -217,15 +231,17 @@ GALXLIB_API int prepend_str(const String *const source, String *const dest);
 
 /**
  * Duplicates a String.
- * @param source A pointer to the String, which will be duplicated.
+ * @param str_source A pointer to the String, which will be duplicated.
  * @param output A double String pointer, where the address of the duplicate will be placed.
- * @returns 0 on success. On failure:
+ * @return A value of the @ref StringError:
  *
- * 1 if the source argument is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
+ * - STR_ERR_NULL_ARGUMENT
+ * 
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int duplicate_str(const String *const source, String **const output);
+GALXLIB_API enum StringError duplicate_str(const String *const str_source, String **const output);
 
 /**
  * Gives a copy of the character array found in the String.
