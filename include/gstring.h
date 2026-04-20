@@ -108,9 +108,9 @@ GALXLIB_API enum StringError free_string(String *str);
  * - STR_SUCCESS
  *
  * - STR_ERR_NULL_ARGUMENT
- * 
+ *
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
- * 
+ *
  * - STR_ERR_MEMORY_ALLOCATION
  */
 GALXLIB_API enum StringError append_char(String *const str, const char c);
@@ -125,9 +125,9 @@ GALXLIB_API enum StringError append_char(String *const str, const char c);
  * - STR_SUCCESS
  *
  * - STR_ERR_NULL_ARGUMENT
- * 
+ *
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
- * 
+ *
  * - STR_ERR_MEMORY_ALLOCATION
  */
 GALXLIB_API enum StringError append_char_array(String *const str_dest, const char *const source, size_t source_length);
@@ -143,11 +143,11 @@ GALXLIB_API enum StringError append_char_array(String *const str_dest, const cha
  * - STR_SUCCESS
  *
  * - STR_ERR_NULL_ARGUMENT
- * 
+ *
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
- * 
+ *
  * - STR_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - STR_ERR_LOOP_MAX_LIMIT
  */
 GALXLIB_API enum StringError append_nt(String *const str_dest, const char *const source);
@@ -161,9 +161,9 @@ GALXLIB_API enum StringError append_nt(String *const str_dest, const char *const
  * - STR_SUCCESS
  *
  * - STR_ERR_NULL_ARGUMENT
- * 
+ *
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
- * 
+ *
  * - STR_ERR_MEMORY_ALLOCATION
  */
 GALXLIB_API enum StringError append_str(const String *const str_source, String *const str_dest);
@@ -177,9 +177,9 @@ GALXLIB_API enum StringError append_str(const String *const str_source, String *
  * - STR_SUCCESS
  *
  * - STR_ERR_NULL_ARGUMENT
- * 
+ *
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
- * 
+ *
  * - STR_ERR_MEMORY_ALLOCATION
  */
 GALXLIB_API enum StringError prepend_char(String *const str, const char c);
@@ -194,40 +194,48 @@ GALXLIB_API enum StringError prepend_char(String *const str, const char c);
  * - STR_SUCCESS
  *
  * - STR_ERR_NULL_ARGUMENT
- * 
+ *
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
- * 
+ *
  * - STR_ERR_MEMORY_ALLOCATION
  */
 GALXLIB_API enum StringError prepend_char_array(String *const str_dest, const char *const source, const size_t source_length);
 
 /**
- * Prepends all the characters of a character array, until a null-terminator '\0, to the start of the String.
- * @param charArr A character array containig the characters, which will be prepended.
+ * Prepends all the characters of a character array, until a null-terminator '\0', to the start of the String.
+ * @param str_dest A pointer to the String, to which the characters will be prepended.
+ * @param source A character array containig the characters, which will be prepended.
  * The charArr must be null-terminated.
- * If a null-terminator '\0' is not found among the first STRING_LOOP_MAX_LIMIT characters, error code 4 is returned.
- * @param str A pointer to the String, to which the characters will be prepended.
- * @returns 0 on success. On failure:
+ * The null-terminator '\0' must be among the first GSTRING_LOOP_MAX_LIMIT characters.
+ * @return A value of the @ref StringError:
  *
- * 1 if either of the arguments is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
+ * - STR_ERR_NULL_ARGUMENT
  *
- * 4 if a null-teminator '\0' was not found among the first STRING_LOOP_MAX_LIMIT characters.
+ * - STR_ERR_LOOP_MAX_LIMIT
+ *
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int prepend_nt(const char *const charArr, String *const str);
+GALXLIB_API enum StringError prepend_nt(String *const str_dest, const char *const source);
 
 /**
  * Prepends all the characters from one String to the start of the other.
  * @param source A pointer to the String, from which the characters will copied.
  * @param dest A pointer to the String, to which the characters will be prepended.
- * @returns 0 on success. On failure:
+ * @return A value of the @ref StringError:
  *
- * 1 if either of the arguments is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int prepend_str(const String *const source, String *const dest);
+GALXLIB_API enum StringError prepend_str(const String *const source, String *const dest);
 
 /**
  * Duplicates a String.
@@ -238,7 +246,7 @@ GALXLIB_API int prepend_str(const String *const source, String *const dest);
  * - STR_SUCCESS
  *
  * - STR_ERR_NULL_ARGUMENT
- * 
+ *
  * - STR_ERR_MEMORY_ALLOCATION
  */
 GALXLIB_API enum StringError duplicate_str(const String *const str_source, String **const output);
@@ -247,40 +255,44 @@ GALXLIB_API enum StringError duplicate_str(const String *const str_source, Strin
  * Gives a copy of the character array found in the String.
  * @param source A pointer to the String, from which the character array will be copied.
  * @param output A double character array pointer, where the copy will be placed.
- * @returns 0 on success. On failure:
+ * @return A value of the @ref StringError:
  *
- * 1 if the source argument is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int get_raw(const String *const source, char **const output);
+GALXLIB_API enum StringError get_raw(const String *const source, char **const output);
 
 /**
- * Gives a null-terminated copy of the character array found in the String. String->str = "abc"; output = "abc\0"
+ * Gives a null-terminated copy of the character array found in the String.
  * @param source A pointer to the String, from which the character array will be copied.
- * @param output A double character array pointer, where the copy will be placed.
- * @returns 0 on success. On failure:
+ * @param output A character array pointer, where the copy will be placed.
+ * @return A value of the @ref StringError:
  *
- * 1 if the source argument is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
+ * - STR_ERR_NULL_ARGUMENT
  *
- * 3 if the updated size of the String is not sufficient.
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int get_raw_nt(const String *const source, char **const output);
+GALXLIB_API enum StringError get_raw_nt(const String *const source, char **const output);
 
 /**
  * Filters the characters in the String.
  * @param str A pointer to the String, which must be filtered.
  * @param filter A function pointer to the function, which will select which characters are to stay.
  * The filter returns 1 if the character is to STAY, 0 otherwise.
- * @returns 0 on success. On failure:
+ * @return A value of the @ref StringError:
  *
- * 1 if the source argument is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory could not be allocated.
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int filter_str(String *const str, int (*filter)(char c));
+GALXLIB_API enum StringError filter_str(String *const str, int (*filter)(char c));
 
 /**
  * Replaces all characters in the String, which match, with the given character.
@@ -289,26 +301,26 @@ GALXLIB_API int filter_str(String *const str, int (*filter)(char c));
  * @param str A pointer to the String, which must be processed.
  * @param to_replace The character which must be replaced.
  * @param replacement The character which will be placed on the index of the character to_replace.
- * @returns 0 on success. On failure:
+ * @return A value of the @ref StringError:
  *
- * 1 if the str argument is NULL.
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
  */
-GALXLIB_API int replace_char(String *const str, const char to_replace, const char replacement);
+GALXLIB_API enum StringError replace_char(String *const str, const char to_replace, const char replacement);
 
 /**
  * Removes all instances of the character from the String.
- * If the length property of the String is 0, nothing is done an 0 is returned.
- * The new length property of the String is equal to the original length minus the count of the removed character instances.
  * @param str A pointer to the String, which must be processed.
  * @param to_remove The character which must be removed. All instances are removed.
- * @returns 0 on success. On failure:
+ * @return A value of the @ref StringError:
  *
- * 1 if the str argument is NULL.
+ * - STR_SUCCESS
  *
- * 2 if memory for a new character array could not be allocated (malloc).
- *
- * 3 if memory could not be reallocated (realloc).
+ * - STR_ERR_NULL_ARGUMENT
+ * 
+ * - STR_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API int remove_char(String *const str, const char to_remove);
+GALXLIB_API enum StringError remove_char(String *const str, const char to_remove);
 
 #endif

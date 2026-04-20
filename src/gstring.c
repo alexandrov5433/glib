@@ -116,12 +116,12 @@ static enum StringError _index_of_nt(const char *const char_arr, size_t *const o
  * @brief Copies count characters from source to dest.
  * The process starts from index 0 for both source and dest.
  */
-static enum StringError _copy_chars(const char *const source, char *const dest, size_t const length)
+static enum StringError _copy_chars(const char *const source, char *const dest, size_t const count)
 {
 	if (source == NULL || dest == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
-	for (size_t i = 0; i < length; ++i)
+	for (size_t i = 0; i < count; ++i)
 		dest[i] = source[i];
 
 	return STR_SUCCESS;
@@ -295,13 +295,13 @@ enum StringError prepend_char_array(String *const str_dest, const char *const so
 {
 	if (str_dest == NULL || source == NULL)
 		return STR_ERR_NULL_ARGUMENT;
-/* 
-	TODO: implement a String back-up system
-	String *str_backup = NULL;
-	int err_duplication  = duplicate_str(str_dest, &str_backup);
-	if (err_duplication)
-		return err_duplication;
- */
+	/*
+		TODO: implement a String back-up system
+		String *str_backup = NULL;
+		int err_duplication  = duplicate_str(str_dest, &str_backup);
+		if (err_duplication)
+			return err_duplication;
+	 */
 	int err_extend = _extend(str_dest, source_length);
 	if (err_extend)
 		return err_extend;
@@ -321,38 +321,43 @@ enum StringError prepend_char_array(String *const str_dest, const char *const so
 	return STR_SUCCESS;
 }
 
-int prepend_nt(const char *const charArr, String *const str)
+enum StringError prepend_nt(String *const str_dest, const char *const source)
 {
-	if (charArr == NULL || str == NULL)
-		return 1;
+	if (str_dest == NULL || source == NULL)
+		return STR_ERR_NULL_ARGUMENT;
 
-	long ntIndex = _index_of_nt(charArr);
-	if (ntIndex < 0)
-		return 4;
+	size_t nt_index = 0;
+	int err_index = _index_of_nt(source, &nt_index);
+	if (err_index)
+		return err_index;
+	/**
+	 * nt_index is the length of the actual characters, because it is the index of the null-terminator.
+	 */
+	int err_shift = _shift_count_right(str_dest, nt_index);
+	if (err_shift)
+		return err_shift;
 
-	// ntIndex is the length of the actual characters, because it is the index of the null-terminator
-	size_t copyLength = ntIndex;
-	int err = _shift_count_right(copyLength, str);
-	if (err)
-		return err;
+	int err_copy = _copy_chars(source, str_dest->str, nt_index);
+	if (err_copy)
+		return err_copy;
 
-	_copy_chars(charArr, str->str, copyLength);
-
-	return 0;
+	return STR_SUCCESS;
 }
 
-int prepend_str(const String *const source, String *const dest)
+enum StringError prepend_str(const String *const source, String *const dest)
 {
 	if (source == NULL || dest == NULL)
-		return 1;
+		return STR_ERR_NULL_ARGUMENT;
 
-	int err = _shift_count_right(source->length, dest);
-	if (err)
-		return err;
+	int err_shift = _shift_count_right(source->length, dest);
+	if (err_shift)
+		return err_shift;
 
-	_copy_chars(source->str, dest->str, source->length);
+	int err_copy = _copy_chars(source->str, dest->str, source->length);
+	if (err_copy)
+		return err_copy;
 
-	return 0;
+	return STR_SUCCESS;
 }
 
 enum StringError duplicate_str(const String *const str_source, String **const output)
@@ -379,92 +384,80 @@ enum StringError duplicate_str(const String *const str_source, String **const ou
 	return STR_SUCCESS;
 }
 
-int get_raw(const String *const source, char **const output)
+enum StringError get_raw(const String *const source, char **const output)
 {
-	if (source == NULL)
-		return 1;
+	if (source == NULL || output == NULL)
+		return STR_ERR_NULL_ARGUMENT;
 
 	char *result = NULL;
-	int duplicationErr = _duplicate_char_array(source->str, source->length, &result);
-	if (duplicationErr)
-		return duplicationErr;
-
-	*output = result;
-
-	return 0;
-}
-
-int get_raw_nt(const String *const source, char **const output)
-{
-	if (source == NULL)
-		return 1;
-
-	String *tempCopy = NULL;
-	int err = duplicate_str(source, &tempCopy);
+	int err = _duplicate_char_array(source->str, source->length, &result);
 	if (err)
 		return err;
 
-	int appendErr = append_char('\0', tempCopy);
-	if (appendErr)
-	{
-		free_string(tempCopy);
-		return appendErr;
-	}
-
-	char *result = NULL;
-	int duplicationErr = _duplicate_char_array(tempCopy->str, tempCopy->length, &result);
-	if (duplicationErr)
-	{
-		free_string(tempCopy);
-		return duplicationErr;
-	}
-
 	*output = result;
 
-	free_string(tempCopy);
-	return 0;
+	return STR_SUCCESS;
 }
 
-int filter_str(String *const str, int (*filter)(char c))
+enum StringError get_raw_nt(const String *const source, char **const output)
+{
+	if (source == NULL || output == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+
+	char *new_arr = NULL;
+	int err_new_arr = _new_char_array(source->length + 1, &new_arr);
+	if (err_new_arr)
+		return err_new_arr;
+
+	int err_copy = _copy_chars(source->str, new_arr, source->length);
+	if (err_copy)
+		return err_copy;
+
+	new_arr[source->length] = '\0';
+	*output = new_arr;
+
+	return STR_SUCCESS;
+}
+
+enum StringError filter_str(String *const str, int (*filter)(char c))
 {
 	if (str == NULL || filter == NULL)
-		return 1;
+		return STR_ERR_NULL_ARGUMENT;
 
-	char *wantedChars = _new_char_array(str->length);
-	size_t wantedCount = 0;
-	if (wantedChars == NULL)
-		return 2;
+	char *wanted_chars = NULL;
+	int err_new_arr = _new_char_array(str->length, &wanted_chars);
+	if (err_new_arr)
+		return err_new_arr;
 
-	// filter return: 1 -> stay; 0 -> remove
+	size_t wanted_count = 0;
+
+	/* filter return: 1 -> stay; 0 -> remove */
 	for (size_t i = 0; i < str->length; ++i)
 	{
 		char c = (str->str)[i];
-		if (filter(c))
-		{
-			// filter returned 1; char is wanted
-			wantedChars[wantedCount++] = c;
-		}
+		if (filter(c) == 1)
+			wanted_chars[wanted_count++] = c;
 	}
 
-	// wantedCount is now the length, because of the last post-incrementation
-	char *resizedWantedChars = realloc(wantedChars, sizeof(char) * wantedCount);
-	if (resizedWantedChars == NULL)
-		return 2;
+	/* wantedCount is now the length, because of the last post-incrementation */
+	char *resized_wanted_chars = realloc(wanted_chars, sizeof(char) * wanted_count);
+	if (resized_wanted_chars == NULL)
+		return STR_ERR_MEMORY_ALLOCATION;
 
 	free(str->str);
-	str->str = resizedWantedChars;
-	str->length = wantedCount;
+	str->str = resized_wanted_chars;
+	str->length = wanted_count;
 
-	return 0;
+	return STR_SUCCESS;
 }
 
-int replace_char(String *const str, const char to_replace, const char replacement)
+enum StringError replace_char(String *const str, const char to_replace, const char replacement)
 {
 	if (str == NULL)
-		return 1;
+		return STR_ERR_NULL_ARGUMENT	;
 
 	if (str->length == 0)
-		return 0;
+		return STR_SUCCESS;
 
 	for (size_t i = 0; i < str->length; ++i)
 	{
@@ -472,35 +465,36 @@ int replace_char(String *const str, const char to_replace, const char replacemen
 			(str->str)[i] = replacement;
 	}
 
-	return 0;
+	return STR_SUCCESS;
 }
 
-int remove_char(String *const str, const char to_remove)
+enum StringError remove_char(String *const str, const char to_remove)
 {
 	if (str == NULL)
-		return 1;
+		return STR_ERR_NULL_ARGUMENT;
 
 	if (str->length == 0)
-		return 0;
+		return STR_SUCCESS;
 
-	char *tmp_str = _new_char_array(str->length);
-	if (tmp_str == NULL)
-		return 2;
+	char *tmp_arr = NULL;
+	int err_new_arr = _new_char_array(str->length, &tmp_arr);
+	if (err_new_arr)
+		return err_new_arr;
 
-	size_t tmp_str_length = 0;
+	size_t tmp_arr_length = 0;
 	for (size_t i = 0; i < str->length; ++i)
 	{
 		if ((str->str)[i] != to_remove)
-			tmp_str[tmp_str_length++] = (str->str)[i];
+			tmp_arr[tmp_arr_length++] = (str->str)[i];
 	}
 
-	char *new_str = realloc(tmp_str, sizeof(char) * tmp_str_length);
+	char *new_str = realloc(tmp_arr, sizeof(char) * tmp_arr_length);
 	if (new_str == NULL)
-		return 3;
+		return STR_ERR_MEMORY_ALLOCATION;
 
 	free(str->str);
 	str->str = new_str;
-	str->length = tmp_str_length;
+	str->length = tmp_arr_length;
 
-	return 0;
+	return STR_SUCCESS;
 }
