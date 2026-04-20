@@ -349,7 +349,7 @@ enum StringError prepend_str(const String *const source, String *const dest)
 	if (source == NULL || dest == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
-	int err_shift = _shift_count_right(source->length, dest);
+	int err_shift = _shift_count_right(dest, source->length);
 	if (err_shift)
 		return err_shift;
 
