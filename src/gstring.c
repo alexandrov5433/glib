@@ -376,7 +376,7 @@ enum StringError prepend_str(const String *const source, String *const dest)
 
 enum StringError duplicate_str(const String *const str_source, String **const output)
 {
-	if (str_source == NULL)
+	if (str_source == NULL || output == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
 	String *str_duplicate = malloc(sizeof(String));

@@ -131,10 +131,10 @@ void test_gstring(void)
 	   get_raw
 	   ========================= */
 	char *raw = NULL;
-	EXPECT_NOT_NULL(raw);
 	EXPECT_EQ(get_raw(NULL, &raw), 1);
 	EXPECT_EQ(get_raw(s1, NULL), 1);
 	EXPECT_EQ(get_raw(s1, &raw), 0);
+	EXPECT_NOT_NULL(raw);
 	EXPECT_STR_EQ(raw, s1->str, s1->length);
 	free(raw);
 
@@ -142,9 +142,10 @@ void test_gstring(void)
 	   get_raw_nt
 	   ========================= */
 	char *raw_nt = NULL;
-	EXPECT_NOT_NULL(raw_nt);
 	EXPECT_EQ(get_raw_nt(NULL, &raw_nt), 1);
 	EXPECT_EQ(get_raw_nt(s1, NULL), 1);
+	EXPECT_EQ(get_raw_nt(s1, &raw_nt), 0);
+	EXPECT_NOT_NULL(raw_nt);
 	EXPECT_EQ(raw_nt[s1->length], '\0');
 	EXPECT_STR_EQ(raw_nt, s1->str, s1->length);
 	free(raw_nt);
