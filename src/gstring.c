@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdarg.h>
 #include "../include/gstring.h"
 
 // ##################   static   ##################
@@ -454,7 +455,7 @@ enum StringError filter_str(String *const str, int (*filter)(char c))
 enum StringError replace_char(String *const str, const char to_replace, const char replacement)
 {
 	if (str == NULL)
-		return STR_ERR_NULL_ARGUMENT	;
+		return STR_ERR_NULL_ARGUMENT;
 
 	if (str->length == 0)
 		return STR_SUCCESS;
@@ -495,6 +496,43 @@ enum StringError remove_char(String *const str, const char to_remove)
 	free(str->str);
 	str->str = new_str;
 	str->length = tmp_arr_length;
+
+	return STR_SUCCESS;
+}
+
+enum StringError concat(String **const output, const size_t n_str, ...)
+{
+	/**
+	 * Documentation on stdarg.h and variadic functions.
+	 * https://en.cppreference.com/c/header/stdarg
+	 * https://en.cppreference.com/c/variadic
+	 * https://en.cppreference.com/c/language/variadic
+	 */
+	if (output == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+
+	String *str_result = NULL;
+	int err_result_init = new_string(NULL, 0, &str_result);
+	if (err_result_init)
+		return err_result_init;
+
+	va_list list;
+	va_start(list, n_str);
+	for (size_t i = 0; i < n_str; ++i)
+	{
+		String *str = va_arg(list, String *);
+		if (str == NULL)
+			return STR_ERR_NULL_ARGUMENT;
+		int err_concat = append_str(str, str_result);
+		if (err_concat)
+		{
+			free_string(str_result);
+			return err_concat;
+		}
+	}
+	va_end(list);
+
+	*output = str_result;
 
 	return STR_SUCCESS;
 }

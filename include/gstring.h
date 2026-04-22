@@ -323,4 +323,22 @@ GALXLIB_API enum StringError replace_char(String *const str, const char to_repla
  */
 GALXLIB_API enum StringError remove_char(String *const str, const char to_remove);
 
+/**
+ * Concatenates multiple Strings into one.
+ * @param output A pointer, where the resulting concatenated String will be placed.
+ * @param n_str The number of given Strings to concatenate.
+ * @param ... The list of Strings, which must be concatenated. It must contain String pointers. 
+ * The concatenation is done from left to right.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ * 
+ * - STR_ERR_MEMORY_ALLOCATION
+ * 
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ */
+GALXLIB_API enum StringError concat(String **const output, const size_t n_str, ...);
+
 #endif
