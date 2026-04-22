@@ -77,22 +77,28 @@ static enum StringError _shift_count_right(String *const str, size_t const count
 	if (count <= 0)
 		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
 
-	size_t new_length = count + str->length;
+	// size_t new_length = count + str->length;
 
-	char *new_arr = NULL;
+/* 	char *new_arr = NULL;
 	int err_new_arr = _new_char_array(new_length, &new_arr);
 	if (err_new_arr)
-		return err_new_arr;
+		return err_new_arr; */
 
-	size_t j = 0;
-	for (size_t i = count; i < new_length; ++i)
+/* 	size_t j = 0; */
+	for (size_t i = 0; i < count; ++i)
+	{
+		int err = _shift_one_right(str);
+		if (err)
+			return err;
+	}
+/* 	for (size_t i = 0; i < new_length; ++i)
 	{
 		new_arr[i] = (str->str)[j++];
-	}
-
+	} */
+/* 
 	free(str->str);
 	str->str = new_arr;
-	str->length = new_length;
+	str->length = new_length; */
 
 	return STR_SUCCESS;
 }
@@ -334,6 +340,9 @@ enum StringError prepend_nt(String *const str_dest, const char *const source)
 	/**
 	 * nt_index is the length of the actual characters, because it is the index of the null-terminator.
 	 */
+	int err_extend = _extend(str_dest, nt_index);
+	if (err_extend)
+		return err_extend;
 	int err_shift = _shift_count_right(str_dest, nt_index);
 	if (err_shift)
 		return err_shift;
@@ -349,6 +358,10 @@ enum StringError prepend_str(const String *const source, String *const dest)
 {
 	if (source == NULL || dest == NULL)
 		return STR_ERR_NULL_ARGUMENT;
+
+	int err_extend = _extend(dest, source->length);
+	if (err_extend)
+		return err_extend;
 
 	int err_shift = _shift_count_right(dest, source->length);
 	if (err_shift)
@@ -522,7 +535,10 @@ enum StringError concat(String **const output, const size_t n_str, ...)
 	{
 		String *str = va_arg(list, String *);
 		if (str == NULL)
+		{
+			free_string(str_result);
 			return STR_ERR_NULL_ARGUMENT;
+		}
 		int err_concat = append_str(str, str_result);
 		if (err_concat)
 		{

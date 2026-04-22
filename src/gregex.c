@@ -146,12 +146,13 @@ String *get_group_value_str(const int n, const RegexContainer *const container)
                 return NULL;
 
         int length = (container->groups)[n].rm_eo - (container->groups)[n].rm_so;
-        String *str = new_string(NULL, 0);
+        String *str = NULL;
+        int err = new_string(NULL, 0, &str);
         if (str == NULL)
                 return NULL;
 
         for (int i = 0; i < length; i++)
-                append_char((container->matched_input)[(container->groups)[n].rm_so + i], str);
+                append_char(str, (container->matched_input)[(container->groups)[n].rm_so + i]);
 
         return str;
 }
