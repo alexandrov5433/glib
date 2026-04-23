@@ -75,7 +75,7 @@ _err:
         return error_code;
 }
 
-enum RegexContainerError match(RegexContainer *const container, const char *const input)
+enum RegexContainerError match(RegexContainer *const container, char *const input)
 {
         if (container == NULL || input == NULL)
                 return RC_ERR_NULL_ARGUMENT;
