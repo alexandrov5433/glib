@@ -21,23 +21,30 @@ https://pubs.opengroup.org/onlinepubs/009696899/functions/regcomp.html
 */
 
 /**
- * A container for all regex related data.
- * @param regex A ponter to the compiled regex.
- * @param max_groups The number of gpoups, which the regex will hold.
- * @param groups A ponter to the groups specified in the regex pattern. The groups count will equal max_groups.
- * The groups counting stats from 0 - index based. The first group (index 0) indicates the whole matched_input string.
- * @param matched_input A pointer to the input string, against which the compiled regex was matched. Initialized as NULL.
- * @param isMatch 1 if a match was made, 0 otherwise. Initialized as 0.
- *
- * The matched_input and isMatched properties are changed by the match function.
+ * @enum RegexError
+ * @brief The error codes returned by the RegexContainer functions.
+ */
+enum RegexContainerError
+{
+	RC_SUCCESS = 0,				/**< (0) Successful execution of the called function. */
+	RC_ERR_NULL_ARGUMENT = 1,		/**< (1) One or more arguments are NULL. */
+	RC_ERR_MEMORY_ALLOCATION = 2,		/**< (2) Failed to allocate or reallocate memory. */
+	RC_ERR_PATTERN_COMPILATION = 3,		/**< (3) Failed to compile the regex pattern using the regcomp function. */
+	RC_ERR_INVALID_ARGUMENT_DIMENTIONS = 4, /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
+	RC_ERR_NO_MATCH = 5,			/**< (5) The given RegexContainer has not matched a string (character array or String). */
+};
+
+/**
+ * @struct RegexContainer
+ * @brief A container for all regex related data.
  */
 typedef struct RegexContainer
 {
-	regex_t *regex;
-	size_t max_groups;
-	regmatch_t *groups;
-	char *matched_input;
-	int isMatch;
+	regex_t *regex;	     /**< A ponter to the compiled regex. */
+	size_t max_groups;   /**< The number of gpoups, which the regex will hold. */
+	regmatch_t *groups;  /**< A ponter to the groups specified in the regex pattern. The groups count will equal max_groups. The groups counting stats from 0 - index based. The first group (index 0) indicates the whole matched_input string. */
+	char *matched_input; /**< A pointer to the input string, against which the compiled regex was matched. Initialized as NULL. */
+	int is_match;	     /**< 1 if a match was made, 0 otherwise. Initialized as 0. The matched_input and is_match properties are changed by the match function. */
 } RegexContainer;
 
 /**
@@ -47,76 +54,133 @@ typedef struct RegexContainer
  * The first (index 0) is always the whole matched string.
  * @param flag A regex flag to use in the regcomp function.
  * Example REG_EXTENDED (int 1) for compiling an Extended Regular Expression.
- * @param output_status An integer pointer where an eventual error code will be placed. If NULL, it is not used.
- * @return A pointer to the new RegexContainer.
+ * @return A value of the @ref RegexContainerError:
+ *
+ * - RC_SUCCESS
+ *
+ * - RC_ERR_NULL_ARGUMENT
+ *
+ * - RC_ERR_MEMORY_ALLOCATION
+ *
+ * - RC_ERR_PATTERN_COMPILATION
  */
-GALXLIB_API RegexContainer *new_regex_container(
+GALXLIB_API enum RegexContainerError new_regex_container(
     const char *const pattern,
     const size_t max_groups,
     const int flag,
-    int *const output_status);
+    RegexContainer **const output);
 
 /**
  * Frees the memory for the RegexContainer.
- * @param container The pointer to the RegexContainer, which is to be freed. If a NULL pointer is given, nothing is done.
+ * @param container The pointer to the RegexContainer, which is to be freed.
+ * @return A value of the @ref RegexContainerError:
+ *
+ * - RC_SUCCESS
+ *
+ * - RC_ERR_NULL_ARGUMENT
  */
-GALXLIB_API void free_regex_container(RegexContainer *container);
+GALXLIB_API enum RegexContainerError free_regex_container(RegexContainer *container);
 
 /**
- * Attempts to match the given string against the ragex in the RegexContainer.
- * @param input The string to match.
+ * Attempts to match the given character array against the regex in the RegexContainer.
+ * @param input The null-terminated character array to match.
  * @param container The RegexContainer holding all regex related data, including the compiled regex pattern.
- * @returns 0 on success, 1 if either of the arguments is NULL.
+ * @return A value of the @ref RegexContainerError:
  *
- * On success (returned 0) and if the attempt to match is successful:
+ * - RC_SUCCESS
  *
- * 1. the isMatch property of the container is set to 1.
- *
- * 2. the matched_input property of the container is set to the given input.
- *
- * On success (returned 0) and on failure to match:
- *
- * 1. the isMatch property of the container is set to 0.
- *
- * 2. the matched_input property of the container is set to NULL.
+ * - RC_ERR_NULL_ARGUMENT
  */
-GALXLIB_API int match(char *const input, RegexContainer *const container);
+GALXLIB_API enum RegexContainerError match(RegexContainer *const container, const char *const input);
 
 /**
- * Get the matched string from a group as a character array. This is the raw match, without adding a null-terminator.
- * @param n The index of the group indicating the wanted value, from the groups property of the RegexContainer.
- * Must be 0 or less than the max_groups property of the RegexContainer, or else NULL is returned.
- * @param container Pointer to the RegexContainer with the relevant data. If NULL, NULL is returned.
- * If the isMatch property of the container is 0, NULL is returned.
- * @param output_match_length A pointer to an integer, where the length of the matched string will be placed.
- * If NULL, the output_match_length is ignored.
- * @returns The pointer to the string, selected by the group.
- * The returned pointer may be used in the free function, as it's memory is manualy allocated.
+ * Attempts to match the given String against the regex in the RegexContainer.
+ * @param str The String to match.
+ * @param container The RegexContainer holding all regex related data, including the compiled regex pattern.
+ * @return A value of the @ref RegexContainerError:
+ *
+ * - RC_SUCCESS
+ *
+ * - RC_ERR_NULL_ARGUMENT
+ *
+ * - RC_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API char *get_group_value(const int n, const RegexContainer *const container, int *const output_match_length);
+GALXLIB_API enum RegexContainerError match_str(RegexContainer *const container, const String *const str);
+
+/**
+ * Get the matched character array from a group. This is the raw match, without adding a null-terminator.
+ * @param container Pointer to the RegexContainer with the relevant data.
+ * The is_match property of the RegexContainer must be equal to 1.
+ * @param group_index The index of the group indicating the wanted value, from the groups property of the RegexContainer.
+ * Must be 0 or less than the max_groups property of the RegexContainer.
+ * @param output A pointer to where the matched character array will be placed.
+ * @param output_length A pointer to where the length of the matched character array will be placed.
+ * @return A value of the @ref RegexContainerError:
+ *
+ * - RC_SUCCESS
+ *
+ * - RC_ERR_NULL_ARGUMENT
+ *
+ * - RC_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - RC_ERR_NO_MATCH
+ *
+ * - RC_ERR_MEMORY_ALLOCATION
+ */
+GALXLIB_API enum RegexContainerError get_group_value(
+    const RegexContainer *const container,
+    const size_t group_index,
+    char **const output,
+    size_t *const output_length);
 
 /**
  * Get the matched string from a group as a null-terminated character array.
- * @param n The index of the group indicating the wanted value, from the groups property of the RegexContainer.
- * Must be 0 or less than the max_groups property of the RegexContainer, or else NULL is returned.
- * @param container Pointer to the RegexContainer with the relevant data. If NULL, NULL is returned.
- * If the isMatch property of the container is 0, NULL is returned.
- * @param output_match_length A pointer to an integer, where the length of the matched string will be placed.
- * If NULL, the output_match_length is ignored. The null-terminator is at index equal to output_match_length.
- * @returns The pointer to the string, selected by the group.
- * The returned pointer may be used in the free function, as it's memory is manualy allocated.
+ * @param container Pointer to the RegexContainer with the relevant data.
+ * The is_match property of the RegexContainer must be equal to 1.
+ * @param group_index The index of the group indicating the wanted value, from the groups property of the RegexContainer.
+ * Must be 0 or less than the max_groups property of the RegexContainer.
+ * @param output A pointer to where the matched character array will be placed.
+ * @param output_length A pointer to where the length of the matched character array will be placed.
+ * @return A value of the @ref RegexContainerError:
+ *
+ * - RC_SUCCESS
+ *
+ * - RC_ERR_NULL_ARGUMENT
+ *
+ * - RC_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - RC_ERR_NO_MATCH
+ *
+ * - RC_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API char *get_group_value_nt(const int n, const RegexContainer *const container, int *const output_match_length);
+GALXLIB_API enum RegexContainerError get_group_value_nt(
+    const RegexContainer *const container,
+    const size_t group_index,
+    char **const output,
+    size_t *const output_length);
 
 /**
- * Get the matched string from a group as a String (from gstring.h).
- * @param n The index of the group indicating the wanted value, from the groups property of the RegexContainer.
- * Must be 0 or less than the max_groups property of the RegexContainer, or else NULL is returned.
- * @param container Pointer to the RegexContainer with the relevant data. If NULL, NULL is returned.
- * If the isMatch property of the container is 0, NULL is returned.
- * @returns The pointer to the String containing the string, selected by the group.
- * If a new String instance could not be created (new_string returned NULL), NULL is returned.
+ * Get the matched character array from a group as a String.
+ * @param container Pointer to the RegexContainer with the relevant data.
+ * The is_match property of the RegexContainer must be equal to 1.
+ * @param group_index The index of the group indicating the wanted value, from the groups property of the RegexContainer.
+ * Must be 0 or less than the max_groups property of the RegexContainer.
+ * @param output A pointer to where the String will be placed.
+ * @return A value of the @ref RegexContainerError:
+ *
+ * - RC_SUCCESS
+ *
+ * - RC_ERR_NULL_ARGUMENT
+ *
+ * - RC_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - RC_ERR_NO_MATCH
+ *
+ * - RC_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API String *get_group_value_str(const int n, const RegexContainer *const container);
+GALXLIB_API enum RegexContainerError get_group_value_str(
+    const RegexContainer *const container,
+    const size_t group_index,
+    String **const output);
 
 #endif
