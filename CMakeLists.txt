@@ -34,7 +34,7 @@ include(CheckLibraryExists)
 check_library_exists(regex regcomp "" HAVE_LIBREGEX)
 
 if (HAVE_LIBREGEX)
-    target_link_libraries(meval PUBLIC regex)
+    target_link_libraries(galxlib PUBLIC regex)
 endif()
 
 target_sources(galxlib
