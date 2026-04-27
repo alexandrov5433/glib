@@ -6,13 +6,19 @@
 // _WIN32 is a predefined compiler macro when compiling for Windows.
 // Must NOT be defined manually! More notes in CMakeLists.txt
 #ifdef _WIN32
+
+#ifdef GALXLIB_SHARED
+
 #ifdef GALXLIB_EXPORTS
-#define GLIB_API __declspec(dllexport)
+#define GALXLIB_API __declspec(dllexport)
 #else
-#define GLIB_API __declspec(dllimport)
+#define GALXLIB_API __declspec(dllimport)
 #endif
+
 #else
-#define GLIB_API
+#define GALXLIB_API
+#endif
+
 #endif
 
 typedef struct Node
@@ -28,22 +34,22 @@ typedef struct LinkedList
     size_t nodesCount;
 } LinkedList;
 
-GLIB_API LinkedList *newLinkedList();
+GALXLIB_API LinkedList *newLinkedList();
 
-GLIB_API void freeNodeLL(Node *node);
+GALXLIB_API void freeNodeLL(Node *node);
 
-GLIB_API void freeLinkedList(LinkedList *ll);
+GALXLIB_API void freeLinkedList(LinkedList *ll);
 
-GLIB_API int appendToLL(void *value, LinkedList *ll);
+GALXLIB_API int appendToLL(void *value, LinkedList *ll);
 
-GLIB_API int prependToLL(void *value, LinkedList *ll);
+GALXLIB_API int prependToLL(void *value, LinkedList *ll);
 
-GLIB_API int incertBeforeLL(void *newValue, int (*selector)(void *value), LinkedList *ll);
+GALXLIB_API int incertBeforeLL(void *newValue, int (*selector)(void *value), LinkedList *ll);
 
-GLIB_API int incertAfterLL(void *newValue, void *after, LinkedList *ll);
+GALXLIB_API int incertAfterLL(void *newValue, void *after, LinkedList *ll);
 
-GLIB_API Node *findLL(int (*selector)(void *value), LinkedList *ll);
+GALXLIB_API Node *findLL(int (*selector)(void *value), LinkedList *ll);
 
-GLIB_API Node *removeNodeLL(int (*selector)(void *value), LinkedList *ll);
+GALXLIB_API Node *removeNodeLL(int (*selector)(void *value), LinkedList *ll);
 
 #endif

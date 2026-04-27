@@ -68,7 +68,6 @@ target_sources(galxlib
 # executable for testing
 add_executable(lib_test lib_test/main.c)
 target_include_directories(lib_test PRIVATE include)
-target_link_directories(lib_test PRIVATE ${CMAKE_BINARY_DIR})
 target_link_libraries(lib_test galxlib)
 target_sources(lib_test 
     PRIVATE
@@ -101,12 +100,14 @@ endif()
 
 
 
-
+# for shared libraries only!
 # for managing import/export on windows; see .h files
 # when compiling: GLIB_EXPORTS is defined and used in the macro in the .h files to mark the funktions for exporting.
 # when importing the .dll: GLIB_EXPORTS is not defined, so the functions are marked for importing. This way the linker in windows knows where the used functions are to be found.
 # this is relevant only for windows !!!
-target_compile_definitions(galxlib PRIVATE GALXLIB_EXPORTS)
+# Only define this if building a shared lib
+# target_compile_definitions(galxlib PRIVATE GALXLIB_SHARED)
+# target_compile_definitions(galxlib PRIVATE GALXLIB_EXPORTS)
 
 # Public include directories for consumers
 target_include_directories(galxlib

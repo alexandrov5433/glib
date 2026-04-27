@@ -6,13 +6,19 @@
 // _WIN32 is a predefined compiler macro when compiling for Windows.
 // Must NOT be defined manually! More notes in CMakeLists.txt
 #ifdef _WIN32
+
+#ifdef GALXLIB_SHARED
+
 #ifdef GALXLIB_EXPORTS
 #define GALXLIB_API __declspec(dllexport)
 #else
 #define GALXLIB_API __declspec(dllimport)
 #endif
+
 #else
 #define GALXLIB_API
+#endif
+
 #endif
 
 #ifndef HASH_MAP_INIT_CAPACITY

@@ -4,13 +4,19 @@
 #include "../include/linkedList.h"
 
 #ifdef _WIN32
+
+#ifdef GALXLIB_SHARED
+
 #ifdef GALXLIB_EXPORTS
-#define GLIB_API __declspec(dllexport)
+#define GALXLIB_API __declspec(dllexport)
 #else
-#define GLIB_API __declspec(dllimport)
+#define GALXLIB_API __declspec(dllimport)
 #endif
+
 #else
-#define GLIB_API
+#define GALXLIB_API
+#endif
+
 #endif
 
 typedef struct Queue {
