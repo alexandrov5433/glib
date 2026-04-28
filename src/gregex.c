@@ -25,7 +25,7 @@ enum RegexContainerError new_regex_container(
     RegexContainer **const output)
 {
         int error_code = 0;
-        if (pattern == NULL)
+        if (pattern == NULL || output == NULL)
         {
                 error_code = RC_ERR_NULL_ARGUMENT;
                 goto _err;
