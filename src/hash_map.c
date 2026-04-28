@@ -7,203 +7,280 @@
 
 // ##################   static   ##################
 
-static Entry *_new_entry(char *key, void *value)
+static enum HashMapError _new_entry(const char *key, void *value, Entry **const output)
 {
+	if (key == NULL || value == NULL || output == NULL)
+		return HM_ERR_NULL_ARGUMENT;
+
 	Entry *entry = (Entry *)malloc(sizeof(Entry));
 	if (entry == NULL)
-		return NULL;
+		return HM_ERR_MEMORY_ALLOCATION;
 
-	// +1 for the null-terminator '\0'
-	size_t keyLengthWithNullterminator = strlen(key) + 1;
-	char *keyCopy = calloc(keyLengthWithNullterminator, sizeof(char));
-	strcpy(keyCopy, key);
-	entry->key = keyCopy;
+	size_t key_length = strlen_s(key, HASH_MAP_KEY_MAX_LENGTH);
+	if (key_length == 0)
+		return HM_ERR_KEY_EMPTY;
+	else if (key_length == HASH_MAP_KEY_MAX_LENGTH)
+		return HM_ERR_KEY_MAX_LENGTH;
+
+	// +1 for the null-terminator
+	char *key_copy = (char *)malloc((key_length + 1) * sizeof(char));
+	if (key_copy == NULL)
+		return HM_ERR_MEMORY_ALLOCATION;
+
+	if (strcpy_s(key_copy, key_length, key))
+	{
+		free(entry);
+		return HM_ERR_KEY_COPY;
+	}
+
+	entry->key = key_copy;
 	entry->value = value;
-	return entry;
+	*output = entry;
+
+	return HM_SUCCESS;
 }
 
-static void _free_entry(Entry *entry)
+static enum HashMapError _free_entry(Entry *entry)
 {
 	if (entry == NULL)
-		return;
+		return HM_ERR_NULL_ARGUMENT;
+	if (entry->key != NULL)
+		free(entry->key);
 
-	free(entry->key);
 	free(entry);
+	return HM_SUCCESS;
 }
 
-static size_t _hash_str(char *str, size_t capacity)
+static enum HashMapError _hash_str(const char *str, const size_t hm_capacity, size_t *const output)
 {
-	size_t length = strlen(str);
-	int asciiValue = 0;
-	for (int i = 0; i < length; i++)
-		asciiValue += (int)(str[i]);
+	if (str == NULL || output == NULL)
+		return HM_ERR_NULL_ARGUMENT;
 
-	return (size_t)((asciiValue * length) % capacity);
+	size_t str_length = strlen_s(str, HASH_MAP_KEY_MAX_LENGTH);
+	if (str_length == 0)
+		return HM_ERR_KEY_EMPTY;
+	else if (str_length == HASH_MAP_KEY_MAX_LENGTH)
+		return HM_ERR_KEY_MAX_LENGTH;
+
+	size_t ascii_value = 0;
+	for (size_t i = 0; i < str_length; ++i)
+		ascii_value += (size_t)(str[i]);
+
+	*output = (size_t)((ascii_value * str_length) % hm_capacity);
+
+	return HM_SUCCESS;
 }
 
-static int _incert_entry(Entry *newEntry, size_t capacity, Entry **entries)
+static enum HashMapError _incert_entry(const Entry *const new_entry, const size_t hm_capacity, Entry **const hm_entries)
 {
-	size_t index = _hash_str(newEntry->key, capacity);
-	for (size_t i = index; i < capacity; ++i)
+	if (new_entry == NULL || hm_entries == NULL)
+		return HM_ERR_NULL_ARGUMENT;
+
+	size_t index = 0;
+	int err_hash = _hash_str(new_entry->key, hm_capacity, &index);
+	if (err_hash)
+		return err_hash;
+
+	for (size_t i = index; i < hm_capacity; ++i)
 	{
-		Entry *current = entries[i];
-		if (current == NULL)
+		if (hm_entries[i] == NULL)
 		{
-			entries[i] = newEntry;
-			return 0;
+			hm_entries[i] = new_entry;
+			return HM_SUCCESS;
 		}
 	}
 	for (size_t i = 0; i < index; ++i)
 	{
-		Entry *current = entries[i];
-		if (current == NULL)
+		if (hm_entries[i] == NULL)
 		{
-			entries[i] = newEntry;
-			return 0;
+			hm_entries[i] = new_entry;
+			return HM_SUCCESS;
 		}
 	}
-	return 1;
+
+	return HM_ERR_FULL;
 }
 
-static int _incert_replace_entry(Entry *newEntry, size_t capacityEntries, Entry **entries, int *isReplacedOutput, void (*value_destructor)(const Entry *const entry))
+static enum HashMapError _incert_replace_entry(
+    const Entry *const new_entry,
+    const size_t hm_capacity,
+    Entry **const hm_entries,
+    int *const output_is_replaced,
+    void (*value_destructor)(const Entry *const entry))
 {
-	size_t index = _hash_str(newEntry->key, capacityEntries);
-	for (size_t i = index; i < capacityEntries; ++i)
+	// value_destructor CAN be NULL!
+	if (new_entry == NULL || hm_entries == NULL || output_is_replaced == NULL)
+		return HM_ERR_NULL_ARGUMENT;
+
+	size_t index = 0;
+	int err_hash = _hash_str(new_entry->key, hm_capacity, &index);
+	if (err_hash)
+		return err_hash;
+
+	for (size_t i = index; i < hm_capacity; ++i)
 	{
-		Entry *current = entries[i];
-		if (current == NULL)
+		Entry *current_entry = hm_entries[i];
+		if (current_entry == NULL)
 		{
-			entries[i] = newEntry;
-			*isReplacedOutput = 0;
-			return 0;
+			hm_entries[i] = new_entry;
+			*output_is_replaced = 0;
+			return HM_SUCCESS;
 		}
-		else if (strcmp(current->key, newEntry->key) == 0)
+		else if (strcmp(current_entry->key, new_entry->key) == 0)
 		{
 			if (value_destructor != NULL)
-				value_destructor(current);
+				value_destructor(current_entry);
 
-			entries[i] = newEntry;
-			*isReplacedOutput = 1;
-			return 0;
+			hm_entries[i] = new_entry;
+			*output_is_replaced = 1;
+			return HM_SUCCESS;
 		}
 	}
 	for (size_t i = 0; i < index; ++i)
 	{
-		Entry *current = entries[i];
-		if (current == NULL)
+		Entry *current_entry = hm_entries[i];
+		if (current_entry == NULL)
 		{
-			entries[i] = newEntry;
-			*isReplacedOutput = 0;
-			return 0;
+			hm_entries[i] = new_entry;
+			*output_is_replaced = 0;
+			return HM_SUCCESS;
 		}
-		else if (strcmp(current->key, newEntry->key) == 0)
+		else if (strcmp(current_entry->key, new_entry->key) == 0)
 		{
 			if (value_destructor != NULL)
-				value_destructor(current);
+				value_destructor(current_entry);
 
-			entries[i] = newEntry;
-			*isReplacedOutput = 1;
-			return 0;
+			hm_entries[i] = new_entry;
+			*output_is_replaced = 1;
+			return HM_SUCCESS;
 		}
 	}
-	return 1;
+
+	return HM_ERR_FULL;
 }
 
-static int _transfer(Entry **source, Entry **destination, size_t sourceCapacity, size_t destinationCapacity)
+static enum HashMapError _transfer_entries(
+    Entry **const source,
+    Entry **const destination,
+    const size_t source_capacity,
+    const size_t destination_capacity)
 {
-	for (size_t h = 0; h < sourceCapacity; ++h)
+	if (source == NULL || destination == NULL)
+		return HM_ERR_NULL_ARGUMENT;
+
+	for (size_t i = 0; i < source_capacity; ++i)
 	{
-		Entry *ent = source[h];
-		if (ent == NULL)
+		Entry *entry = source[i];
+		if (entry == NULL)
 			continue;
 
-		if (_incert_entry(ent, destinationCapacity, destination))
-			return 1;
+		int err_incert = _incert_entry(entry, destination_capacity, destination);
+		if (err_incert)
+			return err_incert;
 	}
-	return 0;
+
+	return HM_SUCCESS;
 }
 
-static int _extend_hm(HashMap *map)
+static enum HashMapError _extend_hm(HashMap *const map)
 {
-	int emptySpace = map->capacity - map->n_ent;
-	if (emptySpace > (map->capacity * 0.25))
-		return 0;
+	int empty_space = map->capacity - map->n_ent;
+	if (empty_space > (map->capacity * 0.25))
+		return HM_SUCCESS;
 
-	size_t newCapacity = ceil(map->n_ent * 1.5);
-	Entry **newEntries = calloc(newCapacity, sizeof(Entry *));
-	if (newEntries == NULL)
-		return 1;
+	size_t new_capacity = ceil(map->n_ent * 1.5);
+	Entry **new_entries = (Entry **)malloc(new_capacity * sizeof(Entry *));
+	if (new_entries == NULL)
+		return HM_ERR_MEMORY_ALLOCATION;
 
-	if (_transfer(map->entries, newEntries, map->capacity, newCapacity))
+	int err_trasfer = _transfer_entries(map->entries, new_entries, map->capacity, new_capacity);
+	if (err_trasfer)
 	{
-		free(newEntries);
-		return 2;
+		free(new_entries);
+		return err_trasfer;
 	}
 
 	free(map->entries);
-	map->entries = newEntries;
-	map->capacity = newCapacity;
-	return 0;
+	map->entries = new_entries;
+	map->capacity = new_capacity;
+
+	return HM_SUCCESS;
 }
 
-static int _squish_hm(HashMap *map)
+static enum HashMapError _squish_hm(HashMap *const map)
 {
-	int emptySpace = map->capacity - map->n_ent;
+	int empty_space = map->capacity - map->n_ent;
 	// reduce capacity if more than 90% are free
-	if (emptySpace < (map->capacity * 0.9))
-		return 0;
+	if (empty_space < (map->capacity * 0.9))
+		return HM_SUCCESS;
 
-	size_t newCapacity = ceil(map->n_ent * 1.5);
-	Entry **newEntries = calloc(newCapacity, sizeof(Entry *));
-	if (newEntries == NULL)
-		return 1;
+	size_t new_capacity = ceil(map->n_ent * 1.5);
+	Entry **new_entries = (Entry **)malloc(new_capacity * sizeof(Entry *));
+	if (new_entries == NULL)
+		return HM_ERR_MEMORY_ALLOCATION;
 
-	if (_transfer(map->entries, newEntries, map->capacity, newCapacity))
+	int err_trasfer = _transfer_entries(map->entries, new_entries, map->capacity, new_capacity);
+	if (err_trasfer)
 	{
-		free(newEntries);
-		return 2;
+		free(new_entries);
+		return err_trasfer;
 	}
 
 	free(map->entries);
-	map->entries = newEntries;
-	map->capacity = newCapacity;
-	return 0;
+	map->entries = new_entries;
+	map->capacity = new_capacity;
+
+	return HM_SUCCESS;
 }
 
-/**
- * @param initCapacity Initial count of places for Entry pointers.
- */
-static Entry **_new_entries_array(size_t initCapacity)
+static enum HashMapError _new_entries_array(const size_t init_capacity, Entry ***const output)
 {
-	return calloc(initCapacity, sizeof(Entry *));
+	if (output == NULL)
+		return HM_ERR_NULL_ARGUMENT;
+
+	Entry **new_entries = (Entry **)malloc(init_capacity * sizeof(Entry *));
+	if (new_entries == NULL)
+		return HM_ERR_MEMORY_ALLOCATION;
+
+	*output = new_entries;
+	return HM_SUCCESS;
 }
 
 // ##################   public   ##################
 
-HashMap *new_hash_map()
+enum HashMapError new_hash_map(void (*value_destructor)(void *value), HashMap **const output)
 {
+	if (output == NULL)
+		return HM_ERR_NULL_ARGUMENT;
+
 	HashMap *map = (HashMap *)malloc(sizeof(HashMap));
 	if (map == NULL)
-		return NULL;
+		return HM_ERR_MEMORY_ALLOCATION;
 
-	Entry **entries = _new_entries_array(HASH_MAP_INIT_CAPACITY);
-	if (entries == NULL)
-		return NULL;
+	Entry **entries = NULL;
+	int err_entries = _new_entries_array(HASH_MAP_INIT_CAPACITY, &entries);
+	if (err_entries)
+	{
+		free(map);
+		return err_entries;
+	}
 
 	map->entries = entries;
 	map->n_ent = 0;
 	map->capacity = HASH_MAP_INIT_CAPACITY;
-	map->value_destructor = NULL;
-	return map;
+	map->value_destructor = value_destructor == NULL ? NULL : value_destructor;
+	*output = map;
+
+	return HM_SUCCESS;
 }
 
-int add_destructor_hm(void (*value_destructor)(const Entry *const entry), HashMap *map)
+enum HashMapError add_destructor_hm(HashMap *const map, void (*value_destructor)(void *value))
 {
 	if (map == NULL || value_destructor == NULL)
-		return 1;
+		return HM_ERR_NULL_ARGUMENT;
 
 	map->value_destructor = value_destructor;
-	return 0;
+	return HM_SUCCESS;
 }
 
 void free_hash_map(HashMap *map)
