@@ -16,7 +16,7 @@ static enum HashMapError _new_entry(const char *key, void *value, Entry **const 
 	if (entry == NULL)
 		return HM_ERR_MEMORY_ALLOCATION;
 
-	size_t key_length = strlen_s(key, HASH_MAP_KEY_MAX_LENGTH);
+	size_t key_length = strnlen_s(key, HASH_MAP_KEY_MAX_LENGTH);
 	if (key_length == 0)
 		return HM_ERR_KEY_EMPTY;
 	else if (key_length == HASH_MAP_KEY_MAX_LENGTH)
@@ -56,7 +56,7 @@ static enum HashMapError _hash_str(const char *const str, const size_t hm_capaci
 	if (str == NULL || output == NULL)
 		return HM_ERR_NULL_ARGUMENT;
 
-	size_t str_length = strlen_s(str, HASH_MAP_KEY_MAX_LENGTH);
+	size_t str_length = strnlen_s(str, HASH_MAP_KEY_MAX_LENGTH);
 	if (str_length == 0)
 		return HM_ERR_KEY_EMPTY;
 	else if (str_length == HASH_MAP_KEY_MAX_LENGTH)
@@ -71,7 +71,7 @@ static enum HashMapError _hash_str(const char *const str, const size_t hm_capaci
 	return HM_SUCCESS;
 }
 
-static enum HashMapError _incert_entry(const Entry *const new_entry, const size_t hm_capacity, Entry **const hm_entries)
+static enum HashMapError _incert_entry(Entry *const new_entry, const size_t hm_capacity, Entry **const hm_entries)
 {
 	if (new_entry == NULL || hm_entries == NULL)
 		return HM_ERR_NULL_ARGUMENT;
@@ -102,7 +102,7 @@ static enum HashMapError _incert_entry(const Entry *const new_entry, const size_
 }
 
 static enum HashMapError _incert_replace_entry(
-    const Entry *const new_entry,
+    Entry *const new_entry,
     const size_t hm_capacity,
     Entry **const hm_entries,
     int *const output_is_replaced,
@@ -465,7 +465,7 @@ enum HashMapError filter_hm(HashMap *const map, int (*selector)(const Entry *con
 
 	for (size_t i = 0; i < map->capacity; ++i)
 	{
-		const Entry *const e = map->entries[i];
+		Entry *const e = map->entries[i];
 		if (e == NULL)
 			continue;
 
