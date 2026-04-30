@@ -23,7 +23,8 @@ static enum HashMapError _new_entry(const char *key, void *value, Entry **const 
 		return HM_ERR_KEY_MAX_LENGTH;
 
 	// +1 for the null-terminator
-	char *key_copy = (char *)malloc((key_length + 1) * sizeof(char));
+	key_length++;
+	char *key_copy = (char *)malloc(key_length * sizeof(char));
 	if (key_copy == NULL)
 		return HM_ERR_MEMORY_ALLOCATION;
 
@@ -189,7 +190,7 @@ static enum HashMapError _extend_hm(HashMap *const map)
 		return HM_SUCCESS;
 
 	size_t new_capacity = ceil(map->n_ent * 1.5);
-	Entry **new_entries = (Entry **)malloc(new_capacity * sizeof(Entry *));
+	Entry **new_entries = (Entry **)calloc(new_capacity, sizeof(Entry *));
 	if (new_entries == NULL)
 		return HM_ERR_MEMORY_ALLOCATION;
 
@@ -215,7 +216,7 @@ static enum HashMapError _squish_hm(HashMap *const map)
 		return HM_SUCCESS;
 
 	size_t new_capacity = ceil(map->n_ent * 1.5);
-	Entry **new_entries = (Entry **)malloc(new_capacity * sizeof(Entry *));
+	Entry **new_entries = (Entry **)calloc(new_capacity, sizeof(Entry *));
 	if (new_entries == NULL)
 		return HM_ERR_MEMORY_ALLOCATION;
 
@@ -238,7 +239,7 @@ static enum HashMapError _new_entries_array(const size_t init_capacity, Entry **
 	if (output == NULL)
 		return HM_ERR_NULL_ARGUMENT;
 
-	Entry **new_entries = (Entry **)malloc(init_capacity * sizeof(Entry *));
+	Entry **new_entries = (Entry **)calloc(init_capacity, sizeof(Entry *));
 	if (new_entries == NULL)
 		return HM_ERR_MEMORY_ALLOCATION;
 
