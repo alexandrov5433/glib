@@ -104,8 +104,8 @@ GALXLIB_API enum DynamicArrayError free_dynamic_array(DynamicArray *const da);
 
 /**
  * Adds the integer to the end of the DynamicArray.
- * @param item The integer to add.
  * @param da A pointer to the DynamicArray.
+ * @param item The integer to add.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -118,12 +118,12 @@ GALXLIB_API enum DynamicArrayError free_dynamic_array(DynamicArray *const da);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int push_int_da(DynamicArray *const da, int const item);
+GALXLIB_API enum DynamicArrayError push_int_da(DynamicArray *const da, int const item);
 
 /**
  * Adds the character to the end of the DynamicArray.
- * @param item The character to add.
  * @param da A pointer to the DynamicArray.
+ * @param item The character to add.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -136,12 +136,12 @@ GALXLIB_API int push_int_da(DynamicArray *const da, int const item);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int push_char_da(DynamicArray *const da, char const item);
+GALXLIB_API enum DynamicArrayError push_char_da(DynamicArray *const da, char const item);
 
 /**
  * Adds the float to the end of the DynamicArray.
- * @param item The float to add.
  * @param da A pointer to the DynamicArray.
+ * @param item The float to add.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -154,12 +154,12 @@ GALXLIB_API int push_char_da(DynamicArray *const da, char const item);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int push_float_da(DynamicArray *const da, float const item);
+GALXLIB_API enum DynamicArrayError push_float_da(DynamicArray *const da, float const item);
 
 /**
  * Adds the double to the end of the DynamicArray.
- * @param item The double to add.
  * @param da A pointer to the DynamicArray.
+ * @param item The double to add.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -172,12 +172,12 @@ GALXLIB_API int push_float_da(DynamicArray *const da, float const item);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int push_double_da(DynamicArray *const da, double const item);
+GALXLIB_API enum DynamicArrayError push_double_da(DynamicArray *const da, double const item);
 
 /**
  * Adds the pointer to the end of the DynamicArray.
- * @param item The pointer to add.
  * @param da A pointer to the DynamicArray.
+ * @param item The pointer to add.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -190,12 +190,12 @@ GALXLIB_API int push_double_da(DynamicArray *const da, double const item);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int push_ptr_da(DynamicArray *const da, void *const item);
+GALXLIB_API enum DynamicArrayError push_ptr_da(DynamicArray *const da, void *const item);
 
 /**
  * Adds the given integer at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
- * @param item The integer to add.
  * @param da A pointer to the DynamicArray.
+ * @param item The integer to add.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -208,12 +208,12 @@ GALXLIB_API int push_ptr_da(DynamicArray *const da, void *const item);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int unshift_int_da(DynamicArray *const da, int const item);
+GALXLIB_API enum DynamicArrayError unshift_int_da(DynamicArray *const da, int const item);
 
 /**
  * Adds the given character at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
- * @param item The character to add.
  * @param da A pointer to the DynamicArray.
+ * @param item The character to add.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -226,12 +226,12 @@ GALXLIB_API int unshift_int_da(DynamicArray *const da, int const item);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int unshift_char_da(DynamicArray *const da, char const item);
+GALXLIB_API enum DynamicArrayError unshift_char_da(DynamicArray *const da, char const item);
 
 /**
  * Adds the given float at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
- * @param item The float to add.
  * @param da A pointer to the DynamicArray.
+ * @param item The float to add.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -244,12 +244,12 @@ GALXLIB_API int unshift_char_da(DynamicArray *const da, char const item);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int unshift_float_da(DynamicArray *const da, float const item);
+GALXLIB_API enum DynamicArrayError unshift_float_da(DynamicArray *const da, float const item);
 
 /**
  * Adds the given double at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
- * @param item The double to add.
  * @param da A pointer to the DynamicArray.
+ * @param item The double to add.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -262,12 +262,12 @@ GALXLIB_API int unshift_float_da(DynamicArray *const da, float const item);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int unshift_double_da(DynamicArray *const da, double const item);
+GALXLIB_API enum DynamicArrayError unshift_double_da(DynamicArray *const da, double const item);
 
 /**
  * Adds the given pointer at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
+ * @param da A pointer to the DynamicArray.
  * @param item The pointer to add.
- * @param da A pointer to the DynamicArray.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -280,7 +280,7 @@ GALXLIB_API int unshift_double_da(DynamicArray *const da, double const item);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int unshift_ptr_da(DynamicArray *const da, void *const item);
+GALXLIB_API enum DynamicArrayError unshift_ptr_da(DynamicArray *const da, void *const item);
 
 /**
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
@@ -300,7 +300,7 @@ GALXLIB_API int unshift_ptr_da(DynamicArray *const da, void *const item);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int pop_int_da(DynamicArray *const da, int *const output);
+GALXLIB_API enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const output);
 
 /**
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
@@ -320,7 +320,7 @@ GALXLIB_API int pop_int_da(DynamicArray *const da, int *const output);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int pop_char_da(DynamicArray *const da, char *const output);
+GALXLIB_API enum DynamicArrayError pop_char_da(DynamicArray *const da, char *const output);
 
 /**
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
@@ -340,7 +340,7 @@ GALXLIB_API int pop_char_da(DynamicArray *const da, char *const output);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int pop_float_da(DynamicArray *const da, float *const output);
+GALXLIB_API enum DynamicArrayError pop_float_da(DynamicArray *const da, float *const output);
 
 /**
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
@@ -360,7 +360,7 @@ GALXLIB_API int pop_float_da(DynamicArray *const da, float *const output);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int pop_double_da(DynamicArray *const da, double *const output);
+GALXLIB_API enum DynamicArrayError pop_double_da(DynamicArray *const da, double *const output);
 
 /**
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
@@ -380,7 +380,7 @@ GALXLIB_API int pop_double_da(DynamicArray *const da, double *const output);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int pop_ptr_da(DynamicArray *const da, void **const output);
+GALXLIB_API enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **const output);
 
 /**
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
@@ -400,7 +400,7 @@ GALXLIB_API int pop_ptr_da(DynamicArray *const da, void **const output);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int shift_int_da(DynamicArray *const da, int *const output);
+GALXLIB_API enum DynamicArrayError shift_int_da(DynamicArray *const da, int *const output);
 
 /**
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
@@ -420,7 +420,7 @@ GALXLIB_API int shift_int_da(DynamicArray *const da, int *const output);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int shift_char_da(DynamicArray *const da, char *const output);
+GALXLIB_API enum DynamicArrayError shift_char_da(DynamicArray *const da, char *const output);
 
 /**
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
@@ -440,7 +440,7 @@ GALXLIB_API int shift_char_da(DynamicArray *const da, char *const output);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int shift_float_da(DynamicArray *const da, float *const output);
+GALXLIB_API enum DynamicArrayError shift_float_da(DynamicArray *const da, float *const output);
 
 /**
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
@@ -460,7 +460,7 @@ GALXLIB_API int shift_float_da(DynamicArray *const da, float *const output);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int shift_double_da(DynamicArray *const da, double *const output);
+GALXLIB_API enum DynamicArrayError shift_double_da(DynamicArray *const da, double *const output);
 
 /**
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
@@ -480,7 +480,7 @@ GALXLIB_API int shift_double_da(DynamicArray *const da, double *const output);
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API int shift_ptr_da(DynamicArray *const da, void **const output);
+GALXLIB_API enum DynamicArrayError shift_ptr_da(DynamicArray *const da, void **const output);
 
 /**
  * Removes the item at the given index from the DynamicArray.
@@ -504,7 +504,7 @@ GALXLIB_API int shift_ptr_da(DynamicArray *const da, void **const output);
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API int remove_at_da(DynamicArray *const da, const size_t index);
+GALXLIB_API enum DynamicArrayError remove_at_da(DynamicArray *const da, const size_t index);
 
 /**
  * Removes the first matched item from the DynamicArray. The search is done from left to right.
@@ -531,7 +531,7 @@ GALXLIB_API int remove_at_da(DynamicArray *const da, const size_t index);
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API int remove_first_da(DynamicArray *const da, void *const target);
+GALXLIB_API enum DynamicArrayError remove_first_da(DynamicArray *const da, void *const target);
 
 /**
  * Applies a function to the item at the given index in the DynamicArray.
@@ -550,7 +550,7 @@ GALXLIB_API int remove_first_da(DynamicArray *const da, void *const target);
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API int apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr));
+GALXLIB_API enum DynamicArrayError apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr));
 
 /**
  * Applies a processor function to every item in the DynamicArray, from left to right.
@@ -569,7 +569,7 @@ GALXLIB_API int apply_at_da(const DynamicArray *const da, const size_t index, co
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API int process_da(DynamicArray *const da, void (*processor)(void *item_ptr));
+GALXLIB_API enum DynamicArrayError process_da(DynamicArray *const da, void (*processor)(void *item_ptr));
 
 /**
  * Filters the given DynamicArray, leaving only the items selected by the filter function.
@@ -595,7 +595,7 @@ GALXLIB_API int process_da(DynamicArray *const da, void (*processor)(void *item_
  *
  * - DA_ERR_TYPE_MISMATCH
  */
-GALXLIB_API int filter_da(DynamicArray *const da, int (*filter)(void *item_ptr));
+GALXLIB_API enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *item_ptr));
 
 /**
  * Gets the item at a given index, without modifing the DynamicArray.
@@ -615,7 +615,7 @@ GALXLIB_API int filter_da(DynamicArray *const da, int (*filter)(void *item_ptr))
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API int at_da(DynamicArray *const da, size_t index, void **output);
+GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, size_t index, void **output);
 
 /**
  * Finds a specific item in the DynamicArray, without modifing the array. The search is done from left to right.
@@ -639,7 +639,7 @@ GALXLIB_API int at_da(DynamicArray *const da, size_t index, void **output);
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API int find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
+GALXLIB_API enum DynamicArrayError find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds a specific item in the DynamicArray, without modifing the array. The search is done from right to left.
@@ -663,7 +663,7 @@ GALXLIB_API int find_da(DynamicArray *const da, void **const output, int (*selec
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API int find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
+GALXLIB_API enum DynamicArrayError find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds the index of a specific item in the DynamicArray, without modifing the array.
@@ -687,7 +687,7 @@ GALXLIB_API int find_last_da(DynamicArray *const da, void **const output, int (*
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API int find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
+GALXLIB_API enum DynamicArrayError find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds the index of a specific item in the DynamicArray, without modifing the array.
@@ -710,7 +710,7 @@ GALXLIB_API int find_index_da(DynamicArray *const da, size_t *const output, int 
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API int find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
+GALXLIB_API enum DynamicArrayError find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds the index of a specific item in the DynamicArray, without modifing the array, by directly comparing items to the given value.
@@ -730,6 +730,6 @@ GALXLIB_API int find_last_index_da(DynamicArray *const da, size_t *const output,
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API int index_of_da(DynamicArray *const da, size_t *const output, void *const value);
+GALXLIB_API enum DynamicArrayError index_of_da(DynamicArray *const da, size_t *const output, void *const value);
 
 #endif
