@@ -7,30 +7,31 @@
 #include "../include/hash_map.h"
 #include "../../include/gstring.h"
 
-
-void hashMapProcessor(Entry *const ptr)
+void hashMapProcessor(const Entry *const ptr)
 {
     (*(int *)(ptr->value))++;
 }
-int hashMapFilter(Entry *const ptr)
+int hashMapFilter(const Entry *const ptr)
 {
     if (*(int *)(ptr->value) >= 50)
         return 0;
 
     return 1;
 }
-void hashMapValueDestructor(const Entry *const entry)
+void hashMapValueDestructor(void *value)
 {
-    free(entry->value);
+    free(value);
 }
 void hashMapTest()
 {
     puts("################## Test: HashMap ##################");
     int VALUES = 10000;
-    HashMap *map = new_hash_map();
-    if (!map)
+    HashMap *map = NULL;
+    int err_map = new_hash_map(NULL, &map);
+    if (err_map)
     {
         puts("HashMap was not initialized.");
+        printf("HashMap error code: %d\n", err_map);
         goto _test_failure;
     }
 
@@ -45,7 +46,7 @@ void hashMapTest()
         *num = i;
 
         printf("\rFunction put_hm adding: %d", i);
-        int err = put_hm(strBuff, num, map);
+        int err = put_hm(map, strBuff, num);
         if (err)
         {
             printf("Function put_hm returned with Error: %d\n", err);
@@ -63,7 +64,13 @@ void hashMapTest()
     {
         memset(strBuff, 0, 10);
         snprintf(strBuff, 10, "%d", i);
-        int *res = get_hm(strBuff, map);
+        int *res = NULL;
+        int err_get = get_hm(map, strBuff, (void **)&res);
+        if (err_get)
+        {
+            printf("HashMap error code: %d\n", err_get);
+            goto _test_failure;
+        }
         if (*res != i)
         {
             printf("\nFunction get_hm returned (%d), but expected (%d).\n", *res, i);
@@ -81,7 +88,12 @@ void hashMapTest()
 
     puts("Testing: process_hm");
     clock_t cp1 = clock();
-    int processingErr = process_hm(hashMapProcessor, map);
+    int err_process = process_hm(map, hashMapProcessor);
+    if (err_process)
+    {
+        printf("HashMap error code: %d\n", err_process);
+        goto _test_failure;
+    }
     clock_t cp2 = clock();
     double durp = 1000.0 * (cp2 - cp1) / CLOCKS_PER_SEC;
     printf("CPU time used from process_hm (per clock()): %.2f ms\n", durp);
@@ -91,7 +103,13 @@ void hashMapTest()
     {
         memset(strBuff, 0, 10);
         snprintf(strBuff, 10, "%d", i);
-        int *res = get_hm(strBuff, map);
+        int *res = NULL;
+        int err_get = get_hm(map, strBuff, (void **)&res);
+        if (err_get)
+        {
+            printf("HashMap error code: %d\n", err_get);
+            goto _test_failure;
+        }
         if (*res != i + 1)
         {
             printf("\nFunction get_hm returned (%d), but expected (%d) after process_hm.\n", *res, i + 1);
@@ -106,7 +124,7 @@ void hashMapTest()
     {
         memset(strBuff, 0, 10);
         snprintf(strBuff, 10, "%d", i);
-        int err = remove_hm(strBuff, map);
+        int err = remove_hm(map, strBuff);
         if (err)
         {
             printf("\nFunction remove_hm returned with Error: %d\n", err);
@@ -125,12 +143,23 @@ void hashMapTest()
         goto _test_failure;
     }
 
-    free_hash_map(map);
+    int err_free = free_hash_map(map);
+    if (err_free)
+    {
+        printf("HashMap error code: %d\n", err_free);
+        goto _test_failure;
+    }
 
     // filter_hm test
 
     puts("Testing: filter_hm");
-    HashMap *mapFilter = new_hash_map();
+    HashMap *mapFilter = NULL;
+    int err_map_filter_init = new_hash_map(NULL, &mapFilter);
+    if (err_map_filter_init)
+    {
+        printf("HashMap error code: %d\n", err_map_filter_init);
+        goto _test_failure;
+    }
     if (!mapFilter)
     {
         puts("HashMap was not initialized for the test of filter_hm.");
@@ -144,7 +173,7 @@ void hashMapTest()
         *num = i;
 
         printf("\rFunction put_hm adding: %d", i);
-        int err = put_hm(strBuff, num, mapFilter);
+        int err = put_hm(mapFilter, strBuff, num);
         if (err)
         {
             printf("\nFunction put_hm returned with Error: %d\n", err);
@@ -153,7 +182,7 @@ void hashMapTest()
     }
     puts("\nHashMap ready. Invoking filter_hm");
     clock_t cf1 = clock();
-    int filterErr = filter_hm(hashMapFilter, mapFilter);
+    int filterErr = filter_hm(mapFilter, hashMapFilter);
     if (filterErr)
     {
         printf("Function filter_hm returned with Error: %d\n", filterErr);
@@ -168,7 +197,13 @@ void hashMapTest()
     {
         memset(strBuff, 0, 10);
         snprintf(strBuff, 10, "%d", i);
-        int *res = get_hm(strBuff, mapFilter);
+        int *res = NULL;
+        int err_get = get_hm(mapFilter, strBuff, (void **)&res);
+        if (err_get)
+        {
+            printf("HashMap error code: %d\n", err_get);
+            goto _test_failure;
+        }
         if (res == NULL)
         {
             printf("\nFunction get_hm returned NULL, but expected (%d) after filter_hm.\n", i + 1);
@@ -184,7 +219,8 @@ void hashMapTest()
     free_hash_map(mapFilter);
 
     puts("Testing: put action for identicle keys. Value must be replaced.");
-    HashMap *identicleHM = new_hash_map();
+    HashMap *identicleHM = NULL;
+    new_hash_map(NULL, &identicleHM);
     for (int i = 0; i < 3; ++i)
     {
         memset(strBuff, 0, 10);
@@ -193,7 +229,7 @@ void hashMapTest()
         *num = i;
 
         printf("\rFunction put_hm adding: %d", i);
-        int err = put_hm(strBuff, num, identicleHM);
+        int err = put_hm(identicleHM, strBuff, num);
         if (err)
         {
             printf("Function put_hm returned with Error: %d\n", err);
@@ -208,7 +244,7 @@ void hashMapTest()
         *num = i * 10;
 
         printf("\rFunction put_hm adding: %d", i);
-        int err = put_hm(strBuff, num, identicleHM);
+        int err = put_hm(identicleHM, strBuff, num);
         if (err)
         {
             printf("Function put_hm returned with Error: %d\n", err);
@@ -220,7 +256,13 @@ void hashMapTest()
     {
         memset(strBuff, 0, 10);
         snprintf(strBuff, 10, "%d", i);
-        int *res = get_hm(strBuff, identicleHM);
+        int *res = NULL;
+        int err_get = get_hm(identicleHM, strBuff, (void **)&res);
+        if (err_get)
+        {
+            printf("HashMap error code: %d\n", err_get);
+            goto _test_failure;
+        }
         if (*res != i * 10)
         {
             printf("\nFunction get_hm returned (%d), but expected (%d).\n", *res, i * 10);
@@ -236,8 +278,9 @@ void hashMapTest()
     printf("done.\n");
 
     puts("Testing: value_destructor.");
-    HashMap *destructorHM = new_hash_map();
-    int destAddErr = add_destructor_hm(hashMapValueDestructor, destructorHM);
+    HashMap *destructorHM = NULL;
+    new_hash_map(NULL, &destructorHM);
+    int destAddErr = add_destructor_hm(destructorHM, hashMapValueDestructor);
     if (destAddErr)
     {
         printf("Failed to add value_destructor to HashMap. add_destructor_hm returned %d\n", destAddErr);
@@ -250,20 +293,20 @@ void hashMapTest()
         int *num = (int *)malloc(sizeof(int));
         *num = i;
 
-        int err = put_hm(strBuff, num, destructorHM);
+        int err = put_hm(destructorHM, strBuff, num);
         if (err)
         {
             printf("Function put_hm returned with Error: %d\n", err);
             goto _test_failure;
         }
     }
-    int errDestRemove = remove_hm("0", destructorHM);
+    int errDestRemove = remove_hm(destructorHM, "0");
     if (errDestRemove)
     {
         printf("Failed to remove value fromm HashMap. remove_hm returned %d\n", errDestRemove);
         goto _test_failure;
     }
-    int filterDestErr = filter_hm(hashMapFilter, destructorHM);
+    int filterDestErr = filter_hm(destructorHM, hashMapFilter);
     if (filterDestErr)
     {
         printf("Function filter_hm returned with Error: %d\n", filterDestErr);
