@@ -58,12 +58,12 @@
  */
 enum StringError
 {
-    STR_SUCCESS = 0,                         /**< (0) Successful execution of the called function. */
-    STR_ERR_NULL_ARGUMENT = 1,               /**< (1) One or more arguments are NULL. */
-    STR_ERR_MEMORY_ALLOCATION = 2,           /**< (2) Failed to allocate or reallocate memory. */
-    STR_ERR_INDEX_OUT_OF_BOUNDS = 3,         /**< (3) The targeted index is outside of the boundaries of the String. */
-    STR_ERR_INVALID_ARGUMENT_DIMENTIONS = 4, /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
-    STR_ERR_LOOP_MAX_LIMIT = 5,              /**< (5) A null-terminator character '\0' was not found among the first GSTRING_LOOP_MAX_LIMIT characters of the given character array. */
+	STR_SUCCESS = 0,			 /**< (0) Successful execution of the called function. */
+	STR_ERR_NULL_ARGUMENT = 1,		 /**< (1) One or more arguments are NULL. */
+	STR_ERR_MEMORY_ALLOCATION = 2,		 /**< (2) Failed to allocate or reallocate memory. */
+	STR_ERR_INDEX_OUT_OF_BOUNDS = 3,	 /**< (3) The targeted index is outside of the boundaries of the String. */
+	STR_ERR_INVALID_ARGUMENT_DIMENTIONS = 4, /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
+	STR_ERR_LOOP_MAX_LIMIT = 5,		 /**< (5) A null-terminator character '\0' was not found among the first GSTRING_LOOP_MAX_LIMIT characters of the given character array. */
 };
 
 /**
@@ -72,8 +72,8 @@ enum StringError
  */
 typedef struct String
 {
-    size_t length; /**< The number of characters in the array. */
-    char *str;     /**< The character array. */
+	size_t length; /**< The number of characters in the array. */
+	char *str;     /**< The character array. */
 } String;
 
 /**
@@ -324,7 +324,7 @@ GALXLIB_API enum StringError replace_char(String *const str, const char to_repla
  * - STR_SUCCESS
  *
  * - STR_ERR_NULL_ARGUMENT
- * 
+ *
  * - STR_ERR_MEMORY_ALLOCATION
  */
 GALXLIB_API enum StringError remove_char(String *const str, const char to_remove);
@@ -333,16 +333,16 @@ GALXLIB_API enum StringError remove_char(String *const str, const char to_remove
  * Concatenates multiple Strings into one.
  * @param output A pointer, where the resulting concatenated String will be placed.
  * @param n_str The number of given Strings to concatenate.
- * @param ... The list of Strings, which must be concatenated. It must contain String pointers. 
+ * @param ... The list of Strings, which must be concatenated. It must contain String pointers.
  * The concatenation is done from left to right.
  * @return A value of the @ref StringError:
  *
  * - STR_SUCCESS
  *
  * - STR_ERR_NULL_ARGUMENT
- * 
+ *
  * - STR_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  */
 GALXLIB_API enum StringError concat(String **const output, const size_t n_str, ...);

@@ -29,15 +29,15 @@
  */
 enum DynamicArrayError
 {
-    DA_ARRAY_EMPTY = -2,               /**< (-2) The array does not include any items. */
-    DA_ITEM_NOT_FOUND = -1,            /**< (-1) The searched item was not found among the items in the array. */
-    DA_SUCCESS = 0,                    /**< (0) Successful execution of the called function. */
-    DA_ERR_NULL_ARGUMENT = 1,          /**< (1) One or more arguments are NULL. */
-    DA_ERR_MEMORY_ALLOCATION = 2,      /**< (2) Failed to allocate or reallocate memory. */
-    DA_ERR_TYPE_MISMATCH = 3,          /**< (3) The type (DynamicArrayType) of the DynamicArray does not match the type, which the called function processes. */
-    DA_ERR_TYPE_UNKNOWN = 4,           /**< (4) The type (DynamicArrayType) is unknown and not supported. */
-    DA_ERR_INDEX_OUT_OF_BOUNDS = 5,    /**< (5) The targeted index is outside of the boundaries of the DynamicArray. */
-    DA_ERR_ITEM_SIZE_DETERMINATION = 6 /**< (6) The size in bytes of a single item could not be determined, based on the given type argument. */
+	DA_ARRAY_EMPTY = -2,		   /**< (-2) The array does not include any items. */
+	DA_ITEM_NOT_FOUND = -1,		   /**< (-1) The searched item was not found among the items in the array. */
+	DA_SUCCESS = 0,			   /**< (0) Successful execution of the called function. */
+	DA_ERR_NULL_ARGUMENT = 1,	   /**< (1) One or more arguments are NULL. */
+	DA_ERR_MEMORY_ALLOCATION = 2,	   /**< (2) Failed to allocate or reallocate memory. */
+	DA_ERR_TYPE_MISMATCH = 3,	   /**< (3) The type (DynamicArrayType) of the DynamicArray does not match the type, which the called function processes. */
+	DA_ERR_TYPE_UNKNOWN = 4,	   /**< (4) The type (DynamicArrayType) is unknown and not supported. */
+	DA_ERR_INDEX_OUT_OF_BOUNDS = 5,	   /**< (5) The targeted index is outside of the boundaries of the DynamicArray. */
+	DA_ERR_ITEM_SIZE_DETERMINATION = 6 /**< (6) The size in bytes of a single item could not be determined, based on the given type argument. */
 };
 
 /**
@@ -46,11 +46,11 @@ enum DynamicArrayError
  */
 enum DynamicArrayType
 {
-    INT = 0,
-    CHAR = 1,
-    FLOAT = 2,
-    DOUBLE = 3,
-    VOID_PTR = 4
+	INT = 0,
+	CHAR = 1,
+	FLOAT = 2,
+	DOUBLE = 3,
+	VOID_PTR = 4
 };
 
 /**
@@ -59,18 +59,18 @@ enum DynamicArrayType
  */
 typedef struct DynamicArray
 {
-    union
-    {
-        int *int_arr;
-        char *char_arr;
-        float *float_arr;
-        double *double_arr;
-        void **void_arr;
-    };
-    size_t count;               /**< The current number of items in the array. */
-    size_t capacity;            /**< The total number of places (indexes) in the array. This is not the total allocated memory. */
-    size_t single_item_size;    /**< The size in bytes of a singe item contained in the array. */
-    enum DynamicArrayType type; /**< Indicates the type of items contained in the array. */
+	union
+	{
+		int *int_arr;
+		char *char_arr;
+		float *float_arr;
+		double *double_arr;
+		void **void_arr;
+	};
+	size_t count;		    /**< The current number of items in the array. */
+	size_t capacity;	    /**< The total number of places (indexes) in the array. This is not the total allocated memory. */
+	size_t single_item_size;    /**< The size in bytes of a singe item contained in the array. */
+	enum DynamicArrayType type; /**< Indicates the type of items contained in the array. */
 } DynamicArray;
 
 /**
