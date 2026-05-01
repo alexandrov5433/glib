@@ -74,6 +74,16 @@ typedef struct DynamicArray
 } DynamicArray;
 
 /**
+ * @struct DynamicArrayiterator
+ * @brief A stucture used to securely iterate through the element of the @ref DynamicArray.
+ */
+typedef struct DynamicArrayIterator
+{
+	struct DynamicArray *da; /**< A pointer to the @ref DynamicArray for iteration. */
+	size_t current_index;	 /**< The index, keeping track of the progression of the iteration process. */
+} DynamicArrayIterator;
+
+/**
  * Creates a new DynamicArray.
  * @param type The type of values the array will hold, according to the DynamicArrayType enum.
  * @param output A pointer, which will be updated with the adress of the new DynamicArray.
@@ -731,5 +741,111 @@ GALXLIB_API enum DynamicArrayError find_last_index_da(DynamicArray *const da, si
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API enum DynamicArrayError index_of_da(DynamicArray *const da, size_t *const output, void *const value);
+
+/**
+ * Creates a new @ref DynamicArrayIterator.
+ * @param da The @ref DynamicArray for iteration.
+ * @param output The address, where the new @ref DynamicArrayIterator will be placed.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ *
+ * - DA_ERR_MEMORY_ALLOCATION
+ */
+GALXLIB_API enum DynamicArrayError new_iterator_da(DynamicArray *const da, DynamicArrayIterator **const output);
+
+/**
+ * Outputs 1 if there are more elements to iterate through, 0 otherwise.
+ * @param itr The @ref DynamicArrayIterator managing the iteration process.
+ * @param output The address, where the 1 or 0 output will be placed.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ */
+GALXLIB_API enum DynamicArrayError has_next_dai(const DynamicArrayIterator *const itr, int *const output);
+
+/**
+ * Outputs the next element from the iteration process.
+ * @param itr The @ref DynamicArrayIterator managing the iteration process.
+ * @param output The address, where the element will be placed.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ * 
+ * - DA_ERR_TYPE_MISMATCH
+ * 
+ * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ */
+GALXLIB_API enum DynamicArrayError next_int_dai(DynamicArrayIterator *const itr, int *const output);
+
+/**
+ * Outputs the next element from the iteration process.
+ * @param itr The @ref DynamicArrayIterator managing the iteration process.
+ * @param output The address, where the element will be placed.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ * 
+ * - DA_ERR_TYPE_MISMATCH
+ * 
+ * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ */
+GALXLIB_API enum DynamicArrayError next_char_dai(DynamicArrayIterator *const itr, char *const output);
+
+/**
+ * Outputs the next element from the iteration process.
+ * @param itr The @ref DynamicArrayIterator managing the iteration process.
+ * @param output The address, where the element will be placed.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ * 
+ * - DA_ERR_TYPE_MISMATCH
+ * 
+ * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ */
+GALXLIB_API enum DynamicArrayError next_float_dai(DynamicArrayIterator *const itr, float *const output);
+
+/**
+ * Outputs the next element from the iteration process.
+ * @param itr The @ref DynamicArrayIterator managing the iteration process.
+ * @param output The address, where the element will be placed.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ * 
+ * - DA_ERR_TYPE_MISMATCH
+ * 
+ * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ */
+GALXLIB_API enum DynamicArrayError next_double_dai(DynamicArrayIterator *const itr, double *const output);
+
+/**
+ * Outputs the next element from the iteration process.
+ * @param itr The @ref DynamicArrayIterator managing the iteration process.
+ * @param output The address, where the element will be placed.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ * 
+ * - DA_ERR_TYPE_MISMATCH
+ * 
+ * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ */
+GALXLIB_API enum DynamicArrayError next_ptr_dai(DynamicArrayIterator *const itr, void **const output);
 
 #endif

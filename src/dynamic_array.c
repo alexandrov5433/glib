@@ -1340,3 +1340,134 @@ enum DynamicArrayError index_of_da(DynamicArray *const da, size_t *const output,
 	}
 	return DA_ITEM_NOT_FOUND;
 }
+
+// ##################   DynamicArrayIterator   ##################
+
+enum DynamicArrayError new_iterator_da(DynamicArray *const da, DynamicArrayIterator **const output)
+{
+	if (da == NULL || output == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	DynamicArrayIterator *itr = (DynamicArrayIterator *)malloc(sizeof(DynamicArrayIterator));
+	if (itr == NULL)
+		return DA_ERR_MEMORY_ALLOCATION;
+
+	itr->da = da;
+	itr->current_index = 0;
+	*output = itr;
+
+	return DA_SUCCESS;
+}
+
+enum DynamicArrayError has_next_dai(const DynamicArrayIterator *const itr, int *const output)
+{
+	if (itr == NULL || output == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	if (itr->current_index + 1 <= itr->da->count)
+		*output = 1;
+	else
+		*output = 0;
+
+	return DA_SUCCESS;
+}
+
+enum DynamicArrayError next_int_dai(DynamicArrayIterator *const itr, int *const output)
+{
+	if (itr == NULL || output == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	if (itr->da->type != INT)
+		return DA_ERR_TYPE_MISMATCH;
+
+	int output_has_next = 0;
+	int err_has_next = has_next_dai(itr, &output_has_next);
+	if (err_has_next)
+		return err_has_next;
+	if (output_has_next == 0)
+		return DA_ERR_INDEX_OUT_OF_BOUNDS;
+
+	*output = (int)((itr->da->int_arr)[(itr->current_index)++]);
+
+	return DA_SUCCESS;
+}
+
+enum DynamicArrayError next_char_dai(DynamicArrayIterator *const itr, char *const output)
+{
+	if (itr == NULL || output == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	if (itr->da->type != CHAR)
+		return DA_ERR_TYPE_MISMATCH;
+
+	int output_has_next = 0;
+	int err_has_next = has_next_dai(itr, &output_has_next);
+	if (err_has_next)
+		return err_has_next;
+	if (output_has_next == 0)
+		return DA_ERR_INDEX_OUT_OF_BOUNDS;
+
+	*output = (char)((itr->da->char_arr)[(itr->current_index)++]);
+
+	return DA_SUCCESS;
+}
+
+enum DynamicArrayError next_float_dai(DynamicArrayIterator *const itr, float *const output)
+{
+	if (itr == NULL || output == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	if (itr->da->type != FLOAT)
+		return DA_ERR_TYPE_MISMATCH;
+
+	int output_has_next = 0;
+	int err_has_next = has_next_dai(itr, &output_has_next);
+	if (err_has_next)
+		return err_has_next;
+	if (output_has_next == 0)
+		return DA_ERR_INDEX_OUT_OF_BOUNDS;
+
+	*output = (float)((itr->da->float_arr)[(itr->current_index)++]);
+
+	return DA_SUCCESS;
+}
+
+enum DynamicArrayError next_double_dai(DynamicArrayIterator *const itr, double *const output)
+{
+	if (itr == NULL || output == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	if (itr->da->type != DOUBLE)
+		return DA_ERR_TYPE_MISMATCH;
+
+	int output_has_next = 0;
+	int err_has_next = has_next_dai(itr, &output_has_next);
+	if (err_has_next)
+		return err_has_next;
+	if (output_has_next == 0)
+		return DA_ERR_INDEX_OUT_OF_BOUNDS;
+
+	*output = (double)((itr->da->double_arr)[(itr->current_index)++]);
+
+	return DA_SUCCESS;
+}
+
+enum DynamicArrayError next_ptr_dai(DynamicArrayIterator *const itr, void **const output)
+{
+	if (itr == NULL || output == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	if (itr->da->type != VOID_PTR)
+		return DA_ERR_TYPE_MISMATCH;
+
+	int output_has_next = 0;
+	int err_has_next = has_next_dai(itr, &output_has_next);
+	if (err_has_next)
+		return err_has_next;
+	if (output_has_next == 0)
+		return DA_ERR_INDEX_OUT_OF_BOUNDS;
+
+	*output = (void *)((itr->da->void_arr)[(itr->current_index)++]);
+
+	return DA_SUCCESS;
+}
