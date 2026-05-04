@@ -757,6 +757,17 @@ GALXLIB_API enum DynamicArrayError index_of_da(DynamicArray *const da, size_t *c
 GALXLIB_API enum DynamicArrayError new_iterator_da(DynamicArray *const da, DynamicArrayIterator **const output);
 
 /**
+ * Frees the memory of a @ref DynamicArrayIterator.
+ * @param itr The @ref DynamicArrayIterator.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ */
+GALXLIB_API enum DynamicArrayError free_iterator_da(DynamicArrayIterator *itr);
+
+/**
  * Outputs 1 if there are more elements to iterate through, 0 otherwise.
  * @param itr The @ref DynamicArrayIterator managing the iteration process.
  * @param output The address, where the 1 or 0 output will be placed.

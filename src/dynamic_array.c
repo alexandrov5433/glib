@@ -1359,6 +1359,15 @@ enum DynamicArrayError new_iterator_da(DynamicArray *const da, DynamicArrayItera
 	return DA_SUCCESS;
 }
 
+enum DynamicArrayError free_iterator_da(DynamicArrayIterator *itr)
+{
+	if (itr == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	free(itr);
+	return DA_SUCCESS;
+}
+
 enum DynamicArrayError has_next_dai(const DynamicArrayIterator *const itr, int *const output)
 {
 	if (itr == NULL || output == NULL)
