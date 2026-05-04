@@ -1,5 +1,5 @@
-#ifndef BINARY_TREE_H
-#define BINARY_TREE_H
+#ifndef GALXLIB_BINARY_TREE_H
+#define GALXLIB_BINARY_TREE_H
 
 #ifdef _WIN32
 
@@ -17,16 +17,38 @@
 
 #endif
 
+/**
+ * @enum BinaryTreeError
+ * @brief The error codes returned by the @ref BinaryTree functions.
+ */
+enum BinaryTreeError
+{
+	BT_EMPTY = -2,		      /**< (-2) The binary tree does not include any items. */
+	BT_ITEM_NOT_FOUND = -1,	      /**< (-1) The searched item was not found. */
+	BT_SUCCESS = 0,		      /**< (0) Successful execution of the called function. */
+	BT_ERR_NULL_ARGUMENT = 1,     /**< (1) One or more arguments are NULL. */
+	BT_ERR_MEMORY_ALLOCATION = 2, /**< (2) Failed to allocate or reallocate memory. */
+};
+
+/**
+ * @struct Node
+ * @brief The structure describing a single node in the @ref BinaryTree.
+ */
 typedef struct Node
 {
-    void *data;
-    struct Node *left, *right;
+	void *data;	    /**< The data contained in the Node. */
+	struct Node *left;  /**< The left neighbouring Node. */
+	struct Node *right; /**< The right neighbouring Node. */
 } Node;
 
+/**
+ * @struct BinaryTree
+ * @brief The structure holding the relevant data of the BinaryTree.
+ */
 typedef struct BinaryTree
 {
-    struct Node *root;
-    int (*comparator)(const void *a, const void *b);
+	struct Node *root;					     /**< The first @ref Node of the BinaryTree. */
+	int (*comparator)(const void *const a, const void *const b); /**< A function, which compares the values of each @ref Node in the BinaryTree against each other. */
 } BinaryTree;
 
 /**
