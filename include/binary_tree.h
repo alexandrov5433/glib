@@ -1,6 +1,8 @@
 #ifndef GALXLIB_BINARY_TREE_H
 #define GALXLIB_BINARY_TREE_H
 
+#include <stddef.h>
+
 #ifdef _WIN32
 
 #ifdef GALXLIB_SHARED
@@ -17,6 +19,10 @@
 
 #endif
 
+#ifndef BINARY_TREE_MAX_DEPTH
+#define BINARY_TREE_MAX_DEPTH SIZE_MAX
+#endif
+
 /**
  * @enum BinaryTreeError
  * @brief The error codes returned by the @ref BinaryTree functions.
@@ -28,6 +34,7 @@ enum BinaryTreeError
 	BT_SUCCESS = 0,		      /**< (0) Successful execution of the called function. */
 	BT_ERR_NULL_ARGUMENT = 1,     /**< (1) One or more arguments are NULL. */
 	BT_ERR_MEMORY_ALLOCATION = 2, /**< (2) Failed to allocate or reallocate memory. */
+	BT_ERR_MAX_DEPTH = 3,	      /**< (3) The maximum depth limit, defined as BINARY_TREE_MAX_DEPTH, was reached. */
 };
 
 /**
