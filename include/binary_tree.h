@@ -20,7 +20,7 @@
 #endif
 
 #ifndef BINARY_TREE_MAX_DEPTH
-#define BINARY_TREE_MAX_DEPTH SIZE_MAX
+#define BINARY_TREE_MAX_DEPTH SIZE_MAX - 1
 #endif
 
 /**
@@ -35,6 +35,8 @@ enum BinaryTreeError
 	BT_ERR_NULL_ARGUMENT = 1,     /**< (1) One or more arguments are NULL. */
 	BT_ERR_MEMORY_ALLOCATION = 2, /**< (2) Failed to allocate or reallocate memory. */
 	BT_ERR_MAX_DEPTH = 3,	      /**< (3) The maximum depth limit, defined as BINARY_TREE_MAX_DEPTH, was reached. */
+	BT_ERR_NULL_DATA = 4,	      /**< (4) The data member in a @ref Node is NULL. */
+	BT_ERR_NULL_ROOT = 5,	      /**< (5) The root member of the @ref BinaryTree is NULL. */
 };
 
 /**

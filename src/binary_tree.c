@@ -6,7 +6,7 @@
 
 static enum BinaryTreeError _new_node(void *const data, Node **const output)
 {
-	if (data == NULL)
+	if (data == NULL || output == NULL)
 		return BT_ERR_NULL_ARGUMENT;
 
 	Node *node = (Node *)malloc(sizeof(Node));
@@ -48,6 +48,79 @@ static enum BinaryTreeError _free_node_and_data(Node *const node, void (*destruc
 	return BT_SUCCESS;
 }
 
+static enum BinaryTreeError _dfs(
+    const Node *const node,
+    int (*selector)(void *const data),
+    size_t *const depth,
+    void **const output)
+{
+	// depth first search; pre-order
+	if (node == NULL || selector == NULL || depth == NULL || output == NULL)
+		return BT_ERR_NULL_ARGUMENT;
+
+	if (*depth > BINARY_TREE_MAX_DEPTH)
+		return BT_ERR_MAX_DEPTH;
+	(*depth)++;
+
+	if (node->data == NULL)
+		return BT_ERR_NULL_DATA;
+
+	if (selector(node->data) == 1)
+	{
+		*output = node->data;
+		return BT_SUCCESS;
+	}
+
+	// End of branch reached. Item not found.
+	if (node->left == NULL && node->right == NULL)
+		return BT_ITEM_NOT_FOUND;
+
+	int err_left, err_right = BT_ITEM_NOT_FOUND;
+
+	if (node->left != NULL)
+		err_left = _dfs(node->left, selector, depth, output);
+	if (err_left == BT_SUCCESS)
+		return err_left;
+	else if (err_left == BT_ITEM_NOT_FOUND)
+		goto _right;
+	return err_left; // actual error
+_right:
+	if (node->right != NULL)
+		err_right = _dfs(node->right, selector, depth, output);
+	return err_right; // success, not_found or actual error
+}
+
+enum BinaryTreeError _process_bt(
+    Node *const node,
+    void (*processor)(void *const data),
+    size_t *const depth)
+{
+	if (node == NULL || processor == NULL || depth == NULL)
+		return BT_ERR_NULL_ARGUMENT;
+
+	if (*depth > BINARY_TREE_MAX_DEPTH)
+		return BT_ERR_MAX_DEPTH;
+	(*depth)++;
+
+	if (node->data == NULL)
+		return BT_ERR_NULL_DATA;
+	processor(node->data);
+
+	int err_left, err_right = BT_SUCCESS;
+
+	if (node->left != NULL)
+		err_left = _process_bt(node->left, processor, depth);
+	if (err_left)
+		return err_left;
+
+	if (node->right != NULL)
+		err_right = _process_bt(node->right, processor, depth);
+	if (err_right)
+		return err_right;
+
+	return BT_SUCCESS;
+}
+
 // ##################   public   ##################
 
 enum BinaryTreeError new_binary_tree(
@@ -84,7 +157,7 @@ enum BinaryTreeError free_bt(BinaryTree *const bt)
 	return BT_SUCCESS;
 }
 
-enum BinaryTreeError free_bt_and_data(BinaryTree *const bt, void (*destructor)(void *ptr))
+enum BinaryTreeError free_bt_and_data(BinaryTree *const bt, void (*destructor)(void *data))
 {
 	if (bt == NULL || destructor == NULL)
 		return BT_ERR_NULL_ARGUMENT;
@@ -98,6 +171,9 @@ enum BinaryTreeError add_bt(BinaryTree *const bt, void *const data)
 {
 	if (bt == NULL || data == NULL)
 		return BT_ERR_NULL_ARGUMENT;
+
+	if (bt->root == NULL)
+		BT_ERR_NULL_ROOT;
 
 	Node *new_node = NULL;
 	int err_new_node = _new_node(data, &new_node);
@@ -138,63 +214,36 @@ enum BinaryTreeError add_bt(BinaryTree *const bt, void *const data)
 			node = node->right;
 		}
 	}
-
+	_free_node(new_node);
 	return BT_ERR_MAX_DEPTH;
 }
 
-static void *_DFS(Node *node, int (*selector)(void *const ptr))
+enum BinaryTreeError dfs_bt(
+    const BinaryTree *const bt,
+    int (*selector)(void *const data),
+    void **const output)
 {
-	// depth first search; pre-order
-	if (node == NULL)
-	{
-		return NULL;
-	}
-	if ((selector)(node->data) == 1)
-	{
-		return node->data;
-	}
-	// TODO: void* cast
-	/*
-	$ "D:/Program Files/CMake/bin/cmake.exe" --build build
-    [1/3] Building C object CMakeFiles/glib.dir/src/data_structures/binary_tree.c.obj
-    D:/Code Files/C/glib/src/data_structures/binary_tree.c: In function '_DFS':
-    D:/Code Files/C/glib/src/data_structures/binary_tree.c:156:12: warning: cast to pointer from integer of differen
-    t size [-Wint-to-pointer-cast]
-      156 |     return (void*)(_DFS(node->left, selector) || _DFS(node->right, selector));
-	  |            ^
-    [3/3] Linking C executable glib_test.exe
+	if (bt == NULL || selector == NULL || output == NULL)
+		return BT_ERR_NULL_ARGUMENT;
 
-	*/
-	return (void *)(_DFS(node->left, selector) || _DFS(node->right, selector));
+	if (bt->root == NULL)
+		BT_ERR_NULL_ROOT;
+
+	size_t depth = 0;
+	return _dfs(bt->root, selector, &depth, output);
 }
 
-// static void *_BFS(Node *node, int (*selector)(void *const ptr))
-// {
-//     // TODO
-// }
+enum BinaryTreeError process_bt(BinaryTree *const bt, void (*processor)(void *const data))
+{
+	if (bt == NULL || processor == NULL)
+		return BT_ERR_NULL_ARGUMENT;
 
-// void *findInBT(BinaryTree *bt, int searchAlg, int (*selector)(void *const ptr))
-// {
-//     if (bt == NULL || selector == NULL)
-//     {
-//         return NULL;
-//     }
-//     if (searchAlg <= 0)
-//     {
-//         return _DFS(bt->root, selector);
-//     }
-//     return _BFS(bt->root, selector);
-// }
+	if (bt->root == NULL)
+		return BT_ERR_NULL_ROOT;
 
-// static void _processBT(Node *node, void (*processor)(void *const ptr))
-// {
-//     if (node == NULL)
-//     {
-//         return;
-//     }
-//     _processBT(node->left, processor);
-//     _processBT(node->right, processor);
-// }
+	size_t depth = 0;
+	return _process_bt(bt->root, processor, &depth);
+}
 
 // void processBT(BinaryTree *bt, void (*processor)(void *const ptr))
 // {
