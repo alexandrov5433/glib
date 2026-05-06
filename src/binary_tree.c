@@ -227,7 +227,7 @@ enum BinaryTreeError dfs_bt(
 		return BT_ERR_NULL_ARGUMENT;
 
 	if (bt->root == NULL)
-		BT_ERR_NULL_ROOT;
+		return BT_ERR_NULL_ROOT;
 
 	size_t depth = 0;
 	return _dfs(bt->root, selector, &depth, output);

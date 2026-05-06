@@ -131,7 +131,21 @@ void test_binary_tree(void)
 
         // dfs_bt
         int *output_dfs = NULL;
-        int err_dfs = dfs_bt(bt, selector_bt_5, (void **)&output_dfs);
+        int err_dfs = dfs_bt(NULL, selector_bt_5, (void **)&output_dfs);
+        EXPECT_EQ(err_dfs, BT_ERR_NULL_ARGUMENT);
+        err_dfs = dfs_bt(bt, NULL, (void **)&output_dfs);
+        EXPECT_EQ(err_dfs, BT_ERR_NULL_ARGUMENT);
+        err_dfs = dfs_bt(bt, selector_bt_5, NULL);
+        EXPECT_EQ(err_dfs, BT_ERR_NULL_ARGUMENT);
+
+        BinaryTree *bt_null_root = NULL;
+        int err_bt_null_root_init = new_binary_tree(&first, comparator_bt, &bt_null_root);
+        EXPECT_EQ(err_bt_null_root_init, BT_SUCCESS);
+        bt_null_root->root = NULL; // manually set NULL
+        err_dfs = dfs_bt(bt_null_root, selector_bt_5, (void **)&output_dfs);
+        EXPECT_EQ(err_dfs, BT_ERR_NULL_ROOT);
+
+        err_dfs = dfs_bt(bt, selector_bt_5, (void **)&output_dfs);
         EXPECT_EQ(err_dfs, BT_SUCCESS);
         EXPECT_EQ(*output_dfs, 5);
         err_dfs = dfs_bt(bt, selector_bt_89, (void **)&output_dfs);
@@ -144,7 +158,8 @@ void test_binary_tree(void)
         // clean up
         int err_free = free_bt(bt);
         EXPECT_EQ(err_free, BT_SUCCESS);
-
+        err_free = free_bt(bt_null_root);
+        EXPECT_EQ(err_free, BT_SUCCESS);
 
         printf("All gregex tests passed!\n");
         puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
