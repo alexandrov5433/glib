@@ -18,6 +18,21 @@ void processor_bt(void *const data)
         (*(int *)data)++;
 }
 
+int selector_bt_89(void *const data)
+{
+        return *(int *)data == 89 ? 1 : 0;
+}
+
+int selector_bt_5(void *const data)
+{
+        return *(int *)data == 5 ? 1 : 0;
+}
+
+int selector_bt_invalid(void *const data)
+{
+        return *(int *)data == 50000 ? 1 : 0;
+}
+
 void test_binary_tree(void)
 {
         puts("################## Test: BinaryTree ##################");
@@ -113,6 +128,23 @@ void test_binary_tree(void)
 
         EXPECT_NOT_NULL(bt->root->left->right->right->left);
         EXPECT_EQ(*(int *)(bt->root->left->right->right->left->data), 5);
+
+        // dfs_bt
+        int *output_dfs = NULL;
+        int err_dfs = dfs_bt(bt, selector_bt_5, (void **)&output_dfs);
+        EXPECT_EQ(err_dfs, BT_SUCCESS);
+        EXPECT_EQ(*output_dfs, 5);
+        err_dfs = dfs_bt(bt, selector_bt_89, (void **)&output_dfs);
+        EXPECT_EQ(err_dfs, BT_SUCCESS);
+        EXPECT_EQ(*output_dfs, 89);
+        err_dfs = dfs_bt(bt, selector_bt_invalid, (void **)&output_dfs);
+        EXPECT_EQ(err_dfs, BT_ITEM_NOT_FOUND);
+        EXPECT_EQ(*output_dfs, 89);
+
+        // clean up
+        int err_free = free_bt(bt);
+        EXPECT_EQ(err_free, BT_SUCCESS);
+
 
         printf("All gregex tests passed!\n");
         puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
