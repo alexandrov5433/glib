@@ -78,6 +78,7 @@ target_sources(lib_test
         lib_test/src/stack.c
         lib_test/src/linked_list.c
         lib_test/src/gregex.c
+        lib_test/src/binary_tree.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
@@ -90,6 +91,7 @@ target_sources(lib_test
             lib_test/include/stack.h
             lib_test/include/linked_list.h
             lib_test/include/gregex.h
+            lib_test/include/binary_tree.h
 
 )
 # compile lib code with -g flag, enabling debugging of lib_test.exe with working breakpoints
