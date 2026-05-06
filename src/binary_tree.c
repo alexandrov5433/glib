@@ -125,7 +125,7 @@ enum BinaryTreeError _process_bt(
 
 enum BinaryTreeError new_binary_tree(
     void *const data,
-    int (*comparator)(const void *const a, const void *const b),
+    int (*comparator)(const void *const existing_value, const void *const new_value),
     BinaryTree **const output)
 {
 	if (data == NULL || comparator == NULL || output == NULL)

@@ -64,7 +64,7 @@ typedef struct BinaryTree
  * Creates a new @ref BinaryTree.
  * @param data The data of the root @ref Node.
  * @param comparator A function pointer to the comparator function, which will be used to order the Nodes.
- * (<0) a comes BEFORE b. (>=0) a comes AFTER b.
+ * (<0) new_value comes BEFORE existing_value. (>=0) new_value comes AFTER existing_value.
  * @param output The output address for the new @ref BinaryTree.
  * @return A value of the @ref BinaryTreeError:
  *
@@ -76,7 +76,7 @@ typedef struct BinaryTree
  */
 GALXLIB_API enum BinaryTreeError new_binary_tree(
     void *const data,
-    int (*comparator)(const void *const a, const void *const b),
+    int (*comparator)(const void *const existing_value, const void *const new_value),
     BinaryTree **const output);
 
 /**
