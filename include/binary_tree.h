@@ -37,6 +37,7 @@ enum BinaryTreeError
 	BT_ERR_MAX_DEPTH = 3,	      /**< (3) The maximum depth limit, defined as BINARY_TREE_MAX_DEPTH, was reached. */
 	BT_ERR_NULL_DATA = 4,	      /**< (4) The data member in a @ref Node is NULL. */
 	BT_ERR_NULL_ROOT = 5,	      /**< (5) The root member of the @ref BinaryTree is NULL. */
+	BT_ERR_NULL_COMPARATOR = 6,   /**< (6) The comparator member of the @ref BinaryTree is NULL. */
 };
 
 /**
@@ -124,21 +125,23 @@ GALXLIB_API enum BinaryTreeError add_bt(BinaryTree *const bt, void *const data);
 /**
  * Gets the data of a @ref Node from the @ref BinaryTree.
  * @param bt The @ref BinaryTree, in which to search.
- * @param selector A function, which will be used to recognize the @ref Node containing the wanted data. 
+ * @param selector A function, which will be used to recognize the @ref Node containing the wanted data.
  * Must return 1 if the currently processed data is the wanted one.
  * @param output The output address for the wanted data.
  * @return A value of the @ref BinaryTreeError:
  *
  * - BT_SUCCESS
- * 
+ *
  * - BT_ITEM_NOT_FOUND
  *
  * - BT_ERR_NULL_ARGUMENT
  *
  * - BT_ERR_NULL_ROOT
  *
- * - BT_ERR_MAX_DEPTH
+ * - BT_ERR_NULL_COMPARATOR
  * 
+ * - BT_ERR_MAX_DEPTH
+ *
  * - BT_ERR_NULL_DATA
  */
 GALXLIB_API enum BinaryTreeError dfs_bt(

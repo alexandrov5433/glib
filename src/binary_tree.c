@@ -173,7 +173,10 @@ enum BinaryTreeError add_bt(BinaryTree *const bt, void *const data)
 		return BT_ERR_NULL_ARGUMENT;
 
 	if (bt->root == NULL)
-		BT_ERR_NULL_ROOT;
+		return BT_ERR_NULL_ROOT;
+
+	if (bt->comparator == NULL)
+		return BT_ERR_NULL_COMPARATOR;
 
 	Node *new_node = NULL;
 	int err_new_node = _new_node(data, &new_node);
