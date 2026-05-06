@@ -10,6 +10,7 @@
 #include "./include/sorting.h"
 #include "./include/stack.h"
 #include "./include/gregex.h"
+#include "./include/binary_tree.h"
 
 int main()
 {
@@ -26,6 +27,7 @@ int main()
     // dynamicStackTest();
     dynamicArrayTest();
     test_gregex();
+    test_binary_tree();
     clock_t c2 = clock();
     double dur = 1000.0 * (c2 - c1) / CLOCKS_PER_SEC;
     printf("CPU time used (per clock()): %.2f ms\n", dur);

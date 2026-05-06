@@ -128,7 +128,7 @@ enum BinaryTreeError new_binary_tree(
     int (*comparator)(const void *const a, const void *const b),
     BinaryTree **const output)
 {
-	if (data == NULL || comparator == NULL)
+	if (data == NULL || comparator == NULL || output == NULL)
 		return BT_ERR_NULL_ARGUMENT;
 
 	BinaryTree *bt = (BinaryTree *)malloc(sizeof(BinaryTree));

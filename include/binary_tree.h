@@ -61,47 +61,96 @@ typedef struct BinaryTree
 } BinaryTree;
 
 /**
- * @param ptr The pointer, which will be the data of the root Node. Can not be a NULL pointer.
- * @param comparator A function pointer to the comparator function, which will be used to order the Nodes. (<0) a comes BEFORE b. (0) a and b are EQUAL. (>0) a comes AFTER b. Can not be a NULL pointer.
- * @returns A pointer to the new BinaryTree.
+ * Creates a new @ref BinaryTree.
+ * @param data The data of the root @ref Node.
+ * @param comparator A function pointer to the comparator function, which will be used to order the Nodes.
+ * (<0) a comes BEFORE b. (>=0) a comes AFTER b.
+ * @param output The output address for the new @ref BinaryTree.
+ * @return A value of the @ref BinaryTreeError:
+ *
+ * - BT_SUCCESS
+ *
+ * - BT_ERR_NULL_ARGUMENT
+ *
+ * - BT_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API BinaryTree *newBinaryTree(void *const ptr, int (*comparator)(const void *a, const void *b));
+GALXLIB_API enum BinaryTreeError new_binary_tree(
+    void *const data,
+    int (*comparator)(const void *const a, const void *const b),
+    BinaryTree **const output);
 
 /**
- * Frees the memory for the BinaryTree. The data at the adsresses of the data pointers in the Nodes is not manipulated.
- * @param bt A pointer to the BinaryTree, which must be freed. Can not be a NULL pointer.
- * @returns 0 on succes. 1 the argument bt is NULL.
+ * Frees the memory of the @ref BinaryTree. The content of the data member of each @ref Node is NOT freed.
+ * @param bt The @ref BinaryTree, which must be freed.
+ * @return A value of the @ref BinaryTreeError:
+ *
+ * - BT_SUCCESS
+ *
+ * - BT_ERR_NULL_ARGUMENT
  */
-GALXLIB_API int freeBT(BinaryTree *bt);
+GALXLIB_API enum BinaryTreeError free_bt(BinaryTree *const bt);
 
 /**
- * Frees the memory for the BinaryTree and appies a releaser function on every data pointer in every Node.
- * @param bt A pointer to the BinaryTree, which must be freed. Can not be a NULL pointer.
- * @param releaser A function pointer to the releaser function, which will be applied to every data pointer. Can not be a NULL pointer, otherwise returns NULL.
- * @returns 0 on succes. 1 if one of the arguments is NULL.
+ * Frees the memory of the @ref BinaryTree.
+ * The content of the data member of each @ref Node is fed to the destructor, before freeing the @ref Node.
+ * @param bt The @ref BinaryTree, which must be freed.
+ * @param destructor A function, which will be applied to every pointer in each data member.
+ * @return A value of the @ref BinaryTreeError:
+ *
+ * - BT_SUCCESS
+ *
+ * - BT_ERR_NULL_ARGUMENT
  */
-GALXLIB_API int freeBTAndData(BinaryTree *bt, void (*releaser)(void *ptr));
+GALXLIB_API enum BinaryTreeError free_bt_and_data(BinaryTree *const bt, void (*destructor)(void *data));
 
 /**
- * @param bt A pointer to the BinaryTree, in which the new pointer must be added. Can not be a NULL pointer.
- * @param ptr A pointer, which will be the the data of the newly added Node. Can not be a NULL pointer.
- * @returns 0 on success. 1 when a NULL pointer was received as an argument. 2 when a new Node could not be created from the ptr argument. 3 on unknown error; the function should not be reaching this return statement.
+ * Adds a @ref Node to the @ref BinaryTree.
+ * @param bt The @ref BinaryTree, to which the new @ref Node will be added.
+ * @param data The data of the new @ref Node.
+ * @return A value of the @ref BinaryTreeError:
+ *
+ * - BT_SUCCESS
+ *
+ * - BT_ERR_NULL_ARGUMENT
+ *
+ * - BT_ERR_MEMORY_ALLOCATION
+ *
+ * - BT_ERR_NULL_ROOT
+ *
+ * - BT_ERR_MAX_DEPTH
  */
-GALXLIB_API int addToBT(BinaryTree *bt, void *const ptr);
+GALXLIB_API enum BinaryTreeError add_bt(BinaryTree *const bt, void *const data);
 
 /**
- * @param bt A pointer to the BinaryTree, in which the new pointer must be added. Can not be a NULL pointer.
- * @param searchAlg <=0 for Depth First Search (pre-order) and >0 for Breadth First Search.
- * @param selector A function pointer to the comparator function, which will be used to find the Node containing the wanted data. Must return 1 if the currently processed data is the wanted one. Can not be a NULL pointer, otherwise returns NULL.
- * @returns A pointer to the wanted data or NULL if nothing was found.
+ * Gets the data of a @ref Node from the @ref BinaryTree.
+ * @param bt The @ref BinaryTree, in which to search.
+ * @param selector A function, which will be used to recognize the @ref Node containing the wanted data. 
+ * Must return 1 if the currently processed data is the wanted one.
+ * @param output The output address for the wanted data.
+ * @return A value of the @ref BinaryTreeError:
+ *
+ * - BT_SUCCESS
+ * 
+ * - BT_ITEM_NOT_FOUND
+ *
+ * - BT_ERR_NULL_ARGUMENT
+ *
+ * - BT_ERR_NULL_ROOT
+ *
+ * - BT_ERR_MAX_DEPTH
+ * 
+ * - BT_ERR_NULL_DATA
  */
-GALXLIB_API void *findInBT(BinaryTree *bt, int searchAlg, int (*selector)(void *const ptr));
+GALXLIB_API enum BinaryTreeError dfs_bt(
+    const BinaryTree *const bt,
+    int (*selector)(void *const data),
+    void **const output);
 
 /**
- * Applies a processor function to every data pointer of every Node in the BinaryTree.
- * @param bt A pointer to the BinaryTree, in which the new pointer must be added. Can not be a NULL pointer.
- * @param selector A function pointer to the processor function. Can not be a NULL pointer, otherwise returns.
+ * Applies a processor function to the data fo each @ref Node in the @ref BinaryTree.
+ * @param bt The @ref BinaryTree, which is to be processed.
+ * @param processor A function, which receives the data from each @ref Node.
  */
-GALXLIB_API void processBT(BinaryTree *bt, void (*processor)(void *const ptr));
+GALXLIB_API enum BinaryTreeError process_bt(BinaryTree *const bt, void (*processor)(void *const data));
 
 #endif
