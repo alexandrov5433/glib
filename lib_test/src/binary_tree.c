@@ -190,6 +190,24 @@ void test_binary_tree(void)
         EXPECT_EQ(err_dfs, BT_ITEM_NOT_FOUND);
         EXPECT_EQ(*output_dfs, 89);
 
+        // BINARY_TREE_MAX_DEPTH test
+        BinaryTree *bt_max_depth = NULL;
+        int zero = 0;
+        int err_bt_max_depth_init = new_binary_tree(&zero, comparator_bt, &bt_max_depth);
+        EXPECT_EQ(err_bt_max_depth_init, BT_SUCCESS);
+        int err_add_max = BT_SUCCESS;
+        printf("Testing BINARY_TREE_MAX_DEPTH = %d\n", BINARY_TREE_MAX_DEPTH);
+        for (size_t i = 0; i < BINARY_TREE_MAX_DEPTH; ++i)
+        {
+                printf("Adding: %d\r", i);
+                err_add_max = add_bt(bt_max_depth, &i);
+                EXPECT_EQ(err_add_max, BT_SUCCESS);
+        }
+        puts("");
+        size_t max_value = 100000;
+        err_add_max = add_bt(bt_max_depth, &max_value);
+        EXPECT_EQ(err_add_max, BT_ERR_MAX_DEPTH);
+
         // clean up
         int err_free = free_bt(bt);
         EXPECT_EQ(err_free, BT_SUCCESS);
