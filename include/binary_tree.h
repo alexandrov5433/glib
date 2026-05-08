@@ -20,7 +20,7 @@
 #endif
 
 #ifndef BINARY_TREE_MAX_DEPTH
-#define BINARY_TREE_MAX_DEPTH 10000UL
+#define BINARY_TREE_MAX_DEPTH 1000000UL
 #endif
 
 /**
@@ -63,7 +63,6 @@ typedef struct BinaryTree
 
 /**
  * Creates a new @ref BinaryTree.
- * @param data The data of the root @ref Node.
  * @param comparator A function pointer to the comparator function, which will be used to order the Nodes.
  * (<0) new_value comes BEFORE existing_value. (>=0) new_value comes AFTER existing_value.
  * @param output The output address for the new @ref BinaryTree.
@@ -76,7 +75,6 @@ typedef struct BinaryTree
  * - BT_ERR_MEMORY_ALLOCATION
  */
 GALXLIB_API enum BinaryTreeError new_binary_tree(
-    void *const data,
     int (*comparator)(const void *const existing_value, const void *const new_value),
     BinaryTree **const output);
 
@@ -116,10 +114,10 @@ GALXLIB_API enum BinaryTreeError free_bt_and_data(BinaryTree *const bt, void (*d
  *
  * - BT_ERR_MEMORY_ALLOCATION
  *
- * - BT_ERR_NULL_ROOT
+ * - BT_ERR_NULL_COMPARATOR
  *
  * - BT_ERR_MAX_DEPTH
- * 
+ *
  * - BT_ERR_NULL_DATA
  */
 GALXLIB_API enum BinaryTreeError add_bt(BinaryTree *const bt, void *const data);
@@ -141,7 +139,7 @@ GALXLIB_API enum BinaryTreeError add_bt(BinaryTree *const bt, void *const data);
  * - BT_ERR_NULL_ROOT
  *
  * - BT_ERR_NULL_COMPARATOR
- * 
+ *
  * - BT_ERR_MAX_DEPTH
  *
  * - BT_ERR_NULL_DATA
@@ -162,7 +160,7 @@ GALXLIB_API enum BinaryTreeError dfs_bt(
  * - BT_ERR_NULL_ARGUMENT
  *
  * - BT_ERR_NULL_ROOT
- * 
+ *
  * - BT_ERR_MAX_DEPTH
  *
  * - BT_ERR_NULL_DATA

@@ -58,7 +58,7 @@ static enum BinaryTreeError _dfs(
 	if (node == NULL || selector == NULL || depth == NULL || output == NULL)
 		return BT_ERR_NULL_ARGUMENT;
 
-	if (*depth > BINARY_TREE_MAX_DEPTH)
+	if (*depth >= BINARY_TREE_MAX_DEPTH)
 		return BT_ERR_MAX_DEPTH;
 	(*depth)++;
 
@@ -75,7 +75,8 @@ static enum BinaryTreeError _dfs(
 	if (node->left == NULL && node->right == NULL)
 		return BT_ITEM_NOT_FOUND;
 
-	int err_left, err_right = BT_ITEM_NOT_FOUND;
+	int err_left = BT_ITEM_NOT_FOUND;
+	int err_right = BT_ITEM_NOT_FOUND;
 
 	if (node->left != NULL)
 		err_left = _dfs(node->left, selector, depth, output);
@@ -98,7 +99,7 @@ enum BinaryTreeError _process_bt(
 	if (node == NULL || processor == NULL || depth == NULL)
 		return BT_ERR_NULL_ARGUMENT;
 
-	if (*depth > BINARY_TREE_MAX_DEPTH)
+	if (*depth >= BINARY_TREE_MAX_DEPTH)
 		return BT_ERR_MAX_DEPTH;
 	(*depth)++;
 
@@ -106,7 +107,8 @@ enum BinaryTreeError _process_bt(
 		return BT_ERR_NULL_DATA;
 	processor(node->data);
 
-	int err_left, err_right = BT_SUCCESS;
+	int err_left = BT_SUCCESS;
+	int err_right = BT_SUCCESS;
 
 	if (node->left != NULL)
 		err_left = _process_bt(node->left, processor, depth);
@@ -124,11 +126,10 @@ enum BinaryTreeError _process_bt(
 // ##################   public   ##################
 
 enum BinaryTreeError new_binary_tree(
-    void *const data,
     int (*comparator)(const void *const existing_value, const void *const new_value),
     BinaryTree **const output)
 {
-	if (data == NULL || comparator == NULL || output == NULL)
+	if (comparator == NULL || output == NULL)
 		return BT_ERR_NULL_ARGUMENT;
 
 	BinaryTree *bt = (BinaryTree *)malloc(sizeof(BinaryTree));
@@ -136,11 +137,8 @@ enum BinaryTreeError new_binary_tree(
 		return BT_ERR_MEMORY_ALLOCATION;
 
 	Node *root = NULL;
-	int err_root_init = _new_node(data, &root);
-	if (err_root_init)
-		return err_root_init;
 
-	bt->root = root;
+	bt->root = NULL;
 	bt->comparator = comparator;
 	*output = bt;
 
@@ -172,9 +170,6 @@ enum BinaryTreeError add_bt(BinaryTree *const bt, void *const data)
 	if (bt == NULL || data == NULL)
 		return BT_ERR_NULL_ARGUMENT;
 
-	if (bt->root == NULL)
-		return BT_ERR_NULL_ROOT;
-
 	if (bt->comparator == NULL)
 		return BT_ERR_NULL_COMPARATOR;
 
@@ -183,8 +178,14 @@ enum BinaryTreeError add_bt(BinaryTree *const bt, void *const data)
 	if (err_new_node)
 		return err_new_node;
 
+	if (bt->root == NULL)
+	{
+		bt->root = new_node;
+		return BT_SUCCESS;
+	}
+	
 	Node *node = bt->root;
-	size_t depth = 0;
+	size_t depth = 1;
 	while (1)
 	{
 		if (depth++ >= BINARY_TREE_MAX_DEPTH)
@@ -238,7 +239,7 @@ enum BinaryTreeError dfs_bt(
 	if (bt->root == NULL)
 		return BT_ERR_NULL_ROOT;
 
-	size_t depth = 0;
+	size_t depth = 1;
 	return _dfs(bt->root, selector, &depth, output);
 }
 
@@ -250,6 +251,6 @@ enum BinaryTreeError process_bt(BinaryTree *const bt, void (*processor)(void *co
 	if (bt->root == NULL)
 		return BT_ERR_NULL_ROOT;
 
-	size_t depth = 0;
+	size_t depth = 1;
 	return _process_bt(bt->root, processor, &depth);
 }
