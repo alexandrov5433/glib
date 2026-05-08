@@ -119,6 +119,8 @@ GALXLIB_API enum BinaryTreeError free_bt_and_data(BinaryTree *const bt, void (*d
  * - BT_ERR_NULL_ROOT
  *
  * - BT_ERR_MAX_DEPTH
+ * 
+ * - BT_ERR_NULL_DATA
  */
 GALXLIB_API enum BinaryTreeError add_bt(BinaryTree *const bt, void *const data);
 
@@ -153,6 +155,17 @@ GALXLIB_API enum BinaryTreeError dfs_bt(
  * Applies a processor function to the data fo each @ref Node in the @ref BinaryTree.
  * @param bt The @ref BinaryTree, which is to be processed.
  * @param processor A function, which receives the data from each @ref Node.
+ * @return A value of the @ref BinaryTreeError:
+ *
+ * - BT_SUCCESS
+ *
+ * - BT_ERR_NULL_ARGUMENT
+ *
+ * - BT_ERR_NULL_ROOT
+ * 
+ * - BT_ERR_MAX_DEPTH
+ *
+ * - BT_ERR_NULL_DATA
  */
 GALXLIB_API enum BinaryTreeError process_bt(BinaryTree *const bt, void (*processor)(void *const data));
 
