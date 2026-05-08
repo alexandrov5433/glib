@@ -40,7 +40,7 @@ void test_binary_tree(void)
         int first = 10;
         int arr[10] = {1, 234, 2, 6, 88, 45, 0, -1, 22, 4};
 
-        // Creation
+        // new_binary_tree
         // invalid
         BinaryTree *bt = NULL;
         int err_bt = new_binary_tree(NULL, comparator_bt, &bt);
@@ -58,8 +58,37 @@ void test_binary_tree(void)
         EXPECT_NULL(bt->root->left);
         EXPECT_NULL(bt->root->right);
 
+        // Setup: BinaryTree with NULL root and comparator members
+        BinaryTree *bt_null_root = NULL;
+        int err_bt_null_root_init = new_binary_tree(&first, comparator_bt, &bt_null_root);
+        EXPECT_EQ(err_bt_null_root_init, BT_SUCCESS);
+        bt_null_root->root = NULL;
+
+        BinaryTree *bt_null_cmp = NULL;
+        int err_bt_null_cpm_init = new_binary_tree(&first, comparator_bt, &bt_null_cmp);
+        EXPECT_EQ(err_bt_null_cpm_init, BT_SUCCESS);
+        bt_null_cmp->comparator = NULL;
+
+        // Setup: BinaryTree with NULL data member of root Node
+        BinaryTree *bt_null_root_data = NULL;
+        int err_bt_null_root_data_init = new_binary_tree(&first, comparator_bt, &bt_null_root_data);
+        EXPECT_EQ(err_bt_null_root_data_init, BT_SUCCESS);
+        EXPECT_NOT_NULL(bt_null_root_data->root);
+        bt_null_root_data->root->data = NULL;
+
         // add_bt
         int err_add = BT_SUCCESS;
+        err_add = add_bt(NULL, (void *)(arr));
+        EXPECT_EQ(err_add, BT_ERR_NULL_ARGUMENT);
+        err_add = add_bt(bt, NULL);
+        EXPECT_EQ(err_add, BT_ERR_NULL_ARGUMENT);
+        err_add = add_bt(bt_null_root, (void *)(arr));
+        EXPECT_EQ(err_add, BT_ERR_NULL_ROOT);
+        err_add = add_bt(bt_null_cmp, (void *)(arr));
+        EXPECT_EQ(err_add, BT_ERR_NULL_COMPARATOR);
+        err_add = add_bt(bt_null_root_data, (void *)(arr));
+        EXPECT_EQ(err_add, BT_ERR_NULL_DATA);
+        
         for (size_t i = 0; i < 10; ++i)
         {
                 err_add = add_bt(bt, (void *)(arr + i));
@@ -96,7 +125,16 @@ void test_binary_tree(void)
         EXPECT_EQ(*(int *)(bt->root->left->right->right->left->data), 4);
 
         // process_bt
-        int err_process = process_bt(bt, processor_bt);
+        int err_process = process_bt(NULL, processor_bt);
+        EXPECT_EQ(err_process, BT_ERR_NULL_ARGUMENT);
+        err_process = process_bt(bt, NULL);
+        EXPECT_EQ(err_process, BT_ERR_NULL_ARGUMENT);
+        err_process = process_bt(bt_null_root, processor_bt);
+        EXPECT_EQ(err_process, BT_ERR_NULL_ROOT);
+        err_process = process_bt(bt_null_root_data, processor_bt);
+        EXPECT_EQ(err_process, BT_ERR_NULL_DATA);
+
+        err_process = process_bt(bt, processor_bt);
         EXPECT_EQ(err_process, BT_SUCCESS);
 
         EXPECT_NOT_NULL(bt->root->left);
@@ -137,13 +175,10 @@ void test_binary_tree(void)
         EXPECT_EQ(err_dfs, BT_ERR_NULL_ARGUMENT);
         err_dfs = dfs_bt(bt, selector_bt_5, NULL);
         EXPECT_EQ(err_dfs, BT_ERR_NULL_ARGUMENT);
-
-        BinaryTree *bt_null_root = NULL;
-        int err_bt_null_root_init = new_binary_tree(&first, comparator_bt, &bt_null_root);
-        EXPECT_EQ(err_bt_null_root_init, BT_SUCCESS);
-        bt_null_root->root = NULL; // manually set NULL
         err_dfs = dfs_bt(bt_null_root, selector_bt_5, (void **)&output_dfs);
         EXPECT_EQ(err_dfs, BT_ERR_NULL_ROOT);
+        err_dfs = dfs_bt(bt_null_root_data, selector_bt_5, (void **)&output_dfs);
+        EXPECT_EQ(err_dfs, BT_ERR_NULL_DATA);
 
         err_dfs = dfs_bt(bt, selector_bt_5, (void **)&output_dfs);
         EXPECT_EQ(err_dfs, BT_SUCCESS);
@@ -160,8 +195,12 @@ void test_binary_tree(void)
         EXPECT_EQ(err_free, BT_SUCCESS);
         err_free = free_bt(bt_null_root);
         EXPECT_EQ(err_free, BT_SUCCESS);
+        err_free = free_bt(bt_null_cmp);
+        EXPECT_EQ(err_free, BT_SUCCESS);
+        err_free = free_bt(bt_null_root_data);
+        EXPECT_EQ(err_free, BT_SUCCESS);
 
-        printf("All gregex tests passed!\n");
+        printf("All tests passed!\n");
         puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
         puts("################## Test: BinaryTree ##################");
 }
