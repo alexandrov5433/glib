@@ -253,12 +253,3 @@ enum BinaryTreeError process_bt(BinaryTree *const bt, void (*processor)(void *co
 	size_t depth = 0;
 	return _process_bt(bt->root, processor, &depth);
 }
-
-// void processBT(BinaryTree *bt, void (*processor)(void *const ptr))
-// {
-//     if (bt == NULL || processor == NULL)
-//     {
-//         return;
-//     }
-//     _processBT(bt->root, processor);
-// }
