@@ -190,6 +190,12 @@ enum BinaryTreeError add_bt(BinaryTree *const bt, void *const data)
 		if (depth++ >= BINARY_TREE_MAX_DEPTH)
 			break;
 
+		if (node->data == NULL)
+		{
+			_free_node(new_node);
+			return BT_ERR_NULL_DATA;
+		}
+
 		int result = (bt->comparator)(node->data, data);
 		//(<0) a comes BEFORE b. (0) a and b are EQUAL. (>0) a comes AFTER b.
 		if (result < 0)
