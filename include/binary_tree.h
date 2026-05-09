@@ -20,7 +20,7 @@
 #endif
 
 #ifndef BINARY_TREE_MAX_DEPTH
-#define BINARY_TREE_MAX_DEPTH 1000000UL
+#define BINARY_TREE_MAX_DEPTH 5000UL
 #endif
 
 /**

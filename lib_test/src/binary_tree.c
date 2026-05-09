@@ -13,6 +13,11 @@ int comparator_bt(const void *const existing_value, const void *const new_value)
         return *(int *)(existing_value) > *(int *)(new_value) ? -1 : 0;
 }
 
+int comparator_bt_max_value(const void *const existing_value, const void *const new_value)
+{
+        return *(size_t *)(existing_value) > *(size_t *)(new_value) ? -1 : 0;
+}
+
 void processor_bt(void *const data)
 {
         (*(int *)data)++;
@@ -129,7 +134,7 @@ void test_binary_tree(void)
 
         // BINARY_TREE_MAX_DEPTH test
         BinaryTree *bt_max_depth = NULL;
-        int err_bt_max_depth_init = new_binary_tree(comparator_bt, &bt_max_depth);
+        int err_bt_max_depth_init = new_binary_tree(comparator_bt_max_value, &bt_max_depth);
         EXPECT_EQ(err_bt_max_depth_init, BT_SUCCESS);
         int err_add_max = BT_SUCCESS;
         // printf("Testing BINARY_TREE_MAX_DEPTH = %d\n", BINARY_TREE_MAX_DEPTH);
@@ -140,7 +145,7 @@ void test_binary_tree(void)
                 EXPECT_EQ(err_add_max, BT_SUCCESS);
         }
         // puts("");
-        size_t max_value = 100000;
+        size_t max_value = BINARY_TREE_MAX_DEPTH + 10;
         err_add_max = add_bt(bt_max_depth, &max_value);
         EXPECT_EQ(err_add_max, BT_ERR_MAX_DEPTH);
 
