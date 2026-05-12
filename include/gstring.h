@@ -64,6 +64,7 @@ enum StringError
 	STR_ERR_INDEX_OUT_OF_BOUNDS = 3,	 /**< (3) The targeted index is outside of the boundaries of the String. */
 	STR_ERR_INVALID_ARGUMENT_DIMENTIONS = 4, /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
 	STR_ERR_LOOP_MAX_LIMIT = 5,		 /**< (5) A null-terminator character '\0' was not found among the first GSTRING_LOOP_MAX_LIMIT characters of the given character array. */
+	STR_ERR_NULL_STR = 6,			 /**< (6) The str member of the @ref String is NULL. */
 };
 
 /**
@@ -346,5 +347,20 @@ GALXLIB_API enum StringError remove_char(String *const str, const char to_remove
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  */
 GALXLIB_API enum StringError concat(String **const output, const size_t n_str, ...);
+
+/**
+ * Removes the whitespace characters form the start and end of the @ref String.
+ * @param str The @ref String which must be trimmed.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_NULL_STR
+ */
+GALXLIB_API enum StringError trim(String *const str);
 
 #endif

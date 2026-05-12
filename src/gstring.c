@@ -77,28 +77,12 @@ static enum StringError _shift_count_right(String *const str, size_t const count
 	if (count <= 0)
 		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
 
-	// size_t new_length = count + str->length;
-
-/* 	char *new_arr = NULL;
-	int err_new_arr = _new_char_array(new_length, &new_arr);
-	if (err_new_arr)
-		return err_new_arr; */
-
-/* 	size_t j = 0; */
 	for (size_t i = 0; i < count; ++i)
 	{
 		int err = _shift_one_right(str);
 		if (err)
 			return err;
 	}
-/* 	for (size_t i = 0; i < new_length; ++i)
-	{
-		new_arr[i] = (str->str)[j++];
-	} */
-/* 
-	free(str->str);
-	str->str = new_arr;
-	str->length = new_length; */
 
 	return STR_SUCCESS;
 }
@@ -172,15 +156,15 @@ enum StringError new_string(const char *const char_arr, size_t length, String **
 		return STR_ERR_MEMORY_ALLOCATION;
 
 	char *str = NULL;
+	if (char_arr == NULL && length == 0)
+		goto _end_stage;
+
 	int err_arr_init = _new_char_array(length, &str);
 	if (err_arr_init)
 	{
 		free(new_str);
 		return err_arr_init;
 	}
-
-	if (char_arr == NULL && length == 0)
-		goto _end_stage;
 
 	int err_copy = _copy_chars(char_arr, str, length);
 	if (err_copy)
@@ -550,5 +534,64 @@ enum StringError concat(String **const output, const size_t n_str, ...)
 
 	*output = str_result;
 
+	return STR_SUCCESS;
+}
+
+enum StringError trim(String *const str)
+{
+	if (str == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+
+	if (str->length == 0)
+		return STR_SUCCESS;
+
+	if (str->str == NULL)
+		return STR_ERR_NULL_STR;
+
+	size_t left_trim_count = 0;
+	size_t right_trim_count = 0;
+
+	for (size_t i = 0; i < str->length; ++i)
+	{
+		if ((str->str)[i] != ' ')
+			break;
+		left_trim_count++;
+	}
+	for (size_t i = str->length - 1; i > 0; --i)
+	{
+		if ((str->str)[i] != ' ')
+			break;
+		right_trim_count++;
+	}
+	// --asdf-- l = 2; r = 2; sum = 4; length = 8; new_length = 4
+	// --asdf   l = 2; r = 0; sum = 2; length = 6; new_length = 4
+	// asdf--   l = 0; r = 2; sum = 2; length = 6; new_length = 4
+	// ----     l = 4; r = 3; sum = 7; length = 4; new_length = 0
+	// asdf     l = 0; r = 0; sum = 0; length = 4; new_length = 4
+	size_t trim_sum = left_trim_count + right_trim_count;
+	if (trim_sum == 0)
+		return STR_SUCCESS;
+
+	size_t new_length = trim_sum < str->length ? str->length - trim_sum : 0;
+
+	char *new_str = NULL;
+	if (new_length == 0)
+	{
+		free(str->str);
+		goto _end_stage;
+	}
+
+	int err_new_str = _new_char_array(new_length, &new_str);
+	if (err_new_str)
+		return err_new_str;
+
+	for (size_t i = 0; i < new_length; ++i)
+		new_str[i] = (str->str)[left_trim_count + i];
+
+	free(str->str);
+
+_end_stage:
+	str->str = new_str;
+	str->length = new_length;
 	return STR_SUCCESS;
 }
