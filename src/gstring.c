@@ -152,6 +152,36 @@ static enum StringError _duplicate_char_array(const char *const char_arr, size_t
 	return STR_SUCCESS;
 }
 
+/**
+ * Validates the @ref String structure.
+ * @param str @ref String to validate.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
+ */
+static enum StringError _validate_nsl(const String *const str)
+{
+	if (str == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+
+	if (str->str == NULL && str->length == 0)
+		return STR_SUCCESS;
+
+	if (str->str == NULL)
+		return STR_ERR_NULL_STR;
+
+	if (str->length == 0)
+		return STR_ERR_ZERO_LENGTH;
+
+	return STR_SUCCESS;
+}
+
 // ##################   public   ##################
 
 enum StringError new_string(const char *const char_arr, size_t length, String **const output)
@@ -210,8 +240,9 @@ enum StringError free_string(String *str)
 
 enum StringError append_char(String *const str, const char c)
 {
-	if (str == NULL)
-		return STR_ERR_NULL_ARGUMENT;
+	int err_valid = _validate_nsl(str);
+	if (err_valid)
+		return err_valid;
 
 	int err = _extend(str, 1);
 	if (err)
@@ -224,7 +255,11 @@ enum StringError append_char(String *const str, const char c)
 
 enum StringError append_char_array(String *const str_dest, const char *const source, const size_t source_length)
 {
-	if (source == NULL || str_dest == NULL)
+	int err_valid = _validate_nsl(str_dest);
+	if (err_valid)
+		return err_valid;
+
+	if (source == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
 	int err = _extend(str_dest, source_length);
@@ -239,7 +274,11 @@ enum StringError append_char_array(String *const str_dest, const char *const sou
 
 enum StringError append_nt(String *const str_dest, const char *const source)
 {
-	if (str_dest == NULL || source == NULL)
+	int err_valid = _validate_nsl(str_dest);
+	if (err_valid)
+		return err_valid;
+
+	if (source == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
 	size_t nt_index = 0;
@@ -262,17 +301,16 @@ enum StringError append_nt(String *const str_dest, const char *const source)
 
 enum StringError append_str(const String *const str_source, String *const str_dest)
 {
-	if (str_source == NULL || str_dest == NULL)
-		return STR_ERR_NULL_ARGUMENT;
+	int err_valid = _validate_nsl(str_source);
+	if (err_valid)
+		return err_valid;
 
-	if (str_source->str == NULL && str_source->length == 0)
-		return STR_SUCCESS;
-
-	if (str_source->str == NULL)
-		return STR_ERR_NULL_STR;
+	err_valid = _validate_nsl(str_dest);
+	if (err_valid)
+		return err_valid;
 
 	if (str_source->length == 0)
-		return STR_ERR_ZERO_LENGTH;
+		return STR_SUCCESS;
 
 	size_t old_dest_length = str_dest->length;
 
@@ -290,8 +328,9 @@ enum StringError append_str(const String *const str_source, String *const str_de
 
 enum StringError prepend_char(String *const str, const char c)
 {
-	if (str == NULL)
-		return STR_ERR_NULL_ARGUMENT;
+	int err_valid = _validate_nsl(str);
+	if (err_valid)
+		return err_valid;
 
 	int err_extend = _extend(str, 1);
 	if (err_extend)
@@ -308,7 +347,11 @@ enum StringError prepend_char(String *const str, const char c)
 
 enum StringError prepend_char_array(String *const str_dest, const char *const source, const size_t source_length)
 {
-	if (str_dest == NULL || source == NULL)
+	int err_valid = _validate_nsl(str_dest);
+	if (err_valid)
+		return err_valid;
+
+	if (source == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 	/*
 		TODO: implement a String back-up system
@@ -338,7 +381,11 @@ enum StringError prepend_char_array(String *const str_dest, const char *const so
 
 enum StringError prepend_nt(String *const str_dest, const char *const source)
 {
-	if (str_dest == NULL || source == NULL)
+	int err_valid = _validate_nsl(str_dest);
+	if (err_valid)
+		return err_valid;
+
+	if (source == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
 	size_t nt_index = 0;
@@ -364,17 +411,13 @@ enum StringError prepend_nt(String *const str_dest, const char *const source)
 
 enum StringError prepend_str(const String *const source, String *const dest)
 {
-	if (source == NULL || dest == NULL)
-		return STR_ERR_NULL_ARGUMENT;
+	int err_valid = _validate_nsl(source);
+	if (err_valid)
+		return err_valid;
 
-	if (source->str == NULL && source->length == 0)
-		return STR_SUCCESS;
-
-	if (source->str == NULL)
-		return STR_ERR_NULL_STR;
-
-	if (source->length == 0)
-		return STR_ERR_ZERO_LENGTH;
+	err_valid = _validate_nsl(dest);
+	if (err_valid)
+		return err_valid;
 
 	int err_extend = _extend(dest, source->length);
 	if (err_extend)
@@ -391,23 +434,21 @@ enum StringError prepend_str(const String *const source, String *const dest)
 	return STR_SUCCESS;
 }
 
-enum StringError duplicate_str(const String *const str_source, String **const output)
+enum StringError duplicate_str(const String *const source, String **const output)
 {
-	if (str_source == NULL || output == NULL)
+	int err_valid = _validate_nsl(source);
+	if (err_valid)
+		return err_valid;
+
+	if (output == NULL)
 		return STR_ERR_NULL_ARGUMENT;
-
-	if (str_source->str == NULL)
-		return STR_ERR_NULL_STR;
-
-	if (str_source->length == 0)
-		return STR_ERR_ZERO_LENGTH;
 
 	String *str_duplicate = malloc(sizeof(String));
 	if (str_duplicate == NULL)
 		return STR_ERR_MEMORY_ALLOCATION;
 
 	char *str_char_arr_duplicate = NULL;
-	int err_duplicate = _duplicate_char_array(str_source->str, str_source->length, &str_char_arr_duplicate);
+	int err_duplicate = _duplicate_char_array(source->str, source->length, &str_char_arr_duplicate);
 	if (err_duplicate)
 	{
 		free(str_duplicate);
@@ -415,7 +456,7 @@ enum StringError duplicate_str(const String *const str_source, String **const ou
 	}
 
 	str_duplicate->str = str_char_arr_duplicate;
-	str_duplicate->length = str_source->length;
+	str_duplicate->length = source->length;
 	*output = str_duplicate;
 
 	return STR_SUCCESS;
@@ -423,14 +464,12 @@ enum StringError duplicate_str(const String *const str_source, String **const ou
 
 enum StringError get_raw(const String *const source, char **const output)
 {
-	if (source == NULL || output == NULL)
+	int err_valid = _validate_nsl(source);
+	if (err_valid)
+		return err_valid;
+
+	if (output == NULL)
 		return STR_ERR_NULL_ARGUMENT;
-
-	if (source->str == NULL)
-		return STR_ERR_NULL_STR;
-
-	if (source->length == 0)
-		return STR_ERR_ZERO_LENGTH;
 
 	char *result = NULL;
 	int err = _duplicate_char_array(source->str, source->length, &result);
@@ -444,14 +483,12 @@ enum StringError get_raw(const String *const source, char **const output)
 
 enum StringError get_raw_nt(const String *const source, char **const output)
 {
-	if (source == NULL || output == NULL)
+	int err_valid = _validate_nsl(source);
+	if (err_valid)
+		return err_valid;
+
+	if (output == NULL)
 		return STR_ERR_NULL_ARGUMENT;
-
-	if (source->str == NULL)
-		return STR_ERR_NULL_STR;
-
-	if (source->length == 0)
-		return STR_ERR_ZERO_LENGTH;
 
 	char *new_arr = NULL;
 	int err_new_arr = _new_char_array(source->length + 1, &new_arr);
@@ -470,17 +507,15 @@ enum StringError get_raw_nt(const String *const source, char **const output)
 
 enum StringError filter_str(String *const str, int (*filter)(char c))
 {
-	if (str == NULL || filter == NULL)
+	int err_valid = _validate_nsl(str);
+	if (err_valid)
+		return err_valid;
+
+	if (filter == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
-	if (str->str == NULL && str->length == 0)
-		return STR_SUCCESS;
-
-	if (str->str == NULL)
-		return STR_ERR_NULL_STR;
-
 	if (str->length == 0)
-		return STR_ERR_ZERO_LENGTH;
+		return STR_SUCCESS;
 
 	char *wanted_chars = NULL;
 	int err_new_arr = _new_char_array(str->length, &wanted_chars);
@@ -511,17 +546,12 @@ enum StringError filter_str(String *const str, int (*filter)(char c))
 
 enum StringError replace_char(String *const str, const char to_replace, const char replacement)
 {
-	if (str == NULL)
-		return STR_ERR_NULL_ARGUMENT;
-
-	if (str->str == NULL && str->length == 0)
-		return STR_SUCCESS;
-
-	if (str->str == NULL)
-		return STR_ERR_NULL_STR;
+	int err_valid = _validate_nsl(str);
+	if (err_valid)
+		return err_valid;
 
 	if (str->length == 0)
-		return STR_ERR_ZERO_LENGTH;
+		return STR_SUCCESS;
 
 	for (size_t i = 0; i < str->length; ++i)
 	{
@@ -534,17 +564,12 @@ enum StringError replace_char(String *const str, const char to_replace, const ch
 
 enum StringError remove_char(String *const str, const char to_remove)
 {
-	if (str == NULL)
-		return STR_ERR_NULL_ARGUMENT;
-
-	if (str->str == NULL && str->length == 0)
-		return STR_SUCCESS;
-
-	if (str->str == NULL)
-		return STR_ERR_NULL_STR;
+	int err_valid = _validate_nsl(str);
+	if (err_valid)
+		return err_valid;
 
 	if (str->length == 0)
-		return STR_ERR_ZERO_LENGTH;
+		return STR_SUCCESS;
 
 	char *tmp_arr = NULL;
 	int err_new_arr = _new_char_array(str->length, &tmp_arr);
@@ -611,17 +636,12 @@ enum StringError concat(String **const output, const size_t n_str, ...)
 
 enum StringError trim(String *const str)
 {
-	if (str == NULL)
-		return STR_ERR_NULL_ARGUMENT;
-
-	if (str->str == NULL && str->length == 0)
-		return STR_SUCCESS;
-
-	if (str->str == NULL)
-		return STR_ERR_NULL_STR;
+	int err_valid = _validate_nsl(str);
+	if (err_valid)
+		return err_valid;
 
 	if (str->length == 0)
-		return STR_ERR_ZERO_LENGTH;
+		return STR_SUCCESS;
 
 	size_t left_trim_count = 0;
 	size_t right_trim_count = 0;

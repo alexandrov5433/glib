@@ -120,6 +120,10 @@ GALXLIB_API enum StringError free_string(String *str);
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ * 
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError append_char(String *const str, const char c);
 
@@ -137,6 +141,10 @@ GALXLIB_API enum StringError append_char(String *const str, const char c);
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ * 
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError append_char_array(String *const str_dest, const char *const source, size_t source_length);
 
@@ -157,6 +165,10 @@ GALXLIB_API enum StringError append_char_array(String *const str_dest, const cha
  * - STR_ERR_MEMORY_ALLOCATION
  *
  * - STR_ERR_LOOP_MAX_LIMIT
+ * 
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError append_nt(String *const str_dest, const char *const source);
 
@@ -193,6 +205,10 @@ GALXLIB_API enum StringError append_str(const String *const str_source, String *
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ * 
+ * - STR_ERR_NULL_STR
+ * 
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError prepend_char(String *const str, const char c);
 
@@ -210,6 +226,10 @@ GALXLIB_API enum StringError prepend_char(String *const str, const char c);
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ * 
+ * - STR_ERR_NULL_STR
+ * 
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError prepend_char_array(String *const str_dest, const char *const source, const size_t source_length);
 
@@ -230,6 +250,10 @@ GALXLIB_API enum StringError prepend_char_array(String *const str_dest, const ch
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ * 
+ * - STR_ERR_NULL_STR
+ * 
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError prepend_nt(String *const str_dest, const char *const source);
 
@@ -255,7 +279,7 @@ GALXLIB_API enum StringError prepend_str(const String *const source, String *con
 
 /**
  * Duplicates a String.
- * @param str_source A pointer to the String, which will be duplicated.
+ * @param source A pointer to the String, which will be duplicated.
  * @param output A double String pointer, where the address of the duplicate will be placed.
  * @return A value of the @ref StringError:
  *
@@ -269,7 +293,7 @@ GALXLIB_API enum StringError prepend_str(const String *const source, String *con
  *
  * - STR_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError duplicate_str(const String *const str_source, String **const output);
+GALXLIB_API enum StringError duplicate_str(const String *const source, String **const output);
 
 /**
  * Gives a copy of the character array found in the String.
