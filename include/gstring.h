@@ -65,6 +65,7 @@ enum StringError
 	STR_ERR_INVALID_ARGUMENT_DIMENTIONS = 4, /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
 	STR_ERR_LOOP_MAX_LIMIT = 5,		 /**< (5) A null-terminator character '\0' was not found among the first GSTRING_LOOP_MAX_LIMIT characters of the given character array. */
 	STR_ERR_NULL_STR = 6,			 /**< (6) The str member of the @ref String is NULL. */
+	STR_ERR_ZERO_LENGTH = 7,		 /**< (7) The length member of the @ref String is 0. */
 };
 
 /**
@@ -172,6 +173,10 @@ GALXLIB_API enum StringError append_nt(String *const str_dest, const char *const
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ * 
+ * - STR_ERR_NULL_STR
+ * 
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError append_str(const String *const str_source, String *const str_dest);
 
@@ -241,6 +246,10 @@ GALXLIB_API enum StringError prepend_nt(String *const str_dest, const char *cons
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError prepend_str(const String *const source, String *const dest);
 
@@ -255,6 +264,10 @@ GALXLIB_API enum StringError prepend_str(const String *const source, String *con
  * - STR_ERR_NULL_ARGUMENT
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError duplicate_str(const String *const str_source, String **const output);
 
@@ -269,6 +282,10 @@ GALXLIB_API enum StringError duplicate_str(const String *const str_source, Strin
  * - STR_ERR_NULL_ARGUMENT
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError get_raw(const String *const source, char **const output);
 
@@ -283,6 +300,10 @@ GALXLIB_API enum StringError get_raw(const String *const source, char **const ou
  * - STR_ERR_NULL_ARGUMENT
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError get_raw_nt(const String *const source, char **const output);
 
@@ -298,6 +319,10 @@ GALXLIB_API enum StringError get_raw_nt(const String *const source, char **const
  * - STR_ERR_NULL_ARGUMENT
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError filter_str(String *const str, int (*filter)(char c));
 
@@ -313,6 +338,10 @@ GALXLIB_API enum StringError filter_str(String *const str, int (*filter)(char c)
  * - STR_SUCCESS
  *
  * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError replace_char(String *const str, const char to_replace, const char replacement);
 
@@ -327,6 +356,10 @@ GALXLIB_API enum StringError replace_char(String *const str, const char to_repla
  * - STR_ERR_NULL_ARGUMENT
  *
  * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError remove_char(String *const str, const char to_remove);
 
@@ -345,6 +378,10 @@ GALXLIB_API enum StringError remove_char(String *const str, const char to_remove
  * - STR_ERR_MEMORY_ALLOCATION
  *
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError concat(String **const output, const size_t n_str, ...);
 
@@ -360,6 +397,8 @@ GALXLIB_API enum StringError concat(String **const output, const size_t n_str, .
  * - STR_ERR_MEMORY_ALLOCATION
  *
  * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError trim(String *const str);
 

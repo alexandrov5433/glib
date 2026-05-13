@@ -9,6 +9,9 @@ static enum StringError _new_char_array(size_t length, char **const output)
 	if (output == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
+	if (length == 0)
+		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
+
 	char *arr = (char *)malloc(sizeof(char) * length);
 	if (arr == NULL)
 		return STR_ERR_MEMORY_ALLOCATION;
@@ -27,6 +30,10 @@ static enum StringError _extend(String *const str_to_extend, size_t const extend
 
 	size_t new_length = extend_count + str_to_extend->length;
 
+	/**
+	 * https://en.cppreference.com/c/memory/realloc
+	 * If str_to_extend->str is NULL, the behavior of realloc is the same as calling malloc(new_size).
+	 */
 	char *new_str = realloc(str_to_extend->str, new_length);
 	if (new_str == NULL)
 		return STR_ERR_MEMORY_ALLOCATION;
@@ -40,6 +47,9 @@ static enum StringError _shrink(String *const str_to_shrink, size_t const shrink
 {
 	if (str_to_shrink == NULL)
 		return STR_ERR_NULL_ARGUMENT;
+
+	if (shrink_count == 0)
+		return STR_SUCCESS;
 
 	if (str_to_shrink->length < shrink_count)
 		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
@@ -59,6 +69,9 @@ static enum StringError _shift_one_right(String *const str)
 {
 	if (str == NULL)
 		return STR_ERR_NULL_ARGUMENT;
+
+	if (str->str == NULL)
+		return STR_ERR_NULL_STR;
 
 	for (size_t i = str->length - 1; i > 0; --i)
 		(str->str)[i] = (str->str)[i - 1];
@@ -187,7 +200,9 @@ enum StringError free_string(String *str)
 	if (str == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
-	free(str->str);
+	if (str->str != NULL)
+		free(str->str);
+
 	free(str);
 
 	return STR_SUCCESS;
@@ -249,6 +264,15 @@ enum StringError append_str(const String *const str_source, String *const str_de
 {
 	if (str_source == NULL || str_dest == NULL)
 		return STR_ERR_NULL_ARGUMENT;
+
+	if (str_source->str == NULL && str_source->length == 0)
+		return STR_SUCCESS;
+
+	if (str_source->str == NULL)
+		return STR_ERR_NULL_STR;
+
+	if (str_source->length == 0)
+		return STR_ERR_ZERO_LENGTH;
 
 	size_t old_dest_length = str_dest->length;
 
@@ -343,6 +367,15 @@ enum StringError prepend_str(const String *const source, String *const dest)
 	if (source == NULL || dest == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
+	if (source->str == NULL && source->length == 0)
+		return STR_SUCCESS;
+
+	if (source->str == NULL)
+		return STR_ERR_NULL_STR;
+
+	if (source->length == 0)
+		return STR_ERR_ZERO_LENGTH;
+
 	int err_extend = _extend(dest, source->length);
 	if (err_extend)
 		return err_extend;
@@ -362,6 +395,12 @@ enum StringError duplicate_str(const String *const str_source, String **const ou
 {
 	if (str_source == NULL || output == NULL)
 		return STR_ERR_NULL_ARGUMENT;
+
+	if (str_source->str == NULL)
+		return STR_ERR_NULL_STR;
+
+	if (str_source->length == 0)
+		return STR_ERR_ZERO_LENGTH;
 
 	String *str_duplicate = malloc(sizeof(String));
 	if (str_duplicate == NULL)
@@ -387,6 +426,12 @@ enum StringError get_raw(const String *const source, char **const output)
 	if (source == NULL || output == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
+	if (source->str == NULL)
+		return STR_ERR_NULL_STR;
+
+	if (source->length == 0)
+		return STR_ERR_ZERO_LENGTH;
+
 	char *result = NULL;
 	int err = _duplicate_char_array(source->str, source->length, &result);
 	if (err)
@@ -401,6 +446,12 @@ enum StringError get_raw_nt(const String *const source, char **const output)
 {
 	if (source == NULL || output == NULL)
 		return STR_ERR_NULL_ARGUMENT;
+
+	if (source->str == NULL)
+		return STR_ERR_NULL_STR;
+
+	if (source->length == 0)
+		return STR_ERR_ZERO_LENGTH;
 
 	char *new_arr = NULL;
 	int err_new_arr = _new_char_array(source->length + 1, &new_arr);
@@ -421,6 +472,15 @@ enum StringError filter_str(String *const str, int (*filter)(char c))
 {
 	if (str == NULL || filter == NULL)
 		return STR_ERR_NULL_ARGUMENT;
+
+	if (str->str == NULL && str->length == 0)
+		return STR_SUCCESS;
+
+	if (str->str == NULL)
+		return STR_ERR_NULL_STR;
+
+	if (str->length == 0)
+		return STR_ERR_ZERO_LENGTH;
 
 	char *wanted_chars = NULL;
 	int err_new_arr = _new_char_array(str->length, &wanted_chars);
@@ -454,8 +514,14 @@ enum StringError replace_char(String *const str, const char to_replace, const ch
 	if (str == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
-	if (str->length == 0)
+	if (str->str == NULL && str->length == 0)
 		return STR_SUCCESS;
+
+	if (str->str == NULL)
+		return STR_ERR_NULL_STR;
+
+	if (str->length == 0)
+		return STR_ERR_ZERO_LENGTH;
 
 	for (size_t i = 0; i < str->length; ++i)
 	{
@@ -471,8 +537,14 @@ enum StringError remove_char(String *const str, const char to_remove)
 	if (str == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
-	if (str->length == 0)
+	if (str->str == NULL && str->length == 0)
 		return STR_SUCCESS;
+
+	if (str->str == NULL)
+		return STR_ERR_NULL_STR;
+
+	if (str->length == 0)
+		return STR_ERR_ZERO_LENGTH;
 
 	char *tmp_arr = NULL;
 	int err_new_arr = _new_char_array(str->length, &tmp_arr);
@@ -542,11 +614,14 @@ enum StringError trim(String *const str)
 	if (str == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
-	if (str->length == 0)
+	if (str->str == NULL && str->length == 0)
 		return STR_SUCCESS;
 
 	if (str->str == NULL)
 		return STR_ERR_NULL_STR;
+
+	if (str->length == 0)
+		return STR_ERR_ZERO_LENGTH;
 
 	size_t left_trim_count = 0;
 	size_t right_trim_count = 0;

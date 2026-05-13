@@ -22,9 +22,7 @@ void test_gstring(void)
 	puts("################## Test: String ##################");
 	printf(ANSI_COLOR_CYAN "Running String tests...\n" ANSI_COLOR_RESET);
 
-	/* =========================
-	   new_string / free_string
-	   ========================= */
+	// new_string
 	String *s1 = NULL;
 	int err_s1_init = new_string(NULL, 3, &s1);
 	EXPECT_EQ(err_s1_init, STR_ERR_INVALID_ARGUMENT_DIMENTIONS);
