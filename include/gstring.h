@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "./dynamic_array.h"
 
 #ifdef _WIN32
 
@@ -66,6 +67,7 @@ enum StringError
 	STR_ERR_LOOP_MAX_LIMIT = 5,		 /**< (5) A null-terminator character '\0' was not found among the first GSTRING_LOOP_MAX_LIMIT characters of the given character array. */
 	STR_ERR_NULL_STR = 6,			 /**< (6) The str member of the @ref String is NULL. */
 	STR_ERR_ZERO_LENGTH = 7,		 /**< (7) The length member of the @ref String is 0. */
+	STR_ERR_DYNAMIC_ARRAY = 8,		 /**< (8) A DynamicArray function returned a @ref DynamicArrayError error code. */
 };
 
 /**
@@ -120,7 +122,7 @@ GALXLIB_API enum StringError free_string(String *str);
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - STR_ERR_NULL_STR
  *
  * - STR_ERR_ZERO_LENGTH
@@ -141,7 +143,7 @@ GALXLIB_API enum StringError append_char(String *const str, const char c);
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - STR_ERR_NULL_STR
  *
  * - STR_ERR_ZERO_LENGTH
@@ -165,7 +167,7 @@ GALXLIB_API enum StringError append_char_array(String *const str_dest, const cha
  * - STR_ERR_MEMORY_ALLOCATION
  *
  * - STR_ERR_LOOP_MAX_LIMIT
- * 
+ *
  * - STR_ERR_NULL_STR
  *
  * - STR_ERR_ZERO_LENGTH
@@ -185,9 +187,9 @@ GALXLIB_API enum StringError append_nt(String *const str_dest, const char *const
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - STR_ERR_NULL_STR
- * 
+ *
  * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError append_str(const String *const str_source, String *const str_dest);
@@ -205,9 +207,9 @@ GALXLIB_API enum StringError append_str(const String *const str_source, String *
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - STR_ERR_NULL_STR
- * 
+ *
  * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError prepend_char(String *const str, const char c);
@@ -226,9 +228,9 @@ GALXLIB_API enum StringError prepend_char(String *const str, const char c);
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - STR_ERR_NULL_STR
- * 
+ *
  * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError prepend_char_array(String *const str_dest, const char *const source, const size_t source_length);
@@ -250,9 +252,9 @@ GALXLIB_API enum StringError prepend_char_array(String *const str_dest, const ch
  * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
  * - STR_ERR_MEMORY_ALLOCATION
- * 
+ *
  * - STR_ERR_NULL_STR
- * 
+ *
  * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError prepend_nt(String *const str_dest, const char *const source);
@@ -408,6 +410,28 @@ GALXLIB_API enum StringError remove_char(String *const str, const char to_remove
  * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError concat(String **const output, const size_t n_str, ...);
+/**
+ * Concatenates multiple Strings, from a @ref DynamicArray, into one. 
+ * The order of the concatenation is the same as in the @ref DynamicArray.
+ * @param output A pointer, where the resulting concatenated @ref String will be placed.
+ * @param strings A @ref DynamicArray containing the pointers to the Strings for concatenation.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
+ * 
+ * - STR_ERR_DYNAMIC_ARRAY
+ */
+GALXLIB_API enum StringError concat_str_da(String **const output, DynamicArray *const strings);
 
 /**
  * Removes the whitespace characters form the start and end of the @ref String.
@@ -425,5 +449,30 @@ GALXLIB_API enum StringError concat(String **const output, const size_t n_str, .
  * - STR_ERR_ZERO_LENGTH
  */
 GALXLIB_API enum StringError trim(String *const str);
+
+/**
+ * Splits the @ref String into an ordered list of substrings (@ref String) by searching for the pattern.
+ * The pointers to the substrings are placed into a @ref DynamicArray, and the @ref DynamicArray is outputed. 
+ * The original @ref String is not changed.
+ * @param str The @ref String which must be split.
+ * @param pattern The pattern, as a @ref String, which will be used to split.
+ * @param output A pointer, where the @ref DynamicArray with substrings will be outputed. 
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
+ * 
+ * - STR_ERR_DYNAMIC_ARRAY
+ */
+GALXLIB_API enum StringError split_str(const String *const str, const String *const pattern, DynamicArray **const output);
 
 #endif

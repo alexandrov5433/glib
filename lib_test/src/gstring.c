@@ -26,6 +26,150 @@ void gstring_init_zero_length(String **const str)
 	EXPECT_EQ((*str)->length, 0);
 }
 
+static void test_split_str(String *str_null_str, String *str_zero_length, String *empty)
+{
+	String *str_split = NULL;
+	String *str_split_pattern = NULL;
+	EXPECT_EQ(new_string("abcPATTERNdePATTERNfg", 21, &str_split), STR_SUCCESS);
+	EXPECT_EQ(new_string("PATTERN", 7, &str_split_pattern), STR_SUCCESS);
+
+	DynamicArray *da_split_output = NULL;
+
+	EXPECT_EQ(split_str(NULL, str_split_pattern, &da_split_output), STR_ERR_NULL_ARGUMENT);
+	EXPECT_NULL(da_split_output);
+	EXPECT_EQ(split_str(str_split, NULL, &da_split_output), STR_ERR_NULL_ARGUMENT);
+	EXPECT_NULL(da_split_output);
+	EXPECT_EQ(split_str(str_split, str_split_pattern, NULL), STR_ERR_NULL_ARGUMENT);
+	EXPECT_NULL(da_split_output);
+
+	EXPECT_EQ(split_str(str_null_str, str_split_pattern, &da_split_output), STR_ERR_NULL_STR);
+	EXPECT_NULL(da_split_output);
+	EXPECT_EQ(split_str(str_split, str_null_str, &da_split_output), STR_ERR_NULL_STR);
+	EXPECT_NULL(da_split_output);
+
+	EXPECT_EQ(split_str(str_zero_length, str_split_pattern, &da_split_output), STR_ERR_ZERO_LENGTH);
+	EXPECT_NULL(da_split_output);
+	EXPECT_EQ(split_str(str_split, str_zero_length, &da_split_output), STR_ERR_ZERO_LENGTH);
+	EXPECT_NULL(da_split_output);
+
+	EXPECT_EQ(split_str(empty, str_split_pattern, &da_split_output), STR_SUCCESS);
+	EXPECT_NOT_NULL(da_split_output);
+	EXPECT_EQ(da_split_output->count, 0);
+	free_dynamic_array(da_split_output);
+	EXPECT_EQ(split_str(str_split, empty, &da_split_output), STR_SUCCESS);
+	EXPECT_NOT_NULL(da_split_output);
+	EXPECT_EQ(da_split_output->count, 0);
+	free_dynamic_array(da_split_output);
+
+	EXPECT_EQ(split_str(str_split, str_split_pattern, &da_split_output), STR_SUCCESS);
+	EXPECT_NOT_NULL(da_split_output);
+	EXPECT_EQ(da_split_output->count, 3);
+	DynamicArrayIterator *da_split_itr = NULL;
+	EXPECT_EQ(new_iterator_da(da_split_output, &da_split_itr), DA_SUCCESS);
+	int da_split_itr_has_next = 0;
+	EXPECT_EQ(has_next_dai(da_split_itr, &da_split_itr_has_next), DA_SUCCESS);
+
+	DynamicArray *parts = NULL;
+	EXPECT_EQ(new_dynamic_array(VOID_PTR, &parts), DA_SUCCESS);
+
+	while (da_split_itr_has_next)
+	{
+		String *part = NULL;
+		EXPECT_EQ(next_ptr_dai(da_split_itr, (void **)&part), DA_SUCCESS);
+		EXPECT_EQ(push_ptr_da(parts, part), DA_SUCCESS);
+
+		EXPECT_EQ(has_next_dai(da_split_itr, &da_split_itr_has_next), DA_SUCCESS);
+	}
+
+	String *str_concat = NULL;
+	EXPECT_EQ(concat_str_da(&str_concat, parts), DA_SUCCESS);
+	EXPECT_NOT_NULL(str_concat);
+	EXPECT_NOT_NULL(str_concat->str);
+	EXPECT_EQ(str_concat->length, 7);
+	EXPECT_STR_EQ(str_concat->str, "abcdefg", str_concat->length);
+
+
+	free_string(str_split);
+	free_string(str_split_pattern);
+	free_string(str_concat);
+
+	process_da(da_split_output, (void (*)(void *))free_string);
+	free_dynamic_array(da_split_output);
+	free_dynamic_array(parts);
+}
+
+static void test_concat_str_da(String *const empty)
+{
+	String *s1 = NULL;
+	String *s2 = NULL;
+	String *s3 = NULL;
+	String *s4 = NULL;
+	String *str_output = NULL;
+	EXPECT_EQ(new_string("abc", 3, &s1), STR_SUCCESS);
+	EXPECT_EQ(new_string("def", 3, &s2), STR_SUCCESS);
+	EXPECT_EQ(new_string("ghijklmnopqrstuvgxyz", 20, &s3), STR_SUCCESS);
+	EXPECT_EQ(new_string("1234", 4, &s4), STR_SUCCESS);
+
+	DynamicArray *da_strings = NULL;
+	EXPECT_EQ(new_dynamic_array(VOID_PTR, &da_strings), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings, (void *)s1), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings, (void *)s2), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings, (void *)s3), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings, (void *)s4), DA_SUCCESS);
+
+	DynamicArray *da_strings_with_empty = NULL;
+	EXPECT_EQ(new_dynamic_array(VOID_PTR, &da_strings_with_empty), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings_with_empty, (void *)s1), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings_with_empty, (void *)s2), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings_with_empty, empty), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings_with_empty, (void *)s3), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings_with_empty, (void *)s4), DA_SUCCESS);
+
+	DynamicArray *da_empty = NULL;
+	EXPECT_EQ(new_dynamic_array(VOID_PTR, &da_empty), DA_SUCCESS);
+
+	DynamicArray *da_invalid_type = NULL;
+	EXPECT_EQ(new_dynamic_array(DOUBLE, &da_invalid_type), DA_SUCCESS);
+	EXPECT_EQ(push_double_da(da_invalid_type, 1234.123), DA_SUCCESS);
+
+	EXPECT_EQ(concat_str_da(NULL, da_strings), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(concat_str_da(&str_output, NULL), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(concat_str_da(&str_output, da_invalid_type), STR_ERR_INVALID_ARGUMENT_DIMENTIONS);
+
+	EXPECT_EQ(concat_str_da(&str_output, da_empty), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_output);
+	EXPECT_NULL(str_output->str);
+	free_string(str_output);
+	str_output = NULL;
+
+	EXPECT_EQ(concat_str_da(&str_output, da_strings), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_output);
+	EXPECT_NOT_NULL(str_output->str);
+	EXPECT_EQ(str_output->length, 30);
+	EXPECT_STR_EQ(str_output->str, "abcdefghijklmnopqrstuvgxyz1234", str_output->length);
+	free_string(str_output);
+	str_output = NULL;
+
+	EXPECT_EQ(concat_str_da(&str_output, da_strings_with_empty), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_output);
+	EXPECT_NOT_NULL(str_output->str);
+	EXPECT_EQ(str_output->length, 30);
+	EXPECT_STR_EQ(str_output->str, "abcdefghijklmnopqrstuvgxyz1234", str_output->length);
+	free_string(str_output);
+	str_output = NULL;
+
+	free_string(s1);
+	free_string(s2);
+	free_string(s3);
+	free_string(s4);
+	free_string(str_output);
+
+	free_dynamic_array(da_strings);
+	free_dynamic_array(da_strings_with_empty);
+	free_dynamic_array(da_empty);
+	free_dynamic_array(da_invalid_type);
+}
+
 void test_gstring(void)
 {
 	puts("################## Test: String ##################");
@@ -255,6 +399,9 @@ void test_gstring(void)
 	EXPECT_EQ(con_empty->length, 6);
 	EXPECT_STR_EQ(con_empty->str, "abcdef", 6);
 
+	// concat_str_da
+	test_concat_str_da(empty);
+
 	// trim
 	String *str_trim = NULL;
 	String *str_trim_left = NULL;
@@ -305,9 +452,10 @@ void test_gstring(void)
 	EXPECT_NOT_NULL(str_trim_not_middle_no_trim->str);
 	EXPECT_STR_EQ(str_trim_not_middle_no_trim->str, "as df", 5);
 
-	/* =========================
-	   Cleanup
-	   ========================= */
+	// split_str
+	test_split_str(str_null_str, str_zero_length, empty);
+
+	// free_string
 	free_string(empty);
 	free_string(s1);
 	free_string(num);
