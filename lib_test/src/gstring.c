@@ -26,76 +26,84 @@ void gstring_init_zero_length(String **const str)
 	EXPECT_EQ((*str)->length, 0);
 }
 
+static void _test_split_str(
+    String *const str,
+    String *const pattern,
+    char *const raw_str_result,
+    size_t const result_length,
+    size_t const split_count)
+{
+	DynamicArray *da_split_output = NULL;
+
+	EXPECT_EQ(split_str(str, pattern, &da_split_output), STR_SUCCESS);
+	EXPECT_NOT_NULL(da_split_output);
+	EXPECT_EQ(da_split_output->count, split_count);
+
+	String *str_concat = NULL;
+	EXPECT_EQ(concat_str_da(&str_concat, da_split_output), DA_SUCCESS);
+	EXPECT_NOT_NULL(str_concat);
+	EXPECT_NOT_NULL(str_concat->str);
+	EXPECT_EQ(str_concat->length, result_length);
+	EXPECT_STR_EQ(str_concat->str, raw_str_result, result_length);
+
+	free_string(str_concat);
+
+	process_da(da_split_output, (void (*)(void *))free_string);
+	free_dynamic_array(da_split_output);
+}
+
 static void test_split_str(String *str_null_str, String *str_zero_length, String *empty)
 {
+	String *pattern = NULL;
 	String *str_split = NULL;
-	String *str_split_pattern = NULL;
+	String *str_split_pattern_end = NULL;
+	String *str_split_pattern_at_start = NULL;
+	String *str_split_pattern_at_start_and_end = NULL;
+	EXPECT_EQ(new_string("PATTERN", 7, &pattern), STR_SUCCESS);
 	EXPECT_EQ(new_string("abcPATTERNdePATTERNfg", 21, &str_split), STR_SUCCESS);
-	EXPECT_EQ(new_string("PATTERN", 7, &str_split_pattern), STR_SUCCESS);
+	EXPECT_EQ(new_string("abcPATTERNdePATTERNfgPATTERN", 28, &str_split_pattern_end), STR_SUCCESS);
+	EXPECT_EQ(new_string("PATTERNabcPATTERNdePATTERNfg", 28, &str_split_pattern_at_start), STR_SUCCESS);
+	EXPECT_EQ(new_string("PATTERNabcPATTERNdePATTERNfgPATTERN", 35, &str_split_pattern_at_start_and_end), STR_SUCCESS);
 
 	DynamicArray *da_split_output = NULL;
 
-	EXPECT_EQ(split_str(NULL, str_split_pattern, &da_split_output), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(split_str(NULL, pattern, &da_split_output), STR_ERR_NULL_ARGUMENT);
 	EXPECT_NULL(da_split_output);
 	EXPECT_EQ(split_str(str_split, NULL, &da_split_output), STR_ERR_NULL_ARGUMENT);
 	EXPECT_NULL(da_split_output);
-	EXPECT_EQ(split_str(str_split, str_split_pattern, NULL), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(split_str(str_split, pattern, NULL), STR_ERR_NULL_ARGUMENT);
 	EXPECT_NULL(da_split_output);
 
-	EXPECT_EQ(split_str(str_null_str, str_split_pattern, &da_split_output), STR_ERR_NULL_STR);
+	EXPECT_EQ(split_str(str_null_str, pattern, &da_split_output), STR_ERR_NULL_STR);
 	EXPECT_NULL(da_split_output);
 	EXPECT_EQ(split_str(str_split, str_null_str, &da_split_output), STR_ERR_NULL_STR);
 	EXPECT_NULL(da_split_output);
 
-	EXPECT_EQ(split_str(str_zero_length, str_split_pattern, &da_split_output), STR_ERR_ZERO_LENGTH);
+	EXPECT_EQ(split_str(str_zero_length, pattern, &da_split_output), STR_ERR_ZERO_LENGTH);
 	EXPECT_NULL(da_split_output);
 	EXPECT_EQ(split_str(str_split, str_zero_length, &da_split_output), STR_ERR_ZERO_LENGTH);
 	EXPECT_NULL(da_split_output);
 
-	EXPECT_EQ(split_str(empty, str_split_pattern, &da_split_output), STR_SUCCESS);
+	EXPECT_EQ(split_str(empty, pattern, &da_split_output), STR_SUCCESS);
 	EXPECT_NOT_NULL(da_split_output);
 	EXPECT_EQ(da_split_output->count, 0);
 	free_dynamic_array(da_split_output);
+
 	EXPECT_EQ(split_str(str_split, empty, &da_split_output), STR_SUCCESS);
 	EXPECT_NOT_NULL(da_split_output);
 	EXPECT_EQ(da_split_output->count, 0);
 	free_dynamic_array(da_split_output);
 
-	EXPECT_EQ(split_str(str_split, str_split_pattern, &da_split_output), STR_SUCCESS);
-	EXPECT_NOT_NULL(da_split_output);
-	EXPECT_EQ(da_split_output->count, 3);
-	DynamicArrayIterator *da_split_itr = NULL;
-	EXPECT_EQ(new_iterator_da(da_split_output, &da_split_itr), DA_SUCCESS);
-	int da_split_itr_has_next = 0;
-	EXPECT_EQ(has_next_dai(da_split_itr, &da_split_itr_has_next), DA_SUCCESS);
+	_test_split_str(str_split, pattern, "abcdefg", 7, 3);
+	_test_split_str(str_split_pattern_end, pattern, "abcdefg", 7, 3);
+	_test_split_str(str_split_pattern_at_start, pattern, "abcdefg", 7, 3);
+	_test_split_str(str_split_pattern_at_start_and_end, pattern, "abcdefg", 7, 3);
 
-	DynamicArray *parts = NULL;
-	EXPECT_EQ(new_dynamic_array(VOID_PTR, &parts), DA_SUCCESS);
-
-	while (da_split_itr_has_next)
-	{
-		String *part = NULL;
-		EXPECT_EQ(next_ptr_dai(da_split_itr, (void **)&part), DA_SUCCESS);
-		EXPECT_EQ(push_ptr_da(parts, part), DA_SUCCESS);
-
-		EXPECT_EQ(has_next_dai(da_split_itr, &da_split_itr_has_next), DA_SUCCESS);
-	}
-
-	String *str_concat = NULL;
-	EXPECT_EQ(concat_str_da(&str_concat, parts), DA_SUCCESS);
-	EXPECT_NOT_NULL(str_concat);
-	EXPECT_NOT_NULL(str_concat->str);
-	EXPECT_EQ(str_concat->length, 7);
-	EXPECT_STR_EQ(str_concat->str, "abcdefg", str_concat->length);
-
-
+	free_string(pattern);
 	free_string(str_split);
-	free_string(str_split_pattern);
-	free_string(str_concat);
-
-	process_da(da_split_output, (void (*)(void *))free_string);
-	free_dynamic_array(da_split_output);
-	free_dynamic_array(parts);
+	free_string(str_split_pattern_end);
+	free_string(str_split_pattern_at_start);
+	free_string(str_split_pattern_at_start_and_end);
 }
 
 static void test_concat_str_da(String *const empty)
