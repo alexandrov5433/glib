@@ -73,6 +73,11 @@ static void test_split_str(String *str_null_str, String *str_zero_length, String
 	EXPECT_EQ(new_string("PATabcPATTERNdePATTERNfgPAT", 27, &str_split_pattern_at_start_and_end_partial), STR_SUCCESS);
 	EXPECT_EQ(new_string("abcPATdePATTERNfg", 17, &str_split_pattern_at_middle_partial), STR_SUCCESS);
 
+	String *pattern_space = NULL;
+	String *str_sentence = NULL;
+	EXPECT_EQ(new_string(" ", 1, &pattern_space), STR_SUCCESS);
+	EXPECT_EQ(new_string("The chicken is in the oven.", 27, &str_sentence), STR_SUCCESS);
+
 	DynamicArray *da_split_output = NULL;
 
 	EXPECT_EQ(split_str(NULL, pattern, &da_split_output), STR_ERR_NULL_ARGUMENT);
@@ -102,6 +107,7 @@ static void test_split_str(String *str_null_str, String *str_zero_length, String
 	EXPECT_EQ(da_split_output->count, 0);
 	free_dynamic_array(da_split_output);
 
+	//PATTERN
 	_test_split_str(str_split, pattern, "abcdefg", 7, 3);
 	_test_split_str(str_split_pattern_end, pattern, "abcdefg", 7, 3);
 	_test_split_str(str_split_pattern_at_start, pattern, "abcdefg", 7, 3);
@@ -111,12 +117,25 @@ static void test_split_str(String *str_null_str, String *str_zero_length, String
 	_test_split_str(str_split_pattern_at_start_and_end_partial, pattern, "PATabcdefgPAT", 13, 3);
 	_test_split_str(str_split_pattern_at_middle_partial, pattern, "abcPATdefg", 10, 2);
 
+	// " "
+	_test_split_str(str_sentence, pattern_space, "Thechickenisintheoven.", 22, 6);
+	
+	// Pattern not included in sentence.
+	_test_split_str(str_sentence, pattern, "The chicken is in the oven.", 27, 1);
+
+
 	free_string(pattern);
 	free_string(str_split);
 	free_string(str_split_pattern_end);
 	free_string(str_split_pattern_at_start);
 	free_string(str_split_pattern_at_start_and_end);
 	free_string(str_split_pattern_at_end_partial);
+	free_string(str_split_pattern_at_start_partial);
+	free_string(str_split_pattern_at_start_and_end_partial);
+	free_string(str_split_pattern_at_middle_partial);
+
+	free_string(pattern_space);
+	free_string(str_sentence);
 }
 
 static void test_concat_str_da(String *const empty)
