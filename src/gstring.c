@@ -794,8 +794,13 @@ _main_loop:
 		for (size_t i = 0; i < pattern->length; ++i)
 		{
 			if (index_str + i >= str->length)
-				// The String ends with a part of the pattern. This must be included in the current part.
+			{
+				/*
+				The String ends with a part of the pattern. This must be included in the current part.
+				*/
+				index_str = str->length - 1;
 				break;
+			}
 
 			if ((str->str)[index_str + i] != (pattern->str)[i])
 			{
