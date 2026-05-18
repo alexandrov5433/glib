@@ -60,12 +60,16 @@ static void test_split_str(String *str_null_str, String *str_zero_length, String
 	String *str_split_pattern_at_start = NULL;
 	String *str_split_pattern_at_start_and_end = NULL;
 	String *str_split_pattern_at_end_partial = NULL;
+	String *str_split_pattern_at_start_partial = NULL;
+	String *str_split_pattern_at_start_and_end_partial = NULL;
 	EXPECT_EQ(new_string("PATTERN", 7, &pattern), STR_SUCCESS);
 	EXPECT_EQ(new_string("abcPATTERNdePATTERNfg", 21, &str_split), STR_SUCCESS);
 	EXPECT_EQ(new_string("abcPATTERNdePATTERNfgPATTERN", 28, &str_split_pattern_end), STR_SUCCESS);
 	EXPECT_EQ(new_string("PATTERNabcPATTERNdePATTERNfg", 28, &str_split_pattern_at_start), STR_SUCCESS);
 	EXPECT_EQ(new_string("PATTERNabcPATTERNdePATTERNfgPATTERN", 35, &str_split_pattern_at_start_and_end), STR_SUCCESS);
 	EXPECT_EQ(new_string("PATTERNabcPATTERNdePATTERNfgPAT", 31, &str_split_pattern_at_end_partial), STR_SUCCESS);
+	EXPECT_EQ(new_string("PATabcPATTERNdePATTERNfg", 24, &str_split_pattern_at_start_partial), STR_SUCCESS);
+	EXPECT_EQ(new_string("PATabcPATTERNdePATTERNfgPAT", 27, &str_split_pattern_at_start_and_end_partial), STR_SUCCESS);
 
 	DynamicArray *da_split_output = NULL;
 
@@ -101,6 +105,8 @@ static void test_split_str(String *str_null_str, String *str_zero_length, String
 	_test_split_str(str_split_pattern_at_start, pattern, "abcdefg", 7, 3);
 	_test_split_str(str_split_pattern_at_start_and_end, pattern, "abcdefg", 7, 3);
 	_test_split_str(str_split_pattern_at_end_partial, pattern, "abcdefgPAT", 10, 3);
+	_test_split_str(str_split_pattern_at_start_partial, pattern, "PATabcdefg", 10, 3);
+	_test_split_str(str_split_pattern_at_start_and_end_partial, pattern, "PATabcdefgPAT", 13, 3);
 
 	free_string(pattern);
 	free_string(str_split);
