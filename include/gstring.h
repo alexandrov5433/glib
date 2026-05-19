@@ -101,7 +101,7 @@ GALXLIB_API enum StringError new_string(const char *const char_arr, size_t lengt
 
 /**
  * Creates a new @ref String from a null-terminated character array.
- * @param char_arr A pointer to a character array. The content of the character array is copied, therefore it can be freed. 
+ * @param char_arr A pointer to a character array. The content of the character array is copied, therefore it can be freed.
  * If NULL or double quotes with no characters (""), an emtpy @ref String, with 0 length, is created.
  * @param output A pointer, where the newly created @ref String will be outputed.
  * @return A value of the @ref StringError:
@@ -494,5 +494,26 @@ GALXLIB_API enum StringError trim(String *const str);
  * - STR_ERR_DYNAMIC_ARRAY
  */
 GALXLIB_API enum StringError split_str(const String *const str, const String *const pattern, DynamicArray **const output);
+
+/**
+ * Determines whether a given @ref String is present at least once in the given @ref String. 
+ * Neither of the given Strings are changed.
+ * @param str The @ref String to search in.
+ * @param str_search The @ref String for which to search.
+ * @param output A pointer for the output. If the str_search @ref String is present 1 is outputed, 0 otherwise.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
+ */
+GALXLIB_API enum StringError includes_str(
+    const String *const str,
+    const String *const str_search,
+    int *const output);
 
 #endif

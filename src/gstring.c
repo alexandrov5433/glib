@@ -905,3 +905,52 @@ _end_stage:
 	*output = parts;
 	return STR_SUCCESS;
 }
+
+enum StringError includes_str(
+    const String *const str,
+    const String *const str_search,
+    int *const output)
+{
+	int err_valid = _validate_nsl(str);
+	if (err_valid)
+		return err_valid;
+
+	err_valid = _validate_nsl(str_search);
+	if (err_valid)
+		return err_valid;
+
+	if (output == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+
+	int result = 0;
+
+	if (str->length == 0 ||
+	    str_search->length == 0 ||
+	    str->length < str_search->length)
+		goto _end_stage;
+
+	size_t index_str = 0;
+_main_loop:
+	while (index_str < str->length)
+	{
+		if ((str->str)[index_str] != (str_search->str)[0])
+		{
+			index_str++;
+			goto _main_loop;
+		}
+		for (size_t i = 0; i < str_search->length; ++i)
+		{
+			if ((str->str)[index_str + i] != (str_search->str)[i])
+			{
+				index_str += i;
+				goto _main_loop;
+			}
+		}
+		result = 1;
+		break;
+	}
+
+_end_stage:
+	*output = result;
+	return STR_SUCCESS;
+}

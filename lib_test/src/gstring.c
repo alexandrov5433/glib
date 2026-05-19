@@ -209,6 +209,97 @@ static void test_concat_str_da(String *const empty)
 	free_dynamic_array(da_invalid_type);
 }
 
+static void test_includes_str()
+{
+	String *pattern = NULL;
+	String *pattern_too_long = NULL;
+	String *pattern_empty = NULL;
+	String *s1 = NULL;
+	String *s2 = NULL;
+	String *s3 = NULL;
+	String *s4 = NULL;
+	String *s5 = NULL;
+	String *s6 = NULL;
+	String *s7 = NULL;
+	String *s8 = NULL;
+	String *s9 = NULL;
+	String *empty = NULL;
+	EXPECT_EQ(new_string_nt("PATTERN", &pattern), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("SOME_TOO_LONG_PATTERN", &pattern_too_long), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("", &pattern_empty), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("asdfPATTERN1234", &s1), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PATTERNasdf1234", &s2), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("asdf1234PATTERN", &s3), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PATTERNasdf1234PATTERN", &s4), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PATTERNasdfPATTERN1234PATTERN", &s5), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PATasdfPATTERN1234PAT", &s6), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PATasdf1234", &s7), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("asdfPAT1234", &s8), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("asdf1234PAT", &s9), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt(NULL, &empty), STR_SUCCESS);
+
+	int output = -1;
+	EXPECT_EQ(includes_str(NULL, pattern, &output), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(includes_str(s1, NULL, &output), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(includes_str(s1, pattern, NULL), STR_ERR_NULL_ARGUMENT);
+
+	EXPECT_EQ(includes_str(s1, pattern_too_long, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 0);
+	output = -1;
+	EXPECT_EQ(includes_str(s1, pattern_empty, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 0);
+	output = -1;
+	EXPECT_EQ(includes_str(empty, pattern, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 0);
+	output = -1;
+	EXPECT_EQ(includes_str(empty, pattern_empty, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 0);
+	output = -1;
+
+	EXPECT_EQ(includes_str(s1, pattern, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 1);
+	output = -1;
+	EXPECT_EQ(includes_str(s2, pattern, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 1);
+	output = -1;
+	EXPECT_EQ(includes_str(s3, pattern, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 1);
+	output = -1;
+	EXPECT_EQ(includes_str(s4, pattern, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 1);
+	output = -1;
+	EXPECT_EQ(includes_str(s5, pattern, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 1);
+	output = -1;
+	EXPECT_EQ(includes_str(s6, pattern, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 1);
+	output = -1;
+
+	EXPECT_EQ(includes_str(s7, pattern, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 0);
+	output = -1;
+	EXPECT_EQ(includes_str(s8, pattern, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 0);
+	output = -1;
+	EXPECT_EQ(includes_str(s9, pattern, &output), STR_SUCCESS);
+	EXPECT_EQ(output, 0);
+	output = -1;
+
+	free_string(pattern);
+	free_string(pattern_too_long);
+	free_string(pattern_empty);
+	free_string(s1);
+	free_string(s2);
+	free_string(s3);
+	free_string(s4);
+	free_string(s5);
+	free_string(s6);
+	free_string(s7);
+	free_string(s8);
+	free_string(s9);
+	free_string(empty);
+}
+
 void test_gstring(void)
 {
 	puts("################## Test: String ##################");
@@ -248,7 +339,7 @@ void test_gstring(void)
 	// const char chars_no_nt[3] = {'1', '2', '3'};
 	EXPECT_EQ(new_string_nt("", NULL), STR_ERR_NULL_ARGUMENT);
 	// EXPECT_EQ(new_string_nt(chars_no_nt, &str_nt), STR_ERR_LOOP_MAX_LIMIT);
-	
+
 	EXPECT_EQ(new_string_nt(NULL, &str_nt), STR_SUCCESS);
 	EXPECT_NOT_NULL(str_nt);
 	EXPECT_NULL(str_nt->str);
@@ -525,6 +616,9 @@ void test_gstring(void)
 
 	// split_str
 	test_split_str(str_null_str, str_zero_length, empty);
+
+	// includes_str
+	test_includes_str();
 
 	// free_string
 	free_string(empty);
