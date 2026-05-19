@@ -226,6 +226,51 @@ _end_stage:
 	return STR_SUCCESS;
 }
 
+enum StringError new_string_nt(const char *const char_arr, String **const output)
+{
+	if (output == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+
+	String *new_str = malloc(sizeof(String));
+	if (new_str == NULL)
+		return STR_ERR_MEMORY_ALLOCATION;
+
+	char *str = NULL;
+	/* The index of the null-terminator is the length of the String. */
+	size_t str_length = 0;
+	if (char_arr == NULL)
+		goto _end_stage;
+
+	int err_index = _index_of_nt(char_arr, &str_length);
+	if (err_index)
+		return err_index;
+
+	if (str_length == 0)
+		goto _end_stage;
+
+	int err_arr_init = _new_char_array(str_length, &str);
+	if (err_arr_init)
+	{
+		free(new_str);
+		return err_arr_init;
+	}
+
+	int err_copy = _copy_chars(char_arr, str, str_length);
+	if (err_copy)
+	{
+		free(new_str);
+		free(str);
+		return err_copy;
+	}
+
+_end_stage:
+	new_str->str = str;
+	new_str->length = str_length;
+	*output = new_str;
+
+	return STR_SUCCESS;
+}
+
 enum StringError free_string(String *str)
 {
 	if (str == NULL)

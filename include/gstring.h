@@ -81,11 +81,12 @@ typedef struct String
 } String;
 
 /**
- * Creates a new String.
+ * Creates a new @ref String.
  * @param char_arr A pointer to a character array. The content of the character array is copied, therefore it can be freed.
  * If NULL, length argument must be 0 and a String with 0 length will be created.
  * @param length The number of characters, which will be copied to the String.
  * If 0, char_arr argument must be NULL and a String with 0 length will be created.
+ * @param output A pointer, where the newly created @ref String will be outputed.
  * @return A value of the @ref StringError:
  *
  * - STR_SUCCESS
@@ -97,6 +98,25 @@ typedef struct String
  * - STR_ERR_NULL_ARGUMENT
  */
 GALXLIB_API enum StringError new_string(const char *const char_arr, size_t length, String **const output);
+
+/**
+ * Creates a new @ref String from a null-terminated character array.
+ * @param char_arr A pointer to a character array. The content of the character array is copied, therefore it can be freed. 
+ * If NULL or double quotes with no characters (""), an emtpy @ref String, with 0 length, is created.
+ * @param output A pointer, where the newly created @ref String will be outputed.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - STR_ERR_LOOP_MAX_LIMIT
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ */
+GALXLIB_API enum StringError new_string_nt(const char *const char_arr, String **const output);
 
 /**
  * Frees the memory of the String.
@@ -411,7 +431,7 @@ GALXLIB_API enum StringError remove_char(String *const str, const char to_remove
  */
 GALXLIB_API enum StringError concat(String **const output, const size_t n_str, ...);
 /**
- * Concatenates multiple Strings, from a @ref DynamicArray, into one. 
+ * Concatenates multiple Strings, from a @ref DynamicArray, into one.
  * The order of the concatenation is the same as in the @ref DynamicArray.
  * @param output A pointer, where the resulting concatenated @ref String will be placed.
  * @param strings A @ref DynamicArray containing the pointers to the Strings for concatenation.
@@ -428,7 +448,7 @@ GALXLIB_API enum StringError concat(String **const output, const size_t n_str, .
  * - STR_ERR_NULL_STR
  *
  * - STR_ERR_ZERO_LENGTH
- * 
+ *
  * - STR_ERR_DYNAMIC_ARRAY
  */
 GALXLIB_API enum StringError concat_str_da(String **const output, DynamicArray *const strings);
@@ -452,11 +472,11 @@ GALXLIB_API enum StringError trim(String *const str);
 
 /**
  * Splits the @ref String into an ordered list of substrings (@ref String) by searching for the pattern.
- * The pointers to the substrings are placed into a @ref DynamicArray, and the @ref DynamicArray is outputed. 
+ * The pointers to the substrings are placed into a @ref DynamicArray, and the @ref DynamicArray is outputed.
  * The original @ref String is not changed.
  * @param str The @ref String which must be split.
  * @param pattern The pattern, as a @ref String, which will be used to split.
- * @param output A pointer, where the @ref DynamicArray with substrings will be outputed. 
+ * @param output A pointer, where the @ref DynamicArray with substrings will be outputed.
  * @return A value of the @ref StringError:
  *
  * - STR_SUCCESS
@@ -470,7 +490,7 @@ GALXLIB_API enum StringError trim(String *const str);
  * - STR_ERR_NULL_STR
  *
  * - STR_ERR_ZERO_LENGTH
- * 
+ *
  * - STR_ERR_DYNAMIC_ARRAY
  */
 GALXLIB_API enum StringError split_str(const String *const str, const String *const pattern, DynamicArray **const output);

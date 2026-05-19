@@ -107,7 +107,7 @@ static void test_split_str(String *str_null_str, String *str_zero_length, String
 	EXPECT_EQ(da_split_output->count, 0);
 	free_dynamic_array(da_split_output);
 
-	//PATTERN
+	// PATTERN
 	_test_split_str(str_split, pattern, "abcdefg", 7, 3);
 	_test_split_str(str_split_pattern_end, pattern, "abcdefg", 7, 3);
 	_test_split_str(str_split_pattern_at_start, pattern, "abcdefg", 7, 3);
@@ -119,10 +119,9 @@ static void test_split_str(String *str_null_str, String *str_zero_length, String
 
 	// " "
 	_test_split_str(str_sentence, pattern_space, "Thechickenisintheoven.", 22, 6);
-	
+
 	// Pattern not included in sentence.
 	_test_split_str(str_sentence, pattern, "The chicken is in the oven.", 27, 1);
-
 
 	free_string(pattern);
 	free_string(str_split);
@@ -242,6 +241,38 @@ void test_gstring(void)
 
 	String *str_zero_length = NULL;
 	gstring_init_zero_length(&str_zero_length);
+
+	// new_string_nt
+
+	String *str_nt = NULL;
+	// const char chars_no_nt[3] = {'1', '2', '3'};
+	EXPECT_EQ(new_string_nt("", NULL), STR_ERR_NULL_ARGUMENT);
+	// EXPECT_EQ(new_string_nt(chars_no_nt, &str_nt), STR_ERR_LOOP_MAX_LIMIT);
+	
+	EXPECT_EQ(new_string_nt(NULL, &str_nt), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_nt);
+	EXPECT_NULL(str_nt->str);
+	EXPECT_EQ(str_nt->length, 0);
+	free_string(str_nt);
+	str_nt = NULL;
+	EXPECT_NULL(str_nt);
+
+	EXPECT_EQ(new_string_nt("abc", &str_nt), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_nt);
+	EXPECT_NOT_NULL(str_nt->str);
+	EXPECT_EQ(str_nt->length, 3);
+	EXPECT_STR_EQ(str_nt->str, "abc", 3);
+	free_string(str_nt);
+	str_nt = NULL;
+	EXPECT_NULL(str_nt);
+
+	EXPECT_EQ(new_string_nt("", &str_nt), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_nt);
+	EXPECT_NULL(str_nt->str);
+	EXPECT_EQ(str_nt->length, 0);
+	free_string(str_nt);
+	str_nt = NULL;
+	EXPECT_NULL(str_nt);
 
 	// append_char
 	EXPECT_EQ(append_char(NULL, 'd'), STR_ERR_NULL_ARGUMENT);
