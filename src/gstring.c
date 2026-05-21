@@ -811,7 +811,9 @@ enum StringError split_str(const String *const str, const String *const pattern,
 	if (err_da_init)
 		return STR_ERR_DYNAMIC_ARRAY;
 
-	if (str->length == 0 || pattern->length == 0)
+	if (str->length == 0 ||
+	    pattern->length == 0 ||
+	    str->length <= pattern->length)
 		goto _end_stage;
 
 	String *part = NULL;
