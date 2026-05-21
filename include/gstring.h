@@ -429,7 +429,8 @@ GALXLIB_API enum StringError remove_char(String *const str, const char to_remove
  *
  * - STR_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError concat(String **const output, const size_t n_str, ...);
+GALXLIB_API enum StringError concat_str(String **const output, const size_t n_str, ...);
+
 /**
  * Concatenates multiple Strings, from a @ref DynamicArray, into one.
  * The order of the concatenation is the same as in the @ref DynamicArray.
@@ -452,6 +453,35 @@ GALXLIB_API enum StringError concat(String **const output, const size_t n_str, .
  * - STR_ERR_DYNAMIC_ARRAY
  */
 GALXLIB_API enum StringError concat_str_da(String **const output, DynamicArray *const strings);
+
+/**
+ * Concatenates multiple Strings, from a @ref DynamicArray, into one. 
+ * A connector @ref String is placed between each two parts.
+ * The order of the concatenation is the same as in the @ref DynamicArray.
+ * @param output A pointer, where the resulting concatenated @ref String will be placed.
+ * @param strings A @ref DynamicArray containing the pointers to the Strings for concatenation.
+ * @param connector A @ref String which will be placed between each two parts, effectively connecting them.
+ * Will not be placed at the start or end of the resulting @ref String.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
+ *
+ * - STR_ERR_DYNAMIC_ARRAY
+ */
+GALXLIB_API enum StringError concat_str_da_c(
+    String **const output,
+    DynamicArray *const strings,
+    const String *const connector);
 
 /**
  * Removes the whitespace characters form the start and end of the @ref String.
@@ -496,7 +526,7 @@ GALXLIB_API enum StringError trim(String *const str);
 GALXLIB_API enum StringError split_str(const String *const str, const String *const pattern, DynamicArray **const output);
 
 /**
- * Determines whether a given @ref String is present at least once in the given @ref String. 
+ * Determines whether a given @ref String is present at least once in the given @ref String.
  * Neither of the given Strings are changed.
  * @param str The @ref String to search in.
  * @param str_search The @ref String for which to search.

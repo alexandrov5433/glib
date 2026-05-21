@@ -225,6 +225,86 @@ static void test_concat_str_da(String *const empty)
 	free_dynamic_array(da_invalid_type);
 }
 
+static void test_concat_str_da_c()
+{
+	String *s1 = NULL;
+	String *s2 = NULL;
+	String *s3 = NULL;
+	String *s4 = NULL;
+	String *str_output = NULL;
+	String *empty = NULL;
+	String *connector = NULL;
+	EXPECT_EQ(new_string_nt("abc", &s1), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("def", &s2), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("ghijklmnopqrstuvgxyz", &s3), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("1234", &s4), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt(NULL, &empty), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("CON", &connector), STR_SUCCESS);
+
+	DynamicArray *da_strings = NULL;
+	EXPECT_EQ(new_dynamic_array(VOID_PTR, &da_strings), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings, (void *)s1), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings, (void *)s2), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings, (void *)s3), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings, (void *)s4), DA_SUCCESS);
+
+	DynamicArray *da_strings_with_empty = NULL;
+	EXPECT_EQ(new_dynamic_array(VOID_PTR, &da_strings_with_empty), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings_with_empty, (void *)s1), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings_with_empty, (void *)s2), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings_with_empty, empty), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings_with_empty, (void *)s3), DA_SUCCESS);
+	EXPECT_EQ(push_ptr_da(da_strings_with_empty, (void *)s4), DA_SUCCESS);
+
+	DynamicArray *da_empty = NULL;
+	EXPECT_EQ(new_dynamic_array(VOID_PTR, &da_empty), DA_SUCCESS);
+
+	DynamicArray *da_invalid_type = NULL;
+	EXPECT_EQ(new_dynamic_array(DOUBLE, &da_invalid_type), DA_SUCCESS);
+	EXPECT_EQ(push_double_da(da_invalid_type, 1234.123), DA_SUCCESS);
+
+	EXPECT_EQ(concat_str_da_c(NULL, da_strings, connector), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(concat_str_da_c(&str_output, NULL, connector), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(concat_str_da_c(&str_output, da_strings, NULL), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(concat_str_da_c(&str_output, da_invalid_type, connector), STR_ERR_INVALID_ARGUMENT_DIMENTIONS);
+
+	EXPECT_EQ(concat_str_da_c(&str_output, da_empty, connector), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_output);
+	EXPECT_NULL(str_output->str);
+	EXPECT_EQ(str_output->length, 0);
+	free_string(str_output);
+	str_output = NULL;
+
+	EXPECT_EQ(concat_str_da_c(&str_output, da_strings, connector), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_output);
+	EXPECT_NOT_NULL(str_output->str);
+	EXPECT_EQ(str_output->length, 39);
+	EXPECT_STR_EQ(str_output->str, "abcCONdefCONghijklmnopqrstuvgxyzCON1234", str_output->length);
+	free_string(str_output);
+	str_output = NULL;
+
+	EXPECT_EQ(concat_str_da_c(&str_output, da_strings_with_empty, connector), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_output);
+	EXPECT_NOT_NULL(str_output->str);
+	EXPECT_EQ(str_output->length, 39);
+	EXPECT_STR_EQ(str_output->str, "abcCONdefCONghijklmnopqrstuvgxyzCON1234", str_output->length);
+	free_string(str_output);
+	str_output = NULL;
+
+	free_string(s1);
+	free_string(s2);
+	free_string(s3);
+	free_string(s4);
+	free_string(str_output);
+	free_string(empty);
+	free_string(connector);
+
+	free_dynamic_array(da_strings);
+	free_dynamic_array(da_strings_with_empty);
+	free_dynamic_array(da_empty);
+	free_dynamic_array(da_invalid_type);
+}
+
 static void test_includes_str()
 {
 	String *pattern = NULL;
@@ -551,7 +631,7 @@ void test_gstring(void)
 	EXPECT_EQ(num->length, 2);
 	EXPECT_STR_EQ(num->str, "93", 2);
 
-	// concat
+	// concat_str
 	String *con_1 = NULL;
 	String *con_2 = NULL;
 	String *con_result = NULL;
@@ -559,26 +639,29 @@ void test_gstring(void)
 	EXPECT_EQ(new_string("abc", 3, &con_1), STR_SUCCESS);
 	EXPECT_EQ(new_string("def", 3, &con_2), STR_SUCCESS);
 
-	EXPECT_EQ(concat(NULL, 2, con_1, con_2), STR_ERR_NULL_ARGUMENT);
-	EXPECT_EQ(concat(&con_result, 2, NULL, con_2), STR_ERR_NULL_ARGUMENT);
-	EXPECT_EQ(concat(&con_result, 2, con_1, NULL), STR_ERR_NULL_ARGUMENT);
-	EXPECT_EQ(concat(&con_result, 2, str_null_str, con_2), STR_ERR_NULL_STR);
-	EXPECT_EQ(concat(&con_result, 2, str_zero_length, con_2), STR_ERR_ZERO_LENGTH);
-	EXPECT_EQ(concat(&con_result, 2, con_1, str_null_str), STR_ERR_NULL_STR);
-	EXPECT_EQ(concat(&con_result, 2, con_1, str_zero_length), STR_ERR_ZERO_LENGTH);
+	EXPECT_EQ(concat_str(NULL, 2, con_1, con_2), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(concat_str(&con_result, 2, NULL, con_2), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(concat_str(&con_result, 2, con_1, NULL), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(concat_str(&con_result, 2, str_null_str, con_2), STR_ERR_NULL_STR);
+	EXPECT_EQ(concat_str(&con_result, 2, str_zero_length, con_2), STR_ERR_ZERO_LENGTH);
+	EXPECT_EQ(concat_str(&con_result, 2, con_1, str_null_str), STR_ERR_NULL_STR);
+	EXPECT_EQ(concat_str(&con_result, 2, con_1, str_zero_length), STR_ERR_ZERO_LENGTH);
 
-	EXPECT_EQ(concat(&con_result, 2, con_1, con_2), STR_SUCCESS);
+	EXPECT_EQ(concat_str(&con_result, 2, con_1, con_2), STR_SUCCESS);
 	EXPECT_NOT_NULL(con_result);
 	EXPECT_NOT_NULL(con_result->str);
 	EXPECT_EQ(con_result->length, 6);
 	EXPECT_STR_EQ(con_result->str, "abcdef", 6);
-	EXPECT_EQ(concat(&con_empty, 2, con_result, empty), STR_SUCCESS);
+	EXPECT_EQ(concat_str(&con_empty, 2, con_result, empty), STR_SUCCESS);
 	EXPECT_NOT_NULL(con_empty->str);
 	EXPECT_EQ(con_empty->length, 6);
 	EXPECT_STR_EQ(con_empty->str, "abcdef", 6);
 
 	// concat_str_da
 	test_concat_str_da(empty);
+
+	// concat_str_da_c
+	test_concat_str_da_c();
 
 	// trim
 	String *str_trim = NULL;

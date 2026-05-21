@@ -276,6 +276,7 @@ enum StringError free_string(String *str)
 	if (str == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
+	// TODO for whole library: Set the freed pointer - Dangling pointer - to NULL to avoid potential errors in the future.
 	if (str->str != NULL)
 		free(str->str);
 
@@ -608,6 +609,81 @@ enum StringError replace_char(String *const str, const char to_replace, const ch
 	return STR_SUCCESS;
 }
 
+enum StringError replace_str(
+    String *const str,
+    const String *const str_to_replace,
+    const String *const str_replacement)
+{
+	int err_valid = _validate_nsl(str);
+	if (err_valid)
+		return err_valid;
+
+	err_valid = _validate_nsl(str_to_replace);
+	if (err_valid)
+		return err_valid;
+
+	err_valid = _validate_nsl(str_replacement);
+	if (err_valid)
+		return err_valid;
+
+	String *str_updated = NULL;
+	size_t str_updated_length = 0;
+	int err_str_init = new_string_nt(NULL, &str_updated);
+	if (err_str_init)
+		return err_str_init;
+
+	/*
+	str_replacement->length == 0 => may remove parts from the String
+	str->length == str_to_replace->length => may replace the whole String
+	The ratio of the length-s of str and str_replacement does not matter.
+	*/
+	if (str->length == 0 ||
+	    str_to_replace->length == 0 ||
+	    str_replacement->length == 0 ||
+	    str->length < str_to_replace->length)
+		goto _case_nothing_to_do;
+
+	DynamicArray *output_split = NULL;
+	int err_split = split_str(str, str_to_replace, &output_split);
+	if (err_split)
+	{
+		free_string(str_updated);
+		return err_split;
+	}
+
+	// 	size_t str_index = 0;
+	// _main_loop:
+	// 	while (str_index < str->length)
+	// 	{
+	// 		if ((str->str)[str_index] != (str_to_replace->str)[0])
+	// 		{
+	// 			str_index++;
+	// 			goto _main_loop;
+	// 		}
+
+	// 		// Pattern for replacement (str_to_replace) starts. Look ahead ot comfirm completenes.
+	// 		for (size_t i = 0; i < str_to_replace->length; ++i)
+	// 		{
+	// 			if ((str->str)[str_index + i] != (str_to_replace->str)[i])
+	// 			{
+	// 				str_index += i;
+	// 				goto _main_loop;
+	// 			}
+	// 		}
+
+	// 		// Pattern is complete. Must be replaced.
+
+	// 	}
+
+_end_stage:
+	free(str->str);
+	str->str = str_updated->str;
+	str->length = str_updated_length;
+	free(str_updated); // str_updated->str must NOT be freed
+_case_nothing_to_do:
+	return STR_SUCCESS;
+}
+
 enum StringError remove_char(String *const str, const char to_remove)
 {
 	int err_valid = _validate_nsl(str);
@@ -640,7 +716,7 @@ enum StringError remove_char(String *const str, const char to_remove)
 	return STR_SUCCESS;
 }
 
-enum StringError concat(String **const output, const size_t n_str, ...)
+enum StringError concat_str(String **const output, const size_t n_str, ...)
 {
 	/**
 	 * Documentation on stdarg.h and variadic functions.
@@ -733,6 +809,96 @@ enum StringError concat_str_da(String **const output, DynamicArray *const string
 
 _end_stage:
 	*output = str_result;
+	return STR_SUCCESS;
+}
+
+enum StringError concat_str_da_c(
+    String **const output,
+    DynamicArray *const strings,
+    const String *const connector)
+{
+	int err_valid = _validate_nsl(connector);
+	if (err_valid)
+		return err_valid;
+
+	if (output == NULL || strings == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+
+	if (strings->type != VOID_PTR)
+		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
+
+	String *str_result = NULL;
+	int err_result_init = new_string_nt(NULL, &str_result);
+	if (err_result_init)
+		return err_result_init;
+
+	if (strings->count == 0)
+		goto _end_stage;
+
+	DynamicArrayIterator *dai = NULL;
+	int err_dai_init = new_iterator_da(strings, &dai);
+	if (err_dai_init)
+	{
+		free_string(str_result);
+		return STR_ERR_DYNAMIC_ARRAY;
+	}
+
+	int has_next = 0;
+	int err_has_next = has_next_dai(dai, &has_next);
+	if (err_has_next)
+	{
+		free_string(str_result);
+		free_iterator_da(dai);
+		return STR_ERR_DYNAMIC_ARRAY;
+	}
+_main_loop:
+	while (has_next)
+	{
+		String *part = NULL;
+		int err_next = next_ptr_dai(dai, (void **)&part);
+		if (err_next)
+		{
+			free_string(str_result);
+			free_iterator_da(dai);
+			return STR_ERR_DYNAMIC_ARRAY;
+		}
+
+		int err_append_str = append_str(part, str_result);
+		if (err_append_str)
+		{
+			free_string(str_result);
+			free_iterator_da(dai);
+			return err_append_str;
+		}
+
+		err_has_next = has_next_dai(dai, &has_next);
+		if (err_has_next)
+		{
+			free_string(str_result);
+			free_iterator_da(dai);
+			return STR_ERR_DYNAMIC_ARRAY;
+		}
+
+		// If a part is empty "", skip the connector in order to avoid placing two connectors next to each other.
+		if (part->length == 0)
+			goto _main_loop;
+
+		// Append the connector only if there is a following part.
+		if (has_next)
+		{
+			int err_append_str = append_str(connector, str_result);
+			if (err_append_str)
+			{
+				free_string(str_result);
+				free_iterator_da(dai);
+				return err_append_str;
+			}
+		}
+	}
+
+_end_stage:
+	*output = str_result;
+	free_iterator_da(dai);
 	return STR_SUCCESS;
 }
 
