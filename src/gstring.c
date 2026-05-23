@@ -183,6 +183,179 @@ static enum StringError _validate_nsl(const String *const str)
 	return STR_SUCCESS;
 }
 
+/**
+ * Splits the String by a pattern. The result is a DynamicArray with a String at each index.
+ * The indexes holding pattern parts are empty Strings. The other indexes hold the Strings, extracted from the given String.
+ * PATasdPATasdf -> [ "", "asd", "", "asdf" ]
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
+ *
+ * - STR_ERR_DYNAMIC_ARRAY
+ */
+static enum StringError _split_str_pattern_to_empty(
+    const String *const str,
+    const String *const pattern,
+    DynamicArray **const output)
+{
+	int err_valid = _validate_nsl(str);
+	if (err_valid)
+		return err_valid;
+
+	err_valid = _validate_nsl(pattern);
+	if (err_valid)
+		return err_valid;
+
+	if (output == NULL)
+		return STR_ERR_NULL_ARGUMENT;
+
+	DynamicArray *parts = NULL;
+	int err_da_init = new_dynamic_array(VOID_PTR, &parts);
+	if (err_da_init)
+		return STR_ERR_DYNAMIC_ARRAY;
+
+	if (str->length == 0 ||
+	    pattern->length == 0 ||
+	    str->length <= pattern->length)
+		goto _end_stage;
+
+	String *part = NULL;
+	size_t index_part_start = 0;
+	size_t index_str = 0;
+	int must_add_empty_string = 0;
+_main_loop:
+	while (index_str < str->length)
+	{
+		must_add_empty_string = 0; // Do not add empty String.
+		// Check if pattern starts, else continue.
+		if ((str->str)[index_str] != (pattern->str)[0])
+		{
+			index_str++;
+			/*
+			If the end of the String is reached and the start of the pattern is not encountered,
+			then the String ends with a part, which must be extracted.
+			Pattern look-ahead must be skiped.
+			*/
+			if (index_str == str->length - 1)
+				goto _loop_part_extraction_stage;
+
+			goto _main_loop;
+		}
+
+		must_add_empty_string = 1; // Assume the pattern is complete. The value is reset on every _main_loop cicle.
+		// Look ahead if the pattern is complete, else continue.
+		for (size_t i = 0; i < pattern->length; ++i)
+		{
+			if (index_str + i >= str->length)
+			{
+				/*
+				The String ends with a part of the pattern. This must be included in the current part.
+				*/
+				index_str = str->length - 1;
+				must_add_empty_string = 0; // Do not add empty String.
+				break;
+			}
+
+			if ((str->str)[index_str + i] != (pattern->str)[i])
+			{
+				index_str += i;
+				goto _main_loop;
+			}
+		}
+
+		/*
+		If the pattern was confirmed and index_str == index_part_start is still true,
+		then this is a case where this pattern comes directly after the previous pattern.
+		There is nothing to extract from inbetween.
+		*/
+		if (index_str == index_part_start)
+			goto _loop_empty_str_addition_stage;
+
+	_loop_part_extraction_stage:
+		// The part starts at index_part_start and ends at index_str - 1. At index_str starts the pattern.
+		int err_part_init = new_string_nt(NULL, &part);
+		if (err_part_init)
+		{
+			process_da(parts, (void (*)(void *))free_string);
+			return err_part_init;
+		}
+		size_t part_length = index_str - index_part_start;
+		/*
+		If the String ends with a part for extraction, index_str points to
+		the last character of the part, and not to the first part of the (usually) upcomming pattern.
+		Therefore, the part_length must be corrected.
+		*/
+		if (index_str == str->length - 1)
+			part_length++;
+
+		for (size_t i = 0; i < part_length; ++i)
+		{
+			int err_append = append_char(part, (str->str)[index_part_start + i]);
+			if (err_append)
+			{
+				process_da(parts, (void (*)(void *))free_string);
+				return err_append;
+			}
+		}
+
+		// Add part to array.
+		int err_push_part = push_ptr_da(parts, (void *)part);
+		if (err_push_part)
+		{
+			process_da(parts, (void (*)(void *))free_string);
+			return STR_ERR_DYNAMIC_ARRAY;
+		}
+
+	_loop_empty_str_addition_stage:
+		// Add emtpy String.
+		if (1 == must_add_empty_string)
+		{
+			String *empty = NULL;
+			int err_empty_init = new_string_nt(NULL, &empty);
+			if (err_empty_init)
+			{
+				process_da(parts, (void (*)(void *))free_string);
+				return err_empty_init;
+			}
+			int err_push_empty = push_ptr_da(parts, (void *)empty);
+			if (err_push_empty)
+			{
+				process_da(parts, (void (*)(void *))free_string);
+				return STR_ERR_DYNAMIC_ARRAY;
+			}
+		}
+
+		// Update indexes, so that we jump over the current pattern, to the start of the next part.
+		index_str += pattern->length;
+		index_part_start = index_str;
+	}
+
+_end_stage:
+	*output = parts;
+	return STR_SUCCESS;
+}
+
+// ##################   workers   ##################
+
+/**
+ * Frees the memory of empty Strings with free_string.
+ */
+static inline void _worker_free_empty_str(void *str)
+{
+	if (((String *)str)->length == 0)
+		free_string((String *)str);
+}
+
 // ##################   public   ##################
 
 enum StringError new_string(const char *const char_arr, size_t length, String **const output)
@@ -627,10 +800,6 @@ enum StringError replace_str(
 		return err_valid;
 
 	String *str_updated = NULL;
-	size_t str_updated_length = 0;
-	int err_str_init = new_string_nt(NULL, &str_updated);
-	if (err_str_init)
-		return err_str_init;
 
 	/*
 	str_replacement->length == 0 => may remove parts from the String
@@ -644,42 +813,62 @@ enum StringError replace_str(
 		goto _case_nothing_to_do;
 
 	DynamicArray *output_split = NULL;
-	int err_split = split_str(str, str_to_replace, &output_split);
+	int err_split = _split_str_pattern_to_empty(str, str_to_replace, &output_split);
 	if (err_split)
-	{
-		free_string(str_updated);
 		return err_split;
+
+	DynamicArrayIterator *dai = NULL;
+	if (new_iterator_da(output_split, &dai))
+	{
+		process_da(output_split, (void (*)(void *))free_string);
+		return STR_ERR_DYNAMIC_ARRAY;
 	}
 
-	// 	size_t str_index = 0;
-	// _main_loop:
-	// 	while (str_index < str->length)
-	// 	{
-	// 		if ((str->str)[str_index] != (str_to_replace->str)[0])
-	// 		{
-	// 			str_index++;
-	// 			goto _main_loop;
-	// 		}
+	int dai_has_next = 0;
+	if (has_next_dai(dai, &dai_has_next))
+	{
+		process_da(output_split, (void (*)(void *))free_string);
+		return STR_ERR_DYNAMIC_ARRAY;
+	}
 
-	// 		// Pattern for replacement (str_to_replace) starts. Look ahead ot comfirm completenes.
-	// 		for (size_t i = 0; i < str_to_replace->length; ++i)
-	// 		{
-	// 			if ((str->str)[str_index + i] != (str_to_replace->str)[i])
-	// 			{
-	// 				str_index += i;
-	// 				goto _main_loop;
-	// 			}
-	// 		}
+	while (dai_has_next)
+	{
+		String *tmp = NULL;
+		if (next_ptr_dai(dai, (void **)&tmp))
+		{
 
-	// 		// Pattern is complete. Must be replaced.
+			process_da(output_split, (void (*)(void *))free_string);
+			return STR_ERR_DYNAMIC_ARRAY;
+		}
+		if (0 == tmp->length)
+		{
+			int err_append = append_str(str_replacement, tmp);
+			if (err_append)
+			{
+				process_da(output_split, (void (*)(void *))free_string);
+				return err_append;
+			}
+		}
+		if (has_next_dai(dai, &dai_has_next))
+		{
+			process_da(output_split, (void (*)(void *))free_string);
+			return STR_ERR_DYNAMIC_ARRAY;
+		}
+	}
 
-	// 	}
+	int err_concat = concat_str_da(&str_updated, output_split);
+	if (err_concat)
+	{
+		process_da(output_split, (void (*)(void *))free_string);
+		return err_concat;
+	}
 
 _end_stage:
 	free(str->str);
 	str->str = str_updated->str;
-	str->length = str_updated_length;
-	free(str_updated); // str_updated->str must NOT be freed
+	str->length = str_updated->length;
+	free(str_updated);					 // str_updated->str must NOT be freed
+	process_da(output_split, (void (*)(void *))free_string); // Strigns from output_split are copied and can be freed.
 _case_nothing_to_do:
 	return STR_SUCCESS;
 }
@@ -972,106 +1161,83 @@ enum StringError split_str(const String *const str, const String *const pattern,
 	if (output == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
+	DynamicArray *output_split = NULL;
+	int err_split = _split_str_pattern_to_empty(str, pattern, &output_split);
+	if (err_split)
+		return err_split;
+
+	int error_code = STR_SUCCESS;
 	DynamicArray *parts = NULL;
-	int err_da_init = new_dynamic_array(VOID_PTR, &parts);
-	if (err_da_init)
-		return STR_ERR_DYNAMIC_ARRAY;
+	DynamicArrayIterator *dai = NULL;
 
-	if (str->length == 0 ||
-	    pattern->length == 0 ||
-	    str->length <= pattern->length)
-		goto _end_stage;
-
-	String *part = NULL;
-	size_t index_part_start = 0;
-	size_t index_str = 0;
-_main_loop:
-	while (index_str < str->length)
+	if (new_dynamic_array(VOID_PTR, &parts))
 	{
-		// Check if pattern starts, else continue.
-		if ((str->str)[index_str] != (pattern->str)[0])
-		{
-			index_str++;
-			/*
-			If the end of the String is reached and the start of the pattern is not encountered,
-			then the String ends with a part, which must be extracted.
-			Pattern look-ahead must be skiped.
-			*/
-			if (index_str == str->length - 1)
-				goto _loop_part_extraction_stage;
+		error_code = STR_ERR_DYNAMIC_ARRAY;
+		goto _error_case;
+	}
 
-			goto _main_loop;
+	// Extract parts Strings.
+	if (new_iterator_da(output_split, &dai))
+	{
+		error_code = STR_ERR_DYNAMIC_ARRAY;
+		goto _error_case;
+	}
+	int dai_has_next = 0;
+	if (has_next_dai(dai, &dai_has_next))
+	{
+		error_code = STR_ERR_DYNAMIC_ARRAY;
+		goto _error_case;
+	}
+	while (dai_has_next)
+	{
+		String *tmp = NULL;
+		if (next_ptr_dai(dai, (void **)&tmp))
+		{
+			error_code = STR_ERR_DYNAMIC_ARRAY;
+			goto _error_case;
 		}
 
-		// Look ahead if the pattern is complete, else continue.
-		for (size_t i = 0; i < pattern->length; ++i)
+		if (0 != tmp->length)
 		{
-			if (index_str + i >= str->length)
+			if (push_ptr_da(parts, (void *)tmp))
 			{
-				/*
-				The String ends with a part of the pattern. This must be included in the current part.
-				*/
-				index_str = str->length - 1;
-				break;
-			}
-
-			if ((str->str)[index_str + i] != (pattern->str)[i])
-			{
-				index_str += i;
-				goto _main_loop;
-			}
-		}
-		/*
-		If the pattern was confirmed and index_str == index_part_start is still true,
-		then this is a case where this pattern comes directly after the previous pattern.
-		There is nothing to extract from inbetween.
-		*/
-		if (index_str == index_part_start)
-			goto _loop_index_update_stage;
-
-	_loop_part_extraction_stage:
-		// The part starts at index_part_start and ends at index_str - 1. At index_str starts the pattern.
-		int err_part_init = new_string(NULL, 0, &part);
-		if (err_part_init)
-		{
-			process_da(parts, (void (*)(void *))free_string);
-			return err_part_init;
-		}
-		size_t part_length = index_str - index_part_start;
-		/*
-		If the Strings ends with a part for extraction, index_str points to
-		the last character of the part, and not to the first part of the (usually) upcomming pattern.
-		Therefore, the part_length must be corrected.
-		*/
-		if (index_str == str->length - 1)
-			part_length++;
-
-		for (size_t i = 0; i < part_length; ++i)
-		{
-			int err_append = append_char(part, (str->str)[index_part_start + i]);
-			if (err_append)
-			{
-				process_da(parts, (void (*)(void *))free_string);
-				return err_append;
+				error_code = STR_ERR_DYNAMIC_ARRAY;
+				goto _error_case;
 			}
 		}
 
-		// Add part to array.
-		int err_push_part = push_ptr_da(parts, (void *)part);
-		if (err_push_part)
+		if (has_next_dai(dai, &dai_has_next))
 		{
-			process_da(parts, (void (*)(void *))free_string);
-			return STR_ERR_DYNAMIC_ARRAY;
+			error_code = STR_ERR_DYNAMIC_ARRAY;
+			goto _error_case;
 		}
-	_loop_index_update_stage:
-		// Update indexes, so that we jump over the current pattern, to the start of the next part.
-		index_str += pattern->length;
-		index_part_start = index_str;
+	}
+
+	// Free memory of empty Strings.
+	if (process_da(output_split, _worker_free_empty_str))
+	{
+		error_code = STR_ERR_DYNAMIC_ARRAY;
+		goto _error_case;
 	}
 
 _end_stage:
 	*output = parts;
-	return STR_SUCCESS;
+	free_iterator_da(dai);
+	free_dynamic_array(output_split);
+	return error_code;
+
+_error_case:
+	if (NULL != dai)
+		free_iterator_da(dai);
+	if (NULL != output_split)
+	{
+		process_da(output_split, (void (*)(void *))free_string);
+		free_dynamic_array(output_split);
+	}
+	if (NULL != parts)
+		free_dynamic_array(parts); // String pointers are copied to parts from output_split.
+
+	return error_code;
 }
 
 enum StringError includes_str(

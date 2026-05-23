@@ -410,7 +410,33 @@ GALXLIB_API enum StringError replace_char(String *const str, const char to_repla
 GALXLIB_API enum StringError remove_char(String *const str, const char to_remove);
 
 /**
+ * Removes all instances of the character from the String.
+ * @param str A pointer to the String, which must be processed.
+ * @param to_remove The character which must be removed. All instances are removed.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
+ *
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
+ *
+ * - STR_ERR_DYNAMIC_ARRAY
+ */
+GALXLIB_API enum StringError replace_str(
+    String *const str,
+    const String *const str_to_replace,
+    const String *const str_replacement);
+
+/**
  * Concatenates multiple Strings into one.
+ * The Strings are copied and can therefore be freed.
  * @param output A pointer, where the resulting concatenated String will be placed.
  * @param n_str The number of given Strings to concatenate.
  * @param ... The list of Strings, which must be concatenated. It must contain String pointers.
@@ -434,6 +460,7 @@ GALXLIB_API enum StringError concat_str(String **const output, const size_t n_st
 /**
  * Concatenates multiple Strings, from a @ref DynamicArray, into one.
  * The order of the concatenation is the same as in the @ref DynamicArray.
+ * The Strings from the DynamicArray are copied and can therefore be freed.
  * @param output A pointer, where the resulting concatenated @ref String will be placed.
  * @param strings A @ref DynamicArray containing the pointers to the Strings for concatenation.
  * @return A value of the @ref StringError:
@@ -458,6 +485,7 @@ GALXLIB_API enum StringError concat_str_da(String **const output, DynamicArray *
  * Concatenates multiple Strings, from a @ref DynamicArray, into one. 
  * A connector @ref String is placed between each two parts.
  * The order of the concatenation is the same as in the @ref DynamicArray.
+ * The Strings from the DynamicArray are copied and can therefore be freed.
  * @param output A pointer, where the resulting concatenated @ref String will be placed.
  * @param strings A @ref DynamicArray containing the pointers to the Strings for concatenation.
  * @param connector A @ref String which will be placed between each two parts, effectively connecting them.

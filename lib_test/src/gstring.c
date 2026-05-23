@@ -140,6 +140,7 @@ static void test_split_str(String *str_null_str, String *str_zero_length, String
 	_test_split_str(str_sentence, pattern, "The chicken is in the oven.", 27, 1);
 
 	free_string(pattern);
+	free_string(pat);
 	free_string(str_split);
 	free_string(str_split_pattern_end);
 	free_string(str_split_pattern_at_start);
@@ -396,10 +397,113 @@ static void test_includes_str()
 	free_string(empty);
 }
 
+static void test_replace_str()
+{
+	String *output = NULL;
+	String *replacement = NULL;
+	String *pattern = NULL;
+	String *pat = NULL;
+	String *str = NULL;
+	String *str_pattern_end = NULL;
+	String *str_pattern_at_start = NULL;
+	String *str_pattern_at_start_and_end = NULL;
+	String *str_pattern_at_end_partial = NULL;
+	String *str_pattern_at_start_partial = NULL;
+	String *str_pattern_at_start_and_end_partial = NULL;
+	String *str_pattern_at_middle_partial = NULL;
+	String *empty = NULL;
+	EXPECT_EQ(new_string_nt("REP", &replacement), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PATTERN", &pattern), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PAT", &pat), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("abcPATTERNdePATTERNfg", &str), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("abcPATTERNdePATTERNfgPATTERN", &str_pattern_end), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PATTERNabcPATTERNdePATTERNfg", &str_pattern_at_start), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PATTERNabcPATTERNdePATTERNfgPATTERN", &str_pattern_at_start_and_end), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PATTERNabcPATTERNdePATTERNfgPAT", &str_pattern_at_end_partial), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PATabcPATTERNdePATTERNfg", &str_pattern_at_start_partial), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("PATabcPATTERNdePATTERNfgPAT", &str_pattern_at_start_and_end_partial), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt("abcPATdePATTERNfg", &str_pattern_at_middle_partial), STR_SUCCESS);
+	EXPECT_EQ(new_string_nt(NULL, &empty), STR_SUCCESS);
+
+	EXPECT_EQ(replace_str(NULL, pattern, replacement), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(replace_str(str, NULL, replacement), STR_ERR_NULL_ARGUMENT);
+	EXPECT_EQ(replace_str(str, pattern, NULL), STR_ERR_NULL_ARGUMENT);
+
+	EXPECT_EQ(replace_str(empty, pattern, replacement), STR_SUCCESS);
+	EXPECT_NOT_NULL(empty);
+	EXPECT_EQ(empty->length, 0);
+
+	EXPECT_EQ(replace_str(str, empty, replacement), STR_SUCCESS);
+	EXPECT_NOT_NULL(str);
+	EXPECT_EQ(str->length, 21);
+	EXPECT_STR_EQ(str->str, "abcPATTERNdePATTERNfg", 21);
+
+	EXPECT_EQ(replace_str(str, pattern, replacement), STR_SUCCESS);
+	EXPECT_NOT_NULL(str);
+	EXPECT_NOT_NULL(str->str);
+	EXPECT_EQ(str->length, 13);
+	EXPECT_STR_EQ(str->str, "abcREPdeREPfg", 13);
+
+	EXPECT_EQ(replace_str(str_pattern_end, pattern, replacement), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_pattern_end);
+	EXPECT_NOT_NULL(str_pattern_end->str);
+	EXPECT_EQ(str_pattern_end->length, 16);
+	EXPECT_STR_EQ(str_pattern_end->str, "abcREPdeREPfgREP", 16);
+
+	EXPECT_EQ(replace_str(str_pattern_at_start, pattern, replacement), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_pattern_at_start);
+	EXPECT_NOT_NULL(str_pattern_at_start->str);
+	EXPECT_EQ(str_pattern_at_start->length, 16);
+	EXPECT_STR_EQ(str_pattern_at_start->str, "REPabcREPdeREPfg", 16);
+
+	EXPECT_EQ(replace_str(str_pattern_at_start_and_end, pattern, replacement), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_pattern_at_start_and_end);
+	EXPECT_NOT_NULL(str_pattern_at_start_and_end->str);
+	EXPECT_EQ(str_pattern_at_start_and_end->length, 19);
+	EXPECT_STR_EQ(str_pattern_at_start_and_end->str, "REPabcREPdeREPfgREP", 19);
+
+	EXPECT_EQ(replace_str(str_pattern_at_end_partial, pattern, replacement), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_pattern_at_end_partial);
+	EXPECT_NOT_NULL(str_pattern_at_end_partial->str);
+	EXPECT_EQ(str_pattern_at_end_partial->length, 19);
+	EXPECT_STR_EQ(str_pattern_at_end_partial->str, "REPabcREPdeREPfgPAT", 19);
+
+	EXPECT_EQ(replace_str(str_pattern_at_start_partial, pattern, replacement), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_pattern_at_start_partial);
+	EXPECT_NOT_NULL(str_pattern_at_start_partial->str);
+	EXPECT_EQ(str_pattern_at_start_partial->length, 16);
+	EXPECT_STR_EQ(str_pattern_at_start_partial->str, "PATabcREPdeREPfg", 16);
+
+	EXPECT_EQ(replace_str(str_pattern_at_start_and_end_partial, pattern, replacement), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_pattern_at_start_and_end_partial);
+	EXPECT_NOT_NULL(str_pattern_at_start_and_end_partial->str);
+	EXPECT_EQ(str_pattern_at_start_and_end_partial->length, 19);
+	EXPECT_STR_EQ(str_pattern_at_start_and_end_partial->str, "PATabcREPdeREPfgPAT", 19);
+
+	EXPECT_EQ(replace_str(str_pattern_at_middle_partial, pattern, replacement), STR_SUCCESS);
+	EXPECT_NOT_NULL(str_pattern_at_middle_partial);
+	EXPECT_NOT_NULL(str_pattern_at_middle_partial->str);
+	EXPECT_EQ(str_pattern_at_middle_partial->length, 13);
+	EXPECT_STR_EQ(str_pattern_at_middle_partial->str, "abcPATdeREPfg", 13);
+
+	free_string(replacement);
+	free_string(pattern);
+	free_string(pat);
+	free_string(str);
+	free_string(str_pattern_end);
+	free_string(str_pattern_at_start);
+	free_string(str_pattern_at_start_and_end);
+	free_string(str_pattern_at_end_partial);
+	free_string(str_pattern_at_start_partial);
+	free_string(str_pattern_at_start_and_end_partial);
+	free_string(str_pattern_at_middle_partial);
+	free_string(empty);
+}
+
 void test_gstring(void)
 {
 	puts("################## Test: String ##################");
-	printf(ANSI_COLOR_CYAN "Running String tests...\n" ANSI_COLOR_RESET);
+	puts("Running tests...");
 
 	// new_string
 	String *s1 = NULL;
@@ -663,6 +767,9 @@ void test_gstring(void)
 	// concat_str_da_c
 	test_concat_str_da_c();
 
+	// replace_str
+	test_replace_str();
+
 	// trim
 	String *str_trim = NULL;
 	String *str_trim_left = NULL;
@@ -738,6 +845,6 @@ void test_gstring(void)
 	free_string(str_trim_not_middle_no_trim);
 	free_string(str_zero_length);
 
-	printf(ANSI_COLOR_GREEN "All tests passed!\n" ANSI_COLOR_RESET);
+	puts(ANSI_COLOR_GREEN "All tests passed!" ANSI_COLOR_RESET);
 	puts("################## Test: String ##################");
 }
