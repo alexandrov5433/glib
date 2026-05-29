@@ -18,30 +18,6 @@ typedef struct Da_Person
 	int age;
 } Da_Person;
 
-static void increment_int(void *ptr)
-{
-	int *v = (int *)ptr;
-	(*v)++;
-}
-
-static int is_even(void *ptr)
-{
-	int *v = (int *)ptr;
-	return (*v % 2) == 0;
-}
-
-static int equals_five(void *ptr)
-{
-	int *v = (int *)ptr;
-	return (*v == 5);
-}
-
-static int greater_than_three(void *ptr)
-{
-	int *v = (int *)ptr;
-	return (*v > 3);
-}
-
 static void _person_destructor(void **ptr)
 {
 	assert(ptr != NULL);
@@ -882,6 +858,399 @@ static void _test_remove_at()
 	assert(free_dynamic_array(&da) == DA_SUCCESS);
 }
 
+static void _test_remove_first()
+{
+	/* ==================== NULL ARGUMENTS ==================== */
+
+	int value = 5;
+
+	assert(remove_first_da(NULL, &value) == DA_ERR_NULL_ARGUMENT);
+
+	DynamicArray *da = NULL;
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	assert(remove_first_da(da, NULL) == DA_ERR_NULL_ARGUMENT);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== EMPTY ARRAY ==================== */
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	assert(remove_first_da(da, &value) == DA_EMPTY);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== ITEM NOT FOUND ==================== */
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	for (int i = 0; i < 5; i++)
+	{
+		assert(push_int_da(da, i) == DA_SUCCESS);
+	}
+
+	value = 100;
+
+	assert(remove_first_da(da, &value) == DA_ITEM_NOT_FOUND);
+
+	assert(da->count == 5);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - INT ==================== */
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	for (int i = 0; i < 5; i++)
+	{
+		assert(push_int_da(da, i) == DA_SUCCESS);
+	}
+
+	value = 2;
+
+	assert(remove_first_da(da, &value) == DA_SUCCESS);
+
+	/*
+		Array before:
+		[0, 1, 2, 3, 4]
+
+		Expected after removing 2:
+		[0, 1, 3, 4]
+	*/
+
+	assert(da->count == 4);
+
+	assert(da->int_arr[0] == 0);
+	assert(da->int_arr[1] == 1);
+	assert(da->int_arr[2] == 3);
+	assert(da->int_arr[3] == 4);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - REMOVE FIRST MATCH ONLY ==================== */
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	assert(push_int_da(da, 1) == DA_SUCCESS);
+	assert(push_int_da(da, 2) == DA_SUCCESS);
+	assert(push_int_da(da, 2) == DA_SUCCESS);
+	assert(push_int_da(da, 3) == DA_SUCCESS);
+
+	value = 2;
+
+	assert(remove_first_da(da, &value) == DA_SUCCESS);
+
+	/*
+		Expected:
+		[1, 2, 3]
+	*/
+
+	assert(da->count == 3);
+
+	assert(da->int_arr[0] == 1);
+	assert(da->int_arr[1] == 2);
+	assert(da->int_arr[2] == 3);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - CHAR ==================== */
+
+	char c = 'b';
+
+	assert(new_dynamic_array(DA_CHAR, &da) == DA_SUCCESS);
+
+	assert(push_char_da(da, 'a') == DA_SUCCESS);
+	assert(push_char_da(da, 'b') == DA_SUCCESS);
+	assert(push_char_da(da, 'c') == DA_SUCCESS);
+
+	assert(remove_first_da(da, &c) == DA_SUCCESS);
+
+	assert(da->count == 2);
+
+	assert(da->char_arr[0] == 'a');
+	assert(da->char_arr[1] == 'c');
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - FLOAT ==================== */
+
+	float f = 2.0f;
+
+	assert(new_dynamic_array(DA_FLOAT, &da) == DA_SUCCESS);
+
+	assert(push_float_da(da, 1.0f) == DA_SUCCESS);
+	assert(push_float_da(da, 2.0f) == DA_SUCCESS);
+	assert(push_float_da(da, 3.0f) == DA_SUCCESS);
+
+	assert(remove_first_da(da, &f) == DA_SUCCESS);
+
+	assert(da->count == 2);
+
+	assert(da->float_arr[0] == 1.0f);
+	assert(da->float_arr[1] == 3.0f);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - DOUBLE ==================== */
+
+	double d = 2.0;
+
+	assert(new_dynamic_array(DA_DOUBLE, &da) == DA_SUCCESS);
+
+	assert(push_double_da(da, 1.0) == DA_SUCCESS);
+	assert(push_double_da(da, 2.0) == DA_SUCCESS);
+	assert(push_double_da(da, 3.0) == DA_SUCCESS);
+
+	assert(remove_first_da(da, &d) == DA_SUCCESS);
+
+	assert(da->count == 2);
+
+	assert(da->double_arr[0] == 1.0);
+	assert(da->double_arr[1] == 3.0);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - PTR ==================== */
+
+	int a = 1;
+	int b = 2;
+	int c2 = 3;
+
+	void *target = &b;
+
+	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+
+	assert(push_ptr_da(da, &a) == DA_SUCCESS);
+	assert(push_ptr_da(da, &b) == DA_SUCCESS);
+	assert(push_ptr_da(da, &c2) == DA_SUCCESS);
+
+	assert(remove_first_da(da, target) == DA_SUCCESS);
+
+	assert(da->count == 2);
+
+	assert(da->void_arr[0] == &a);
+	assert(da->void_arr[1] == &c2);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== REMOVE LAST ELEMENT ==================== */
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	assert(push_int_da(da, 10) == DA_SUCCESS);
+
+	value = 10;
+
+	assert(remove_first_da(da, &value) == DA_SUCCESS);
+
+	assert(da->count == 0);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+}
+
+static int worker_call_count = 0;
+
+static void _increment_int(void *item_ptr)
+{
+	assert(item_ptr != NULL);
+
+	int *value = (int *)item_ptr;
+
+	(*value)++;
+
+	worker_call_count++;
+}
+
+static void _uppercase_char(void *item_ptr)
+{
+	assert(item_ptr != NULL);
+
+	char *c = (char *)item_ptr;
+
+	if (*c >= 'a' && *c <= 'z')
+	{
+		*c = (char)(*c - ('a' - 'A'));
+	}
+
+	worker_call_count++;
+}
+
+static void _double_float(void *item_ptr)
+{
+	assert(item_ptr != NULL);
+
+	float *f = (float *)item_ptr;
+
+	*f *= 2.0f;
+
+	worker_call_count++;
+}
+
+static void _double_double(void *item_ptr)
+{
+	assert(item_ptr != NULL);
+
+	double *d = (double *)item_ptr;
+
+	*d *= 2.0;
+
+	worker_call_count++;
+}
+
+static void _increment_ptr_value(void *item_ptr)
+{
+	assert(item_ptr != NULL);
+
+	int *value = (int *)item_ptr;
+
+	(*value)++;
+
+	worker_call_count++;
+}
+
+static void _test_apply_at()
+{
+	worker_call_count = 0;
+
+	/* ==================== NULL ARGUMENTS ==================== */
+
+	assert(apply_at_da(NULL, 0, _increment_int) == DA_ERR_NULL_ARGUMENT);
+
+	DynamicArray *da = NULL;
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	assert(apply_at_da(da, 0, NULL) == DA_ERR_NULL_ARGUMENT);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== EMPTY ARRAY ==================== */
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	assert(apply_at_da(da, 0, _increment_int) == DA_EMPTY);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== INDEX OUT OF BOUNDS ==================== */
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	for (int i = 0; i < 5; i++)
+	{
+		assert(push_int_da(da, i) == DA_SUCCESS);
+	}
+
+	assert(apply_at_da(da, 5, _increment_int) == DA_ERR_INDEX_OUT_OF_BOUNDS);
+	assert(apply_at_da(da, 100, _increment_int) == DA_ERR_INDEX_OUT_OF_BOUNDS);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - INT ==================== */
+
+	worker_call_count = 0;
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	assert(push_int_da(da, 10) == DA_SUCCESS);
+
+	assert(apply_at_da(da, 0, _increment_int) == DA_SUCCESS);
+
+	assert(da->int_arr[0] == 11);
+
+	assert(worker_call_count == 1);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - CHAR ==================== */
+
+	worker_call_count = 0;
+
+	assert(new_dynamic_array(DA_CHAR, &da) == DA_SUCCESS);
+
+	assert(push_char_da(da, 'a') == DA_SUCCESS);
+
+	assert(apply_at_da(da, 0, _uppercase_char) == DA_SUCCESS);
+
+	assert(da->char_arr[0] == 'A');
+
+	assert(worker_call_count == 1);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - FLOAT ==================== */
+
+	worker_call_count = 0;
+
+	assert(new_dynamic_array(DA_FLOAT, &da) == DA_SUCCESS);
+
+	assert(push_float_da(da, 5.0f) == DA_SUCCESS);
+
+	assert(apply_at_da(da, 0, _double_float) == DA_SUCCESS);
+
+	assert(da->float_arr[0] == 10.0f);
+
+	assert(worker_call_count == 1);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - DOUBLE ==================== */
+
+	worker_call_count = 0;
+
+	assert(new_dynamic_array(DA_DOUBLE, &da) == DA_SUCCESS);
+
+	assert(push_double_da(da, 2.5) == DA_SUCCESS);
+
+	assert(apply_at_da(da, 0, _double_double) == DA_SUCCESS);
+
+	assert(da->double_arr[0] == 5.0);
+
+	assert(worker_call_count == 1);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - PTR ==================== */
+
+	worker_call_count = 0;
+
+	int value = 100;
+
+	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+
+	assert(push_ptr_da(da, &value) == DA_SUCCESS);
+
+	assert(apply_at_da(da, 0, _increment_ptr_value) == DA_SUCCESS);
+
+	assert(value == 101);
+
+	assert(worker_call_count == 1);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== APPLY ONLY TARGET INDEX ==================== */
+
+	worker_call_count = 0;
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	assert(push_int_da(da, 1) == DA_SUCCESS);
+	assert(push_int_da(da, 2) == DA_SUCCESS);
+	assert(push_int_da(da, 3) == DA_SUCCESS);
+
+	assert(apply_at_da(da, 1, _increment_int) == DA_SUCCESS);
+
+	assert(da->int_arr[0] == 1);
+	assert(da->int_arr[1] == 3);
+	assert(da->int_arr[2] == 3);
+
+	assert(worker_call_count == 1);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+}
+
 void dynamicArrayTest()
 {
 	puts("################## Test: DynamicArray ##################");
@@ -948,9 +1317,11 @@ void dynamicArrayTest()
 	// remove_at_da
 	_test_remove_at();
 
+	// remove_first_da
+	_test_remove_first();
+
 	// apply_at_da
-	// assert(apply_at_da(NULL, 0, increment_int) == DA_ERR_NULL_ARGUMENT);
-	// assert(apply_at_da(da, 0, NULL) == DA_ERR_NULL_ARGUMENT);
+	_test_apply_at();
 
 	// push_int_da(da, 1);
 	// assert(apply_at_da(da, 0, increment_int) == DA_SUCCESS);
