@@ -1251,6 +1251,223 @@ static void _test_apply_at()
 	assert(free_dynamic_array(&da) == DA_SUCCESS);
 }
 
+static int process_call_count = 0;
+
+static void _process_int(void *item_ptr)
+{
+	assert(item_ptr != NULL);
+
+	int *value = (int *)item_ptr;
+
+	(*value)++;
+
+	process_call_count++;
+}
+
+static void _process_char(void *item_ptr)
+{
+	assert(item_ptr != NULL);
+
+	char *c = (char *)item_ptr;
+
+	if (*c >= 'a' && *c <= 'z')
+	{
+		*c = (char)(*c - ('a' - 'A'));
+	}
+
+	process_call_count++;
+}
+
+static void _process_float(void *item_ptr)
+{
+	assert(item_ptr != NULL);
+
+	float *f = (float *)item_ptr;
+
+	*f *= 2.0f;
+
+	process_call_count++;
+}
+
+static void _process_double(void *item_ptr)
+{
+	assert(item_ptr != NULL);
+
+	double *d = (double *)item_ptr;
+
+	*d *= 2.0;
+
+	process_call_count++;
+}
+
+static void _process_ptr(void *item_ptr)
+{
+	assert(item_ptr != NULL);
+
+	int *value = (int *)item_ptr;
+
+	(*value)++;
+
+	process_call_count++;
+}
+
+static void _test_process_da()
+{
+	process_call_count = 0;
+
+	/* ==================== NULL ARGUMENTS ==================== */
+
+	assert(process_da(NULL, _process_int) == DA_ERR_NULL_ARGUMENT);
+
+	DynamicArray *da = NULL;
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	assert(process_da(da, NULL) == DA_ERR_NULL_ARGUMENT);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== EMPTY ARRAY ==================== */
+
+	process_call_count = 0;
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	assert(process_da(da, _process_int) == DA_SUCCESS);
+
+	assert(process_call_count == 0);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - INT ==================== */
+
+	process_call_count = 0;
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	for (int i = 0; i < 5; i++)
+	{
+		assert(push_int_da(da, i) == DA_SUCCESS);
+	}
+
+	assert(process_da(da, _process_int) == DA_SUCCESS);
+
+	assert(process_call_count == 5);
+
+	for (int i = 0; i < 5; i++)
+	{
+		assert(da->int_arr[i] == i + 1);
+	}
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - CHAR ==================== */
+
+	process_call_count = 0;
+
+	assert(new_dynamic_array(DA_CHAR, &da) == DA_SUCCESS);
+
+	assert(push_char_da(da, 'a') == DA_SUCCESS);
+	assert(push_char_da(da, 'b') == DA_SUCCESS);
+	assert(push_char_da(da, 'c') == DA_SUCCESS);
+
+	assert(process_da(da, _process_char) == DA_SUCCESS);
+
+	assert(process_call_count == 3);
+
+	assert(da->char_arr[0] == 'A');
+	assert(da->char_arr[1] == 'B');
+	assert(da->char_arr[2] == 'C');
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - FLOAT ==================== */
+
+	process_call_count = 0;
+
+	assert(new_dynamic_array(DA_FLOAT, &da) == DA_SUCCESS);
+
+	assert(push_float_da(da, 1.0f) == DA_SUCCESS);
+	assert(push_float_da(da, 2.0f) == DA_SUCCESS);
+	assert(push_float_da(da, 3.0f) == DA_SUCCESS);
+
+	assert(process_da(da, _process_float) == DA_SUCCESS);
+
+	assert(process_call_count == 3);
+
+	assert(da->float_arr[0] == 2.0f);
+	assert(da->float_arr[1] == 4.0f);
+	assert(da->float_arr[2] == 6.0f);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - DOUBLE ==================== */
+
+	process_call_count = 0;
+
+	assert(new_dynamic_array(DA_DOUBLE, &da) == DA_SUCCESS);
+
+	assert(push_double_da(da, 1.0) == DA_SUCCESS);
+	assert(push_double_da(da, 2.0) == DA_SUCCESS);
+	assert(push_double_da(da, 3.0) == DA_SUCCESS);
+
+	assert(process_da(da, _process_double) == DA_SUCCESS);
+
+	assert(process_call_count == 3);
+
+	assert(da->double_arr[0] == 2.0);
+	assert(da->double_arr[1] == 4.0);
+	assert(da->double_arr[2] == 6.0);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== SUCCESS CASE - PTR ==================== */
+
+	process_call_count = 0;
+
+	int values[5];
+
+	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+
+	for (int i = 0; i < 5; i++)
+	{
+		values[i] = i;
+
+		assert(push_ptr_da(da, &values[i]) == DA_SUCCESS);
+	}
+
+	assert(process_da(da, _process_ptr) == DA_SUCCESS);
+
+	assert(process_call_count == 5);
+
+	for (int i = 0; i < 5; i++)
+	{
+		assert(values[i] == i + 1);
+	}
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+	/* ==================== PROCESS ORDER CHECK ==================== */
+
+	process_call_count = 0;
+
+	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+
+	assert(push_int_da(da, 10) == DA_SUCCESS);
+	assert(push_int_da(da, 20) == DA_SUCCESS);
+	assert(push_int_da(da, 30) == DA_SUCCESS);
+
+	assert(process_da(da, _process_int) == DA_SUCCESS);
+
+	assert(da->int_arr[0] == 11);
+	assert(da->int_arr[1] == 21);
+	assert(da->int_arr[2] == 31);
+
+	assert(process_call_count == 3);
+
+	assert(free_dynamic_array(&da) == DA_SUCCESS);
+}
+
 void dynamicArrayTest()
 {
 	puts("################## Test: DynamicArray ##################");
@@ -1323,13 +1540,8 @@ void dynamicArrayTest()
 	// apply_at_da
 	_test_apply_at();
 
-	// push_int_da(da, 1);
-	// assert(apply_at_da(da, 0, increment_int) == DA_SUCCESS);
-
 	// process_da
-	// assert(process_da(NULL, increment_int) == DA_ERR_NULL_ARGUMENT);
-	// assert(process_da(da, NULL) == DA_ERR_NULL_ARGUMENT);
-	// assert(process_da(da, increment_int) == DA_SUCCESS);
+	_test_process_da();
 
 	// filter_da
 	// assert(filter_da(NULL, is_even) == DA_ERR_NULL_ARGUMENT);
