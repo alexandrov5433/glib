@@ -712,7 +712,6 @@ static void _test_apply_destructor_da()
 	assert(destructor_counter == 0);
 
 	assert(free_dynamic_array(&da) == DA_SUCCESS);
-
 }
 
 static void _test_remove_at()
@@ -1468,6 +1467,75 @@ static void _test_process_da()
 	assert(free_dynamic_array(&da) == DA_SUCCESS);
 }
 
+static int _is_even_filter(void *item_ptr)
+{
+	if (item_ptr == NULL)
+		return 0;
+	int value = *(int *)item_ptr;
+	return (value % 2 == 0) ? 1 : 0;
+}
+
+static void _test_filter_da()
+{
+	enum DynamicArrayError err;
+	DynamicArray *da = NULL;
+
+	// ---------------------------------------------------------
+	// TEST 1: NULL Array Argument
+	// ---------------------------------------------------------
+	err = filter_da(NULL, _is_even_filter);
+	assert(err == DA_ERR_NULL_ARGUMENT);
+
+	// ---------------------------------------------------------
+	// TEST 2: NULL Filter Argument
+	// ---------------------------------------------------------
+	err = new_dynamic_array(DA_INT, &da);
+	assert(err == DA_SUCCESS);
+	assert(da != NULL);
+
+	err = filter_da(da, NULL);
+	assert(err == DA_ERR_NULL_ARGUMENT);
+
+	// ---------------------------------------------------------
+	// TEST 3: Empty Array Execution
+	// ---------------------------------------------------------
+	err = filter_da(da, _is_even_filter);
+	assert(err == DA_SUCCESS);
+	assert(da->count == 0); // Sanity check that size remains 0
+
+	// ---------------------------------------------------------
+	// TEST 4: Valid Filtering (Success Case)
+	// ---------------------------------------------------------
+	// Populate the array: [1, 2, 3, 4, 5]
+	assert(push_int_da(da, 1) == DA_SUCCESS);
+	assert(push_int_da(da, 2) == DA_SUCCESS);
+	assert(push_int_da(da, 3) == DA_SUCCESS);
+	assert(push_int_da(da, 4) == DA_SUCCESS);
+	assert(push_int_da(da, 5) == DA_SUCCESS);
+
+	err = filter_da(da, _is_even_filter);
+
+	// After filtering even numbers, array should be: [2, 4]
+	assert(err == DA_SUCCESS);
+	assert(da->count == 2);
+	assert(da->int_arr[0] == 2);
+	assert(da->int_arr[1] == 4);
+
+	// ---------------------------------------------------------
+	// TEST 5: Unknown/Invalid Array Type
+	// ---------------------------------------------------------
+	// We intentionally corrupt the type to see if internal allocations catch it.
+	da->type = (enum DynamicArrayType)999;
+	err = filter_da(da, _is_even_filter);
+	assert(err == DA_ERR_TYPE_UNKNOWN);
+
+	// Cleanup: We must manually restore the type so the free function works properly.
+	da->type = DA_INT;
+	err = free_dynamic_array(&da);
+	assert(err == DA_SUCCESS);
+	assert(da == NULL);
+}
+
 void dynamicArrayTest()
 {
 	puts("################## Test: DynamicArray ##################");
@@ -1544,13 +1612,10 @@ void dynamicArrayTest()
 	_test_process_da();
 
 	// filter_da
-	// assert(filter_da(NULL, is_even) == DA_ERR_NULL_ARGUMENT);
-	// assert(filter_da(da, NULL) == DA_ERR_NULL_ARGUMENT);
-	// assert(filter_da(da, is_even) == DA_SUCCESS);
+	_test_filter_da();
 
 	// at_da
-	// void *out = NULL;
-	// assert(at_da(NULL, 0, &out) == DA_ERR_NULL_ARGUMENT);
+	_test_at_da();
 
 	// if (da->count > 0)
 	// {
