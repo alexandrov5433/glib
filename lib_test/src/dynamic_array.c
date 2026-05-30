@@ -1835,6 +1835,127 @@ static void _test_index_of_da()
 	}
 }
 
+static void _test_new_iterator_da()
+{
+
+	enum DynamicArrayError err;
+	DynamicArray *da = NULL;
+	DynamicArrayIterator *itr = NULL;
+
+	// ---------------------------------------------------------
+	// 1. ERROR CASE HANDLING
+	// ---------------------------------------------------------
+
+	// Setup a valid dynamic array for testing isolated arguments
+	err = new_dynamic_array(DA_INT, &da);
+	assert(err == DA_SUCCESS);
+	assert(da != NULL);
+
+	// Test Case: NULL array pointer argument
+	err = new_iterator_da(NULL, &itr);
+	assert(err == DA_ERR_NULL_ARGUMENT);
+
+	// Test Case: NULL iterator double-pointer argument
+	err = new_iterator_da(da, NULL);
+	assert(err == DA_ERR_NULL_ARGUMENT);
+
+	// Test Case: Corrupted / Unknown Array Type handling
+	da->type = (enum DynamicArrayType)999;
+	err = new_iterator_da(da, &itr);
+	assert(err == DA_ERR_TYPE_UNKNOWN);
+
+	// Cleanup error testing array
+	da->type = DA_INT; // Restore correct type for clean deallocation
+	err = free_dynamic_array(&da);
+	assert(err == DA_SUCCESS);
+	assert(da == NULL);
+
+	// ---------------------------------------------------------
+	// 2. TYPE-SPECIFIC FUNCTIONALITY VERIFICATION
+	// ---------------------------------------------------------
+
+	/* * NOTE ON ITERATOR DEALLOCATION:
+	 * Below, standard `free(itr)` is used to clean up allocated iterators.
+	 * If your library exposes a specific cleanup function for iterators
+	 * (e.g., `free_iterator_dai(&itr)`), replace `free(itr)` with it.
+	 */
+
+	// --- Type 1: DA_INT ---
+	{
+		DynamicArray *da_int = NULL;
+		DynamicArrayIterator *itr_int = NULL;
+
+		assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
+		assert(new_iterator_da(da_int, &itr_int) == DA_SUCCESS);
+		assert(itr_int != NULL);
+		assert(itr_int->da == da_int);
+		assert(itr_int->current_index == 0);
+
+		free_iterator_da(&itr_int);
+		assert(free_dynamic_array(&da_int) == DA_SUCCESS);
+	}
+
+	// --- Type 2: DA_CHAR ---
+	{
+		DynamicArray *da_char = NULL;
+		DynamicArrayIterator *itr_char = NULL;
+
+		assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
+		assert(new_iterator_da(da_char, &itr_char) == DA_SUCCESS);
+		assert(itr_char != NULL);
+		assert(itr_char->da == da_char);
+		assert(itr_char->current_index == 0);
+
+		free_iterator_da(&itr_char);
+		assert(free_dynamic_array(&da_char) == DA_SUCCESS);
+	}
+
+	// --- Type 3: DA_FLOAT ---
+	{
+		DynamicArray *da_float = NULL;
+		DynamicArrayIterator *itr_float = NULL;
+
+		assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
+		assert(new_iterator_da(da_float, &itr_float) == DA_SUCCESS);
+		assert(itr_float != NULL);
+		assert(itr_float->da == da_float);
+		assert(itr_float->current_index == 0);
+
+		free_iterator_da(&itr_float);
+		assert(free_dynamic_array(&da_float) == DA_SUCCESS);
+	}
+
+	// --- Type 4: DA_DOUBLE ---
+	{
+		DynamicArray *da_double = NULL;
+		DynamicArrayIterator *itr_double = NULL;
+
+		assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
+		assert(new_iterator_da(da_double, &itr_double) == DA_SUCCESS);
+		assert(itr_double != NULL);
+		assert(itr_double->da == da_double);
+		assert(itr_double->current_index == 0);
+
+		free_iterator_da(&itr_double);
+		assert(free_dynamic_array(&da_double) == DA_SUCCESS);
+	}
+
+	// --- Type 5: DA_PTR ---
+	{
+		DynamicArray *da_ptr = NULL;
+		DynamicArrayIterator *itr_ptr = NULL;
+
+		assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
+		assert(new_iterator_da(da_ptr, &itr_ptr) == DA_SUCCESS);
+		assert(itr_ptr != NULL);
+		assert(itr_ptr->da == da_ptr);
+		assert(itr_ptr->current_index == 0);
+
+		free_iterator_da(&itr_ptr);
+		assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+	}
+}
+
 void dynamicArrayTest()
 {
 	puts("################## Test: DynamicArray ##################");
@@ -1925,11 +2046,13 @@ void dynamicArrayTest()
 	// index_of_da
 	_test_index_of_da();
 
+	// DynamicArrayIterator
+	// new_iterator_da
+	_test_new_iterator_da();
+
 	// Cleanup
 	int err_f_da = free_dynamic_array(&da);
 	assert(err_f_da == 0);
-	// int err_f_itr = free_iterator_da(&itr);
-	// assert(err_f_itr == 0);
 
 	free_dynamic_array(&da_i);
 	free_dynamic_array(&da_c);
