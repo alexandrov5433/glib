@@ -2570,11 +2570,8 @@ void dynamicArrayTest()
 
 	// next_*_dai
 	_test_next_dai_null_arguments();
-
 	_test_next_dai_type_mismatch();
-
 	_test_next_dai_out_of_bounds();
-
 	_test_next_dai_success_flows();
 
 	// Cleanup
