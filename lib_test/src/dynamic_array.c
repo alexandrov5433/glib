@@ -1566,12 +1566,12 @@ static void _test_filter_da()
 //     // Test Case: Index out of bounds (Populated Array)
 //     err = push_int_da(da, 42);
 //     assert(err == DA_SUCCESS);
-    
+
 //     err = at_da(da, 1, &output_buffer_int); // Index 1 does not exist yet
 //     assert(err == DA_ERR_INDEX_OUT_OF_BOUNDS);
 
 //     // Test Case: Corrupted / Unknown Array Type
-//     da->type = (enum DynamicArrayType)999; 
+//     da->type = (enum DynamicArrayType)999;
 //     err = at_da(da, 0, &output_buffer_int);
 //     assert(err == DA_ERR_TYPE_UNKNOWN);
 
@@ -1581,7 +1581,6 @@ static void _test_filter_da()
 //     assert(err == DA_SUCCESS);
 //     assert(da == NULL);
 
-
 //     // ---------------------------------------------------------
 //     // 2. TYPE-SPECIFIC FUNCTIONALITY VERIFICATION
 //     // ---------------------------------------------------------
@@ -1590,7 +1589,7 @@ static void _test_filter_da()
 //     {
 //         DynamicArray *da_int = NULL;
 //         int val = 100, out = 0;
-        
+
 //         assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
 //         assert(push_int_da(da_int, val) == DA_SUCCESS);
 //         assert(at_da(da_int, 0, &out) == DA_SUCCESS);
@@ -1602,7 +1601,7 @@ static void _test_filter_da()
 //     {
 //         DynamicArray *da_char = NULL;
 //         char val = 'G', out = 0;
-        
+
 //         assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
 //         assert(push_char_da(da_char, val) == DA_SUCCESS);
 //         assert(at_da(da_char, 0, &out) == DA_SUCCESS);
@@ -1614,7 +1613,7 @@ static void _test_filter_da()
 //     {
 //         DynamicArray *da_float = NULL;
 //         float val = 3.14159f, out = 0.0f;
-        
+
 //         assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
 //         assert(push_float_da(da_float, val) == DA_SUCCESS);
 //         assert(at_da(da_float, 0, &out) == DA_SUCCESS);
@@ -1626,7 +1625,7 @@ static void _test_filter_da()
 //     {
 //         DynamicArray *da_double = NULL;
 //         double val = 2.718281828459, out = 0.0;
-        
+
 //         assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
 //         assert(push_double_da(da_double, val) == DA_SUCCESS);
 //         assert(at_da(da_double, 0, &out) == DA_SUCCESS);
@@ -1640,7 +1639,7 @@ static void _test_filter_da()
 //         int dummy_target = 1234;
 //         void *val = &dummy_target;
 //         void *out = NULL;
-        
+
 //         assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
 //         assert(push_ptr_da(da_ptr, val) == DA_SUCCESS);
 //         assert(at_da(da_ptr, 0, &out) == DA_SUCCESS);
@@ -1648,6 +1647,193 @@ static void _test_filter_da()
 //         assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
 //     }
 // }
+
+static void _test_index_of_da()
+{
+	enum DynamicArrayError err;
+	DynamicArray *da = NULL;
+	size_t index_out = 0; // If your library uses 'int' for the output index parameter, change this to 'int index_out = 0;'
+	int test_val = 42;
+
+	// ---------------------------------------------------------
+	// 1. ERROR AND BOUNDARY CASE HANDLING
+	// ---------------------------------------------------------
+
+	// Setup a valid array for boundary isolation testing
+	err = new_dynamic_array(DA_INT, &da);
+	assert(err == DA_SUCCESS);
+	assert(da != NULL);
+
+	// Test Case: NULL array pointer argument
+	err = index_of_da(NULL, &test_val, &index_out);
+	assert(err == DA_ERR_NULL_ARGUMENT);
+
+	// Test Case: NULL item pointer argument
+	err = index_of_da(da, NULL, &index_out);
+	assert(err == DA_ERR_NULL_ARGUMENT);
+
+	// Test Case: NULL output index pointer argument
+	err = index_of_da(da, &test_val, NULL);
+	assert(err == DA_ERR_NULL_ARGUMENT);
+
+	// Test Case: Empty Array Check
+	err = index_of_da(da, &test_val, &index_out);
+	assert(err == DA_EMPTY);
+
+	// Test Case: Corrupted / Unknown Array Type
+	// Populate the array so it passes empty/size checks, then inject an invalid type tag
+	assert(push_int_da(da, 10) == DA_SUCCESS);
+	da->type = (enum DynamicArrayType)999;
+	err = index_of_da(da, &test_val, &index_out);
+	assert(err == DA_ERR_TYPE_UNKNOWN);
+
+	// Cleanup error testing array
+	da->type = DA_INT; // Restore correct type for clean deallocation
+	err = free_dynamic_array(&da);
+	assert(err == DA_SUCCESS);
+	assert(da == NULL);
+
+	// ---------------------------------------------------------
+	// 2. TYPE-SPECIFIC FUNCTIONALITY AND POSITION VERIFICATION
+	// ---------------------------------------------------------
+
+	// --- Type 1: DA_INT ---
+	{
+		DynamicArray *da_int = NULL;
+		int v0 = 10, v1 = 20, v2 = 30, v_not_found = 99;
+
+		assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
+		assert(push_int_da(da_int, v0) == DA_SUCCESS);
+		assert(push_int_da(da_int, v1) == DA_SUCCESS);
+		assert(push_int_da(da_int, v2) == DA_SUCCESS);
+		assert(push_int_da(da_int, v1) == DA_SUCCESS); // Duplicate value at index 3
+
+		// Test: Item at the beginning (index 0)
+		assert(index_of_da(da_int, &v0, &index_out) == DA_SUCCESS);
+		assert(index_out == 0);
+
+		// Test: Item in the middle & First-Occurrence Behavior (should find index 1, not 3)
+		assert(index_of_da(da_int, &v1, &index_out) == DA_SUCCESS);
+		assert(index_out == 1);
+
+		// Test: Item at the end (index 2)
+		assert(index_of_da(da_int, &v2, &index_out) == DA_SUCCESS);
+		assert(index_out == 2);
+
+		// Test: Item not found
+		err = index_of_da(da_int, &v_not_found, &index_out);
+		assert(err == DA_ITEM_NOT_FOUND);
+
+		assert(free_dynamic_array(&da_int) == DA_SUCCESS);
+	}
+
+	// --- Type 2: DA_CHAR ---
+	{
+		DynamicArray *da_char = NULL;
+		char v0 = 'a', v1 = 'b', v2 = 'c', v_not_found = 'z';
+
+		assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
+		assert(push_char_da(da_char, v0) == DA_SUCCESS);
+		assert(push_char_da(da_char, v1) == DA_SUCCESS);
+		assert(push_char_da(da_char, v2) == DA_SUCCESS);
+
+		assert(index_of_da(da_char, &v0, &index_out) == DA_SUCCESS);
+		assert(index_out == 0);
+
+		assert(index_of_da(da_char, &v1, &index_out) == DA_SUCCESS);
+		assert(index_out == 1);
+
+		assert(index_of_da(da_char, &v2, &index_out) == DA_SUCCESS);
+		assert(index_out == 2);
+
+		err = index_of_da(da_char, &v_not_found, &index_out);
+		assert(err == DA_ITEM_NOT_FOUND);
+
+		assert(free_dynamic_array(&da_char) == DA_SUCCESS);
+	}
+
+	// --- Type 3: DA_FLOAT ---
+	{
+		DynamicArray *da_float = NULL;
+		float v0 = 1.1f, v1 = 2.2f, v2 = 3.3f, v_not_found = 9.9f;
+
+		assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
+		assert(push_float_da(da_float, v0) == DA_SUCCESS);
+		assert(push_float_da(da_float, v1) == DA_SUCCESS);
+		assert(push_float_da(da_float, v2) == DA_SUCCESS);
+
+		assert(index_of_da(da_float, &v0, &index_out) == DA_SUCCESS);
+		assert(index_out == 0);
+
+		assert(index_of_da(da_float, &v1, &index_out) == DA_SUCCESS);
+		assert(index_out == 1);
+
+		assert(index_of_da(da_float, &v2, &index_out) == DA_SUCCESS);
+		assert(index_out == 2);
+
+		err = index_of_da(da_float, &v_not_found, &index_out);
+		assert(err == DA_ITEM_NOT_FOUND);
+
+		assert(free_dynamic_array(&da_float) == DA_SUCCESS);
+	}
+
+	// --- Type 4: DA_DOUBLE ---
+	{
+		DynamicArray *da_double = NULL;
+		double v0 = 1.11, v1 = 2.22, v2 = 3.33, v_not_found = 9.99;
+
+		assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
+		assert(push_double_da(da_double, v0) == DA_SUCCESS);
+		assert(push_double_da(da_double, v1) == DA_SUCCESS);
+		assert(push_double_da(da_double, v2) == DA_SUCCESS);
+
+		assert(index_of_da(da_double, &v0, &index_out) == DA_SUCCESS);
+		assert(index_out == 0);
+
+		assert(index_of_da(da_double, &v1, &index_out) == DA_SUCCESS);
+		assert(index_out == 1);
+
+		assert(index_of_da(da_double, &v2, &index_out) == DA_SUCCESS);
+		assert(index_out == 2);
+
+		err = index_of_da(da_double, &v_not_found, &index_out);
+		assert(err == DA_ITEM_NOT_FOUND);
+
+		assert(free_dynamic_array(&da_double) == DA_SUCCESS);
+	}
+
+	// --- Type 5: DA_PTR ---
+	{
+		DynamicArray *da_ptr = NULL;
+		int d0 = 10, d1 = 20, d2 = 30, d_not_found = 40;
+		void *v0 = &d0, *v1 = &d1, *v2 = &d2, *v_not_found = &d_not_found;
+
+		assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
+		assert(push_ptr_da(da_ptr, v0) == DA_SUCCESS);
+		assert(push_ptr_da(da_ptr, v1) == DA_SUCCESS);
+		assert(push_ptr_da(da_ptr, v2) == DA_SUCCESS);
+
+		/*
+		 * Note on DA_PTR: This assumes the typical pattern where the address
+		 * of the target being evaluated is passed uniformly. If your library compares
+		 * pointers directly by value (e.g., if (da->void_arr[i] == item)), simply
+		 * omit the '&' symbol and pass the pointer value directly (e.g., index_of_da(da_ptr, v0, &index_out)).
+		 */
+		assert(index_of_da(da_ptr, v0, &index_out) == DA_SUCCESS);
+		assert(index_out == 0);
+
+		assert(index_of_da(da_ptr, v1, &index_out) == DA_SUCCESS);
+		assert(index_out == 1);
+
+		assert(index_of_da(da_ptr, v2, &index_out) == DA_SUCCESS);
+		assert(index_out == 2);
+
+		err = index_of_da(da_ptr, v_not_found, &index_out);
+		assert(err == DA_ITEM_NOT_FOUND);
+
+		assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+	}
+}
 
 void dynamicArrayTest()
 {
@@ -1737,6 +1923,7 @@ void dynamicArrayTest()
 	// find_index_da
 
 	// index_of_da
+	_test_index_of_da();
 
 	// Cleanup
 	int err_f_da = free_dynamic_array(&da);
