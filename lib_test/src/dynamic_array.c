@@ -1956,6 +1956,101 @@ static void _test_new_iterator_da()
 	}
 }
 
+static void _test_free_iterator_da() {
+
+    enum DynamicArrayError err;
+    DynamicArrayIterator *itr = NULL;
+
+    // ---------------------------------------------------------
+    // 1. ERROR CASE HANDLING
+    // ---------------------------------------------------------
+
+    // Test Case: NULL double-pointer argument passed to the function
+    err = free_iterator_da(NULL);
+    assert(err == DA_ERR_NULL_ARGUMENT);
+
+    // Test Case: Valid double-pointer, but the underlying iterator pointer is already NULL
+    DynamicArrayIterator *null_itr = NULL;
+    err = free_iterator_da(&null_itr);
+    assert(err == DA_SUCCESS);
+
+
+    // ---------------------------------------------------------
+    // 2. TYPE-SPECIFIC FUNCTIONALITY VERIFICATION
+    // ---------------------------------------------------------
+
+    // --- Type 1: DA_INT ---
+    {
+        DynamicArray *da_int = NULL;
+        assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
+        assert(new_iterator_da(da_int, &itr) == DA_SUCCESS);
+        assert(itr != NULL);
+
+        // Test deallocation and verify the pointer is reset to NULL
+        err = free_iterator_da(&itr);
+        assert(err == DA_SUCCESS);
+        assert(itr == NULL);
+
+        assert(free_dynamic_array(&da_int) == DA_SUCCESS);
+    }
+
+    // --- Type 2: DA_CHAR ---
+    {
+        DynamicArray *da_char = NULL;
+        assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
+        assert(new_iterator_da(da_char, &itr) == DA_SUCCESS);
+        assert(itr != NULL);
+
+        err = free_iterator_da(&itr);
+        assert(err == DA_SUCCESS);
+        assert(itr == NULL);
+
+        assert(free_dynamic_array(&da_char) == DA_SUCCESS);
+    }
+
+    // --- Type 3: DA_FLOAT ---
+    {
+        DynamicArray *da_float = NULL;
+        assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
+        assert(new_iterator_da(da_float, &itr) == DA_SUCCESS);
+        assert(itr != NULL);
+
+        err = free_iterator_da(&itr);
+        assert(err == DA_SUCCESS);
+        assert(itr == NULL);
+
+        assert(free_dynamic_array(&da_float) == DA_SUCCESS);
+    }
+
+    // --- Type 4: DA_DOUBLE ---
+    {
+        DynamicArray *da_double = NULL;
+        assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
+        assert(new_iterator_da(da_double, &itr) == DA_SUCCESS);
+        assert(itr != NULL);
+
+        err = free_iterator_da(&itr);
+        assert(err == DA_SUCCESS);
+        assert(itr == NULL);
+
+        assert(free_dynamic_array(&da_double) == DA_SUCCESS);
+    }
+
+    // --- Type 5: DA_PTR ---
+    {
+        DynamicArray *da_ptr = NULL;
+        assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
+        assert(new_iterator_da(da_ptr, &itr) == DA_SUCCESS);
+        assert(itr != NULL);
+
+        err = free_iterator_da(&itr);
+        assert(err == DA_SUCCESS);
+        assert(itr == NULL);
+
+        assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+    }
+}
+
 void dynamicArrayTest()
 {
 	puts("################## Test: DynamicArray ##################");
@@ -2049,6 +2144,9 @@ void dynamicArrayTest()
 	// DynamicArrayIterator
 	// new_iterator_da
 	_test_new_iterator_da();
+
+	// free_iterator_da
+	_test_free_iterator_da();
 
 	// Cleanup
 	int err_f_da = free_dynamic_array(&da);
