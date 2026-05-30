@@ -2051,6 +2051,172 @@ static void _test_free_iterator_da() {
     }
 }
 
+static void _test_has_next_dai() {
+    enum DynamicArrayError err;
+    DynamicArray *da = NULL;
+    DynamicArrayIterator *itr = NULL;
+    int has_next_out = -1;
+
+    // ---------------------------------------------------------
+    // 1. ERROR CASE HANDLING
+    // ---------------------------------------------------------
+
+    // Test Case: NULL iterator pointer argument
+    err = has_next_dai(NULL, &has_next_out);
+    assert(err == DA_ERR_NULL_ARGUMENT);
+
+    // Setup a valid iterator to isolate the next argument check
+    assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+    assert(new_iterator_da(da, &itr) == DA_SUCCESS);
+
+    // Test Case: NULL output integer pointer argument
+    err = has_next_dai(itr, NULL);
+    assert(err == DA_ERR_NULL_ARGUMENT);
+
+    // Clean up initial error test setup
+    assert(free_iterator_da(&itr) == DA_SUCCESS);
+    assert(free_dynamic_array(&da) == DA_SUCCESS);
+
+
+    // ---------------------------------------------------------
+    // 2. TYPE-SPECIFIC FUNCTIONALITY VERIFICATION
+    // ---------------------------------------------------------
+
+    // --- Type 1: DA_INT ---
+    {
+        DynamicArray *da_int = NULL;
+        DynamicArrayIterator *itr_int = NULL;
+        int next_out = 0;
+
+        assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
+        
+        // Scenario A: Empty Array (has_next should be 0)
+        assert(new_iterator_da(da_int, &itr_int) == DA_SUCCESS);
+        assert(has_next_dai(itr_int, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 0);
+        assert(free_iterator_da(&itr_int) == DA_SUCCESS);
+
+        // Scenario B: Populated Array (has_next should be 1)
+        assert(push_int_da(da_int, 100) == DA_SUCCESS);
+        assert(new_iterator_da(da_int, &itr_int) == DA_SUCCESS);
+        assert(has_next_dai(itr_int, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 1);
+
+        // Scenario C: After Consumption (has_next should become 0)
+        assert(next_int_dai(itr_int, &next_out) == DA_SUCCESS);
+        assert(has_next_dai(itr_int, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 0);
+
+        assert(free_iterator_da(&itr_int) == DA_SUCCESS);
+        assert(free_dynamic_array(&da_int) == DA_SUCCESS);
+    }
+
+    // --- Type 2: DA_CHAR ---
+    {
+        DynamicArray *da_char = NULL;
+        DynamicArrayIterator *itr_char = NULL;
+        char next_out = 0;
+
+        assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
+        
+        assert(new_iterator_da(da_char, &itr_char) == DA_SUCCESS);
+        assert(has_next_dai(itr_char, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 0);
+        assert(free_iterator_da(&itr_char) == DA_SUCCESS);
+
+        assert(push_char_da(da_char, 'A') == DA_SUCCESS);
+        assert(new_iterator_da(da_char, &itr_char) == DA_SUCCESS);
+        assert(has_next_dai(itr_char, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 1);
+
+        assert(next_char_dai(itr_char, &next_out) == DA_SUCCESS);
+        assert(has_next_dai(itr_char, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 0);
+
+        assert(free_iterator_da(&itr_char) == DA_SUCCESS);
+        assert(free_dynamic_array(&da_char) == DA_SUCCESS);
+    }
+
+    // --- Type 3: DA_FLOAT ---
+    {
+        DynamicArray *da_float = NULL;
+        DynamicArrayIterator *itr_float = NULL;
+        float next_out = 0.0f;
+
+        assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
+        
+        assert(new_iterator_da(da_float, &itr_float) == DA_SUCCESS);
+        assert(has_next_dai(itr_float, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 0);
+        assert(free_iterator_da(&itr_float) == DA_SUCCESS);
+
+        assert(push_float_da(da_float, 1.23f) == DA_SUCCESS);
+        assert(new_iterator_da(da_float, &itr_float) == DA_SUCCESS);
+        assert(has_next_dai(itr_float, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 1);
+
+        assert(next_float_dai(itr_float, &next_out) == DA_SUCCESS);
+        assert(has_next_dai(itr_float, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 0);
+
+        assert(free_iterator_da(&itr_float) == DA_SUCCESS);
+        assert(free_dynamic_array(&da_float) == DA_SUCCESS);
+    }
+
+    // --- Type 4: DA_DOUBLE ---
+    {
+        DynamicArray *da_double = NULL;
+        DynamicArrayIterator *itr_double = NULL;
+        double next_out = 0.0;
+
+        assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
+        
+        assert(new_iterator_da(da_double, &itr_double) == DA_SUCCESS);
+        assert(has_next_dai(itr_double, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 0);
+        assert(free_iterator_da(&itr_double) == DA_SUCCESS);
+
+        assert(push_double_da(da_double, 9.87) == DA_SUCCESS);
+        assert(new_iterator_da(da_double, &itr_double) == DA_SUCCESS);
+        assert(has_next_dai(itr_double, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 1);
+
+        assert(next_double_dai(itr_double, &next_out) == DA_SUCCESS);
+        assert(has_next_dai(itr_double, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 0);
+
+        assert(free_iterator_da(&itr_double) == DA_SUCCESS);
+        assert(free_dynamic_array(&da_double) == DA_SUCCESS);
+    }
+
+    // --- Type 5: DA_PTR ---
+    {
+        DynamicArray *da_ptr = NULL;
+        DynamicArrayIterator *itr_ptr = NULL;
+        int dummy = 42;
+        void *next_out = NULL;
+
+        assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
+        
+        assert(new_iterator_da(da_ptr, &itr_ptr) == DA_SUCCESS);
+        assert(has_next_dai(itr_ptr, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 0);
+        assert(free_iterator_da(&itr_ptr) == DA_SUCCESS);
+
+        assert(push_ptr_da(da_ptr, &dummy) == DA_SUCCESS);
+        assert(new_iterator_da(da_ptr, &itr_ptr) == DA_SUCCESS);
+        assert(has_next_dai(itr_ptr, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 1);
+
+        assert(next_ptr_dai(itr_ptr, &next_out) == DA_SUCCESS);
+        assert(has_next_dai(itr_ptr, &has_next_out) == DA_SUCCESS);
+        assert(has_next_out == 0);
+
+        assert(free_iterator_da(&itr_ptr) == DA_SUCCESS);
+        assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+    }
+}
+
 void dynamicArrayTest()
 {
 	puts("################## Test: DynamicArray ##################");
@@ -2147,6 +2313,9 @@ void dynamicArrayTest()
 
 	// free_iterator_da
 	_test_free_iterator_da();
+
+	// has_next_dai
+	_test_has_next_dai();
 
 	// Cleanup
 	int err_f_da = free_dynamic_array(&da);
