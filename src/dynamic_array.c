@@ -4,24 +4,22 @@
 
 // ##################   static   ##################
 
+/**
+ * @return DA_SUCCESS for a valid type and DA_ERR_TYPE_UNKNOWN for an invalid one.
+ */
 static inline enum DynamicArrayError _is_type_invalid(enum DynamicArrayType const type)
 {
 	switch (type)
 	{
-	case 0:
-		// int
+	case DA_INT:
 		return DA_SUCCESS;
-	case 1:
-		// char
+	case DA_CHAR:
 		return DA_SUCCESS;
-	case 2:
-		// float
+	case DA_FLOAT:
 		return DA_SUCCESS;
-	case 3:
-		// double
+	case DA_DOUBLE:
 		return DA_SUCCESS;
-	case 4:
-		// void*
+	case DA_PTR:
 		return DA_SUCCESS;
 	default:
 		return DA_ERR_TYPE_UNKNOWN;
@@ -35,36 +33,31 @@ static enum DynamicArrayError _mem_realloc(DynamicArray *const da, size_t new_ca
 
 	switch (da->type)
 	{
-	case 0:
-		// int
+	case DA_INT:
 		int *int_arr = realloc(da->int_arr, new_capcity * da->single_item_size);
 		if (int_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->int_arr = int_arr;
 		break;
-	case 1:
-		// char
+	case DA_CHAR:
 		char *char_arr = realloc(da->char_arr, new_capcity * da->single_item_size);
 		if (char_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->char_arr = char_arr;
 		break;
-	case 2:
-		// float
+	case DA_FLOAT:
 		float *float_arr = realloc(da->float_arr, new_capcity * da->single_item_size);
 		if (float_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->float_arr = float_arr;
 		break;
-	case 3:
-		// double
+	case DA_DOUBLE:
 		double *double_arr = realloc(da->double_arr, new_capcity * da->single_item_size);
 		if (double_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->double_arr = double_arr;
 		break;
-	case 4:
-		// void*
+	case DA_PTR:
 		void **void_arr = realloc(da->void_arr, new_capcity * da->single_item_size);
 		if (void_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
@@ -123,28 +116,23 @@ static enum DynamicArrayError _move_one_right(DynamicArray *const da)
 {
 	switch (da->type)
 	{
-	case 0:
-		// int
+	case DA_INT:
 		for (size_t i = da->count; i > 0; --i)
 			da->int_arr[i] = da->int_arr[i - 1];
 		break;
-	case 1:
-		// char
+	case DA_CHAR:
 		for (size_t i = da->count; i > 0; --i)
 			da->char_arr[i] = da->char_arr[i - 1];
 		break;
-	case 2:
-		// float
+	case DA_FLOAT:
 		for (size_t i = da->count; i > 0; --i)
 			da->float_arr[i] = da->float_arr[i - 1];
 		break;
-	case 3:
-		// double
+	case DA_DOUBLE:
 		for (size_t i = da->count; i > 0; --i)
 			da->double_arr[i] = da->double_arr[i - 1];
 		break;
-	case 4:
-		// void**
+	case DA_PTR:
 		for (size_t i = da->count; i > 0; --i)
 			da->void_arr[i] = da->void_arr[i - 1];
 		break;
@@ -159,30 +147,25 @@ static enum DynamicArrayError _move_one_left(DynamicArray *const da)
 {
 	switch (da->type)
 	{
-	case 0:
-		// int
+	case DA_INT:
 		for (size_t i = 0; i < da->count - 1; ++i)
 			da->int_arr[i] = da->int_arr[i + 1];
 		break;
-	case 1:
-		// char
+	case DA_CHAR:
 		for (size_t i = 0; i < da->count - 1; ++i)
-			da->char_arr[i] = da->char_arr[i - 1];
+			da->char_arr[i] = da->char_arr[i + 1];
 		break;
-	case 2:
-		// float
+	case DA_FLOAT:
 		for (size_t i = 0; i < da->count - 1; ++i)
-			da->float_arr[i] = da->float_arr[i - 1];
+			da->float_arr[i] = da->float_arr[i + 1];
 		break;
-	case 3:
-		// double
+	case DA_DOUBLE:
 		for (size_t i = 0; i < da->count - 1; ++i)
-			da->double_arr[i] = da->double_arr[i - 1];
+			da->double_arr[i] = da->double_arr[i + 1];
 		break;
-	case 4:
-		// void*
+	case DA_PTR:
 		for (size_t i = 0; i < da->count - 1; ++i)
-			da->void_arr[i] = da->void_arr[i - 1];
+			da->void_arr[i] = da->void_arr[i + 1];
 		break;
 	default:
 		return DA_ERR_TYPE_UNKNOWN;
@@ -193,7 +176,7 @@ static enum DynamicArrayError _move_one_left(DynamicArray *const da)
 
 static inline enum DynamicArrayError _is_empty(const DynamicArray *const da, int *const output)
 {
-	if (da == NULL)
+	if (da == NULL || output == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
 	*output = da->count <= 0 ? 1 : 0;
@@ -213,26 +196,24 @@ static inline enum DynamicArrayError _is_out_of_bounds(const DynamicArray *const
 
 static enum DynamicArrayError _single_item_size(enum DynamicArrayType type, size_t *const output)
 {
+	if (NULL == output)
+		return DA_ERR_NULL_ARGUMENT;
+
 	switch (type)
 	{
-	case 0:
-		// int
+	case DA_INT:
 		*output = sizeof(int);
 		break;
-	case 1:
-		// char
+	case DA_CHAR:
 		*output = sizeof(char);
 		break;
-	case 2:
-		// float
+	case DA_FLOAT:
 		*output = sizeof(float);
 		break;
-	case 3:
-		// double
+	case DA_DOUBLE:
 		*output = sizeof(double);
 		break;
-	case 4:
-		// void*
+	case DA_PTR:
 		*output = sizeof(void *);
 		break;
 	default:
@@ -249,36 +230,31 @@ static enum DynamicArrayError _new_items_array(DynamicArray *const da)
 
 	switch (da->type)
 	{
-	case 0:
-		// int
+	case DA_INT:
 		int *int_arr = malloc(da->capacity * da->single_item_size);
 		if (int_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->int_arr = int_arr;
 		break;
-	case 1:
-		// char
+	case DA_CHAR:
 		char *char_arr = malloc(da->capacity * da->single_item_size);
 		if (char_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->char_arr = char_arr;
 		break;
-	case 2:
-		// float
+	case DA_FLOAT:
 		float *float_arr = malloc(da->capacity * da->single_item_size);
 		if (float_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->float_arr = float_arr;
 		break;
-	case 3:
-		// double
+	case DA_DOUBLE:
 		double *double_arr = malloc(da->capacity * da->single_item_size);
 		if (double_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
 		da->double_arr = double_arr;
 		break;
-	case 4:
-		// void**
+	case DA_PTR:
 		void **void_arr = malloc(da->capacity * da->single_item_size);
 		if (void_arr == NULL)
 			return DA_ERR_MEMORY_ALLOCATION;
@@ -292,7 +268,7 @@ static enum DynamicArrayError _new_items_array(DynamicArray *const da)
 
 static enum DynamicArrayError _get_pointer_at_index(const DynamicArray *const da, const size_t index, void **output)
 {
-	if (da == NULL)
+	if (da == NULL || output == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
 	int err_bounds_check = _is_out_of_bounds(da, index);
@@ -301,29 +277,44 @@ static enum DynamicArrayError _get_pointer_at_index(const DynamicArray *const da
 
 	switch (da->type)
 	{
-	case 0:
-		// int
+	case DA_INT:
 		*output = (void *)&((da->int_arr)[index]);
 		break;
-	case 1:
-		// char
+	case DA_CHAR:
 		*output = (void *)&((da->char_arr)[index]);
 		break;
-	case 2:
-		// float
+	case DA_FLOAT:
 		*output = (void *)&((da->float_arr)[index]);
 		break;
-	case 3:
-		// double
+	case DA_DOUBLE:
 		*output = (void *)&((da->double_arr)[index]);
 		break;
-	case 4:
-		// void**
+	case DA_PTR:
 		*output = (void *)(da->void_arr)[index];
 		break;
 	default:
 		return DA_ERR_TYPE_UNKNOWN;
 	}
+	return DA_SUCCESS;
+}
+
+static enum DynamicArrayError _get_address_of_pointer_at_index(
+    const DynamicArray *const da,
+    const size_t index,
+    void ***output)
+{
+	if (da == NULL || output == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	if (DA_PTR != da->type)
+		return DA_ERR_TYPE_MISMATCH;
+
+	int err_bounds_check = _is_out_of_bounds(da, index);
+	if (err_bounds_check)
+		return err_bounds_check;
+
+	*output = (void *)&((da->void_arr)[index]);
+
 	return DA_SUCCESS;
 }
 
@@ -359,32 +350,27 @@ static enum DynamicArrayError _remove_at(DynamicArray *const da, const size_t in
 
 		switch (da->type)
 		{
-		case 0:
-			// int
+		case DA_INT:
 			err_code = push_int_da(tmp, (da->int_arr)[i]);
 			if (err_code)
 				goto _error_case;
 			break;
-		case 1:
-			// char
+		case DA_CHAR:
 			err_code = push_char_da(tmp, (da->char_arr)[i]);
 			if (err_code)
 				goto _error_case;
 			break;
-		case 2:
-			// float
+		case DA_FLOAT:
 			err_code = push_float_da(tmp, (da->float_arr)[i]);
 			if (err_code)
 				goto _error_case;
 			break;
-		case 3:
-			// double
+		case DA_DOUBLE:
 			err_code = push_double_da(tmp, (da->double_arr)[i]);
 			if (err_code)
 				goto _error_case;
 			break;
-		case 4:
-			// void*
+		case DA_PTR:
 			err_code = push_ptr_da(tmp, (da->void_arr)[i]);
 			if (err_code)
 				goto _error_case;
@@ -397,28 +383,23 @@ static enum DynamicArrayError _remove_at(DynamicArray *const da, const size_t in
 
 	switch (da->type)
 	{
-	case 0:
-		// int
+	case DA_INT:
 		free(da->int_arr);
 		da->int_arr = tmp->int_arr;
 		break;
-	case 1:
-		// char
+	case DA_CHAR:
 		free(da->char_arr);
 		da->char_arr = tmp->char_arr;
 		break;
-	case 2:
-		// float
+	case DA_FLOAT:
 		free(da->float_arr);
 		da->float_arr = tmp->float_arr;
 		break;
-	case 3:
-		// double
+	case DA_DOUBLE:
 		free(da->double_arr);
 		da->double_arr = tmp->double_arr;
 		break;
-	case 4:
-		// void*
+	case DA_PTR:
 		free(da->void_arr);
 		da->void_arr = tmp->void_arr;
 		break;
@@ -436,14 +417,19 @@ static enum DynamicArrayError _remove_at(DynamicArray *const da, const size_t in
 	return DA_SUCCESS;
 
 _error_case:
-	free_dynamic_array(tmp);
+	free_dynamic_array(&tmp);
 	return err_code;
 }
 
 // ##################   creation and destruction  ##################
 
-enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const type, DynamicArray **const output)
+enum DynamicArrayError new_dynamic_array(
+    enum DynamicArrayType const type,
+    DynamicArray **const output)
 {
+	if (output == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
 	if (_is_type_invalid(type))
 		return DA_ERR_TYPE_UNKNOWN;
 
@@ -463,6 +449,7 @@ enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const type, Dynam
 		return DA_ERR_ITEM_SIZE_DETERMINATION;
 	}
 	da->single_item_size = item_size;
+	da->destructor = NULL;
 
 	int err_items_array = _new_items_array(da);
 	if (err_items_array)
@@ -476,38 +463,131 @@ enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const type, Dynam
 	return DA_SUCCESS;
 }
 
-enum DynamicArrayError free_dynamic_array(DynamicArray *const da)
+enum DynamicArrayError new_dynamic_array_d(
+    enum DynamicArrayType const type,
+    void (*destructor)(void **ptr),
+    DynamicArray **const output)
+{
+	if (output == NULL || destructor == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	if (_is_type_invalid(type))
+		return DA_ERR_TYPE_UNKNOWN;
+
+	DynamicArray *da = (DynamicArray *)malloc(sizeof(DynamicArray));
+	if (da == NULL)
+		return DA_ERR_MEMORY_ALLOCATION;
+
+	da->count = 0;
+	da->capacity = DYNAMIC_ARRAY_INIT_CAPACITY;
+	da->type = type;
+
+	size_t item_size = 0;
+	int err_item_size = _single_item_size(type, &item_size);
+	if (err_item_size)
+	{
+		free(da);
+		return DA_ERR_ITEM_SIZE_DETERMINATION;
+	}
+	da->single_item_size = item_size;
+	da->destructor = destructor;
+
+	int err_items_array = _new_items_array(da);
+	if (err_items_array)
+	{
+		free(da);
+		return err_items_array;
+	}
+
+	*output = da;
+
+	return DA_SUCCESS;
+}
+
+enum DynamicArrayError free_dynamic_array(DynamicArray **const da)
 {
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	switch (da->type)
+	if (*da == NULL)
+		return DA_SUCCESS;
+
+	switch ((*da)->type)
 	{
-	case 0:
-		// int
-		free(da->int_arr);
+	case DA_INT:
+		free((*da)->int_arr);
+		(*da)->int_arr = NULL;
 		break;
-	case 1:
-		// char
-		free(da->char_arr);
+	case DA_CHAR:
+		free((*da)->char_arr);
+		(*da)->char_arr = NULL;
 		break;
-	case 2:
-		// float
-		free(da->float_arr);
+	case DA_FLOAT:
+		free((*da)->float_arr);
+		(*da)->float_arr = NULL;
 		break;
-	case 3:
-		// double
-		free(da->double_arr);
+	case DA_DOUBLE:
+		free((*da)->double_arr);
+		(*da)->double_arr = NULL;
 		break;
-	case 4:
-		// void*
-		free(da->void_arr);
+	case DA_PTR:
+		free((*da)->void_arr);
+		(*da)->void_arr = NULL;
 		break;
 	default:
 		return DA_ERR_TYPE_UNKNOWN;
 	}
 
-	free(da);
+	free(*da);
+	*da = NULL;
+
+	return DA_SUCCESS;
+}
+
+enum DynamicArrayError free_dynamic_array_d(DynamicArray **const da)
+{
+	if (da == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	if (*da == NULL)
+		return DA_SUCCESS;
+
+	switch ((*da)->type)
+	{
+	case DA_INT:
+		free((*da)->int_arr);
+		(*da)->int_arr = NULL;
+		break;
+	case DA_CHAR:
+		free((*da)->char_arr);
+		(*da)->char_arr = NULL;
+		break;
+	case DA_FLOAT:
+		free((*da)->float_arr);
+		(*da)->float_arr = NULL;
+		break;
+	case DA_DOUBLE:
+		free((*da)->double_arr);
+		(*da)->double_arr = NULL;
+		break;
+	case DA_PTR:
+		if ((*da)->destructor == NULL)
+			return DA_ERR_NULL_DESTRUCTOR;
+
+		int err = activate_destructor_da(*da);
+		if (err)
+			return err;
+
+		free((*da)->void_arr);
+		(*da)->void_arr = NULL;
+		break;
+	default:
+		return DA_ERR_TYPE_UNKNOWN;
+	}
+
+	free(*da);
+	*da = NULL;
+
 	return DA_SUCCESS;
 }
 
@@ -518,7 +598,7 @@ enum DynamicArrayError push_int_da(DynamicArray *const da, int const item)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != INT)
+	if (da->type != DA_INT)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int err = _expand_da(da);
@@ -535,7 +615,7 @@ enum DynamicArrayError push_char_da(DynamicArray *const da, char const item)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != CHAR)
+	if (da->type != DA_CHAR)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int err = _expand_da(da);
@@ -552,7 +632,7 @@ enum DynamicArrayError push_float_da(DynamicArray *const da, float const item)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != FLOAT)
+	if (da->type != DA_FLOAT)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int err = _expand_da(da);
@@ -569,7 +649,7 @@ enum DynamicArrayError push_double_da(DynamicArray *const da, double const item)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != DOUBLE)
+	if (da->type != DA_DOUBLE)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int err = _expand_da(da);
@@ -586,7 +666,7 @@ enum DynamicArrayError push_ptr_da(DynamicArray *const da, void *const item)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != VOID_PTR)
+	if (da->type != DA_PTR)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int err = _expand_da(da);
@@ -603,7 +683,7 @@ enum DynamicArrayError unshift_int_da(DynamicArray *const da, int const item)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != INT)
+	if (da->type != DA_INT)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int expansion_err = _expand_da(da);
@@ -626,7 +706,7 @@ enum DynamicArrayError unshift_char_da(DynamicArray *const da, char const item)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != CHAR)
+	if (da->type != DA_CHAR)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int expansion_err = _expand_da(da);
@@ -649,7 +729,7 @@ enum DynamicArrayError unshift_float_da(DynamicArray *const da, float const item
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != FLOAT)
+	if (da->type != DA_FLOAT)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int expansion_err = _expand_da(da);
@@ -672,7 +752,7 @@ enum DynamicArrayError unshift_double_da(DynamicArray *const da, double const it
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != DOUBLE)
+	if (da->type != DA_DOUBLE)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int expansion_err = _expand_da(da);
@@ -693,9 +773,9 @@ enum DynamicArrayError unshift_double_da(DynamicArray *const da, double const it
 enum DynamicArrayError unshift_ptr_da(DynamicArray *const da, void *const item)
 {
 	if (da == NULL)
-		return DA_SUCCESS;
+		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != VOID_PTR)
+	if (da->type != DA_PTR)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int expansion_err = _expand_da(da);
@@ -720,7 +800,7 @@ enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const output)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != INT)
+	if (da->type != DA_INT)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
@@ -728,7 +808,7 @@ enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const output)
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	*output = (int)((da->int_arr)[--(da->count)]);
 
@@ -744,7 +824,7 @@ enum DynamicArrayError pop_char_da(DynamicArray *const da, char *const output)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != CHAR)
+	if (da->type != DA_CHAR)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
@@ -752,7 +832,7 @@ enum DynamicArrayError pop_char_da(DynamicArray *const da, char *const output)
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	*output = (char)((da->char_arr)[--(da->count)]);
 
@@ -768,7 +848,7 @@ enum DynamicArrayError pop_float_da(DynamicArray *const da, float *const output)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != FLOAT)
+	if (da->type != DA_FLOAT)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
@@ -776,7 +856,7 @@ enum DynamicArrayError pop_float_da(DynamicArray *const da, float *const output)
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	*output = (float)((da->float_arr)[--(da->count)]);
 
@@ -792,7 +872,7 @@ enum DynamicArrayError pop_double_da(DynamicArray *const da, double *const outpu
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != DOUBLE)
+	if (da->type != DA_DOUBLE)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
@@ -800,7 +880,7 @@ enum DynamicArrayError pop_double_da(DynamicArray *const da, double *const outpu
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	*output = (double)((da->double_arr)[--(da->count)]);
 
@@ -816,7 +896,7 @@ enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **const output)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != VOID_PTR)
+	if (da->type != DA_PTR)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
@@ -824,7 +904,7 @@ enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **const output)
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	*output = (void *)((da->void_arr)[--(da->count)]);
 
@@ -840,7 +920,7 @@ enum DynamicArrayError shift_int_da(DynamicArray *const da, int *const output)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != INT)
+	if (da->type != DA_INT)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
@@ -848,7 +928,7 @@ enum DynamicArrayError shift_int_da(DynamicArray *const da, int *const output)
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	*output = (int)((da->int_arr)[0]);
 
@@ -870,7 +950,7 @@ enum DynamicArrayError shift_char_da(DynamicArray *const da, char *const output)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != CHAR)
+	if (da->type != DA_CHAR)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
@@ -878,7 +958,7 @@ enum DynamicArrayError shift_char_da(DynamicArray *const da, char *const output)
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	*output = (char)((da->char_arr)[0]);
 
@@ -900,7 +980,7 @@ enum DynamicArrayError shift_float_da(DynamicArray *const da, float *const outpu
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != FLOAT)
+	if (da->type != DA_FLOAT)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
@@ -908,7 +988,7 @@ enum DynamicArrayError shift_float_da(DynamicArray *const da, float *const outpu
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	*output = (float)((da->float_arr)[0]);
 
@@ -930,7 +1010,7 @@ enum DynamicArrayError shift_double_da(DynamicArray *const da, double *const out
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != DOUBLE)
+	if (da->type != DA_DOUBLE)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
@@ -938,7 +1018,7 @@ enum DynamicArrayError shift_double_da(DynamicArray *const da, double *const out
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	*output = (double)((da->double_arr)[0]);
 
@@ -960,7 +1040,7 @@ enum DynamicArrayError shift_ptr_da(DynamicArray *const da, void **const output)
 	if (da == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (da->type != VOID_PTR)
+	if (da->type != DA_PTR)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
@@ -968,7 +1048,7 @@ enum DynamicArrayError shift_ptr_da(DynamicArray *const da, void **const output)
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	*output = (void *)((da->void_arr)[0]);
 
@@ -995,7 +1075,7 @@ enum DynamicArrayError remove_at_da(DynamicArray *const da, const size_t index)
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	int err_remove = _remove_at(da, index);
 	if (err_remove)
@@ -1014,10 +1094,10 @@ enum DynamicArrayError remove_first_da(DynamicArray *const da, void *const targe
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	size_t target_index = 0;
-	int err_index_of = index_of_da(da, &target_index, target);
+	int err_index_of = index_of_da(da, target, &target_index);
 	if (err_index_of)
 		return err_index_of;
 
@@ -1040,7 +1120,7 @@ enum DynamicArrayError apply_at_da(const DynamicArray *const da, const size_t in
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	void *ptr = NULL;
 	int err_get_pointer = _get_pointer_at_index(da, index, &ptr);
@@ -1067,6 +1147,51 @@ enum DynamicArrayError process_da(DynamicArray *const da, void (*processor)(void
 			return err_get_pointer;
 
 		processor(ptr);
+	}
+
+	return DA_SUCCESS;
+}
+
+enum DynamicArrayError activate_destructor_da(DynamicArray *const da)
+{
+	if (da == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	if (DA_PTR != da->type)
+		return DA_ERR_TYPE_MISMATCH;
+
+	if (da->destructor == NULL)
+		return DA_ERR_NULL_DESTRUCTOR;
+
+	void **ptr = NULL;
+	for (size_t i = 0; i < da->count; ++i)
+	{
+		int err_get_address = _get_address_of_pointer_at_index(da, i, &ptr);
+		if (err_get_address)
+			return err_get_address;
+
+		(da->destructor)(ptr);
+	}
+
+	return DA_SUCCESS;
+}
+
+enum DynamicArrayError apply_destructor_da(DynamicArray *const da, void (*destructor)(void **value))
+{
+	if (da == NULL || destructor == NULL)
+		return DA_ERR_NULL_ARGUMENT;
+
+	if (DA_PTR != da->type)
+		return DA_ERR_TYPE_MISMATCH;
+
+	void **ptr = NULL;
+	for (size_t i = 0; i < da->count; ++i)
+	{
+		int err_get_address = _get_address_of_pointer_at_index(da, i, &ptr);
+		if (err_get_address)
+			return err_get_address;
+
+		destructor(ptr);
 	}
 
 	return DA_SUCCESS;
@@ -1107,32 +1232,27 @@ enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *ite
 		{
 			switch (da->type)
 			{
-			case 0:
-				// int
+			case DA_INT:
 				err_code = push_int_da(tempDA, *(int *)ptr);
 				if (err_code)
 					goto _error_case;
 				break;
-			case 1:
-				// char
+			case DA_CHAR:
 				err_code = push_char_da(tempDA, *(char *)ptr);
 				if (err_code)
 					goto _error_case;
 				break;
-			case 2:
-				// float
+			case DA_FLOAT:
 				err_code = push_float_da(tempDA, *(float *)ptr);
 				if (err_code)
 					goto _error_case;
 				break;
-			case 3:
-				// double
+			case DA_DOUBLE:
 				err_code = push_double_da(tempDA, *(double *)ptr);
 				if (err_code)
 					goto _error_case;
 				break;
-			case 4:
-				// void**
+			case DA_PTR:
 				err_code = push_ptr_da(tempDA, ptr);
 				if (err_code)
 					goto _error_case;
@@ -1155,24 +1275,19 @@ enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *ite
 	// This (old) pointer will be overwritten by memcpy.
 	switch (da->type)
 	{
-	case 0:
-		// int
+	case DA_INT:
 		free(da->int_arr);
 		break;
-	case 1:
-		// char
+	case DA_CHAR:
 		free(da->char_arr);
 		break;
-	case 2:
-		// float
+	case DA_FLOAT:
 		free(da->float_arr);
 		break;
-	case 3:
-		// double
+	case DA_DOUBLE:
 		free(da->double_arr);
 		break;
-	case 4:
-		// void**
+	case DA_PTR:
 		free(da->void_arr);
 		break;
 	default:
@@ -1185,7 +1300,7 @@ enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *ite
 	return DA_SUCCESS;
 
 _error_case:
-	free_dynamic_array(tempDA);
+	free_dynamic_array(&tempDA);
 	return err_code;
 }
 
@@ -1201,7 +1316,7 @@ enum DynamicArrayError at_da(DynamicArray *const da, size_t index, void **output
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_ARRAY_EMPTY;
+		return DA_EMPTY;
 
 	int err_get_pointer = _get_pointer_at_index(da, index, output);
 	if (err_get_pointer)
@@ -1210,122 +1325,122 @@ enum DynamicArrayError at_da(DynamicArray *const da, size_t index, void **output
 	return DA_SUCCESS;
 }
 
-enum DynamicArrayError find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
-{
-	if (da == NULL || output == NULL || selector == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+// enum DynamicArrayError find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
+// {
+// 	if (da == NULL || output == NULL || selector == NULL)
+// 		return DA_ERR_NULL_ARGUMENT;
 
-	void *ptr = NULL;
-	for (size_t i = 0; i < da->count; ++i)
-	{
-		int err_get_pointer = _get_pointer_at_index(da, i, &ptr);
-		if (err_get_pointer)
-			return err_get_pointer;
+// 	void *ptr = NULL;
+// 	for (size_t i = 0; i < da->count; ++i)
+// 	{
+// 		int err_get_pointer = _get_pointer_at_index(da, i, &ptr);
+// 		if (err_get_pointer)
+// 			return err_get_pointer;
 
-		if (selector(ptr) == 1)
-		{
-			*output = ptr;
-			return DA_SUCCESS;
-		}
-	}
+// 		if (selector(ptr) == 1)
+// 		{
+// 			*output = ptr;
+// 			return DA_SUCCESS;
+// 		}
+// 	}
 
-	return DA_ITEM_NOT_FOUND;
-}
+// 	return DA_ITEM_NOT_FOUND;
+// }
 
-enum DynamicArrayError find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
-{
-	if (da == NULL || output == NULL || selector == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+// enum DynamicArrayError find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
+// {
+// 	if (da == NULL || output == NULL || selector == NULL)
+// 		return DA_ERR_NULL_ARGUMENT;
 
-	void *ptr = NULL;
-	for (size_t i = da->count - 1; i >= 0; --i)
-	{
-		int err_get_pointer = _get_pointer_at_index(da, i, &ptr);
-		if (err_get_pointer)
-			return err_get_pointer;
+// 	void *ptr = NULL;
+// 	for (size_t i = da->count; i-- > 0;)
+// 	// for (size_t i = da->count - 1; i >= 0; --i)
+// 	{
+// 		int err_get_pointer = _get_pointer_at_index(da, i - 1, &ptr);
+// 		if (err_get_pointer)
+// 			return err_get_pointer;
 
-		if (selector(ptr) == 1)
-		{
-			*output = ptr;
-			return DA_SUCCESS;
-		}
-	}
+// 		if (selector(ptr) == 1)
+// 		{
+// 			*output = ptr;
+// 			return DA_SUCCESS;
+// 		}
+// 	}
 
-	return DA_ITEM_NOT_FOUND;
-}
+// 	return DA_ITEM_NOT_FOUND;
+// }
 
-enum DynamicArrayError find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr))
-{
-	if (da == NULL || output == NULL || selector == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+// enum DynamicArrayError find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr))
+// {
+// 	if (da == NULL || output == NULL || selector == NULL)
+// 		return DA_ERR_NULL_ARGUMENT;
 
-	void *ptr = NULL;
-	for (size_t i = 0; i < da->count; ++i)
-	{
-		int err_get_pointer = _get_pointer_at_index(da, i, &ptr);
-		if (err_get_pointer)
-			return err_get_pointer;
+// 	void *ptr = NULL;
+// 	for (size_t i = 0; i < da->count; ++i)
+// 	{
+// 		int err_get_pointer = _get_pointer_at_index(da, i, &ptr);
+// 		if (err_get_pointer)
+// 			return err_get_pointer;
 
-		if (selector(ptr) == 1)
-		{
-			*output = i;
-			return DA_SUCCESS;
-		}
-	}
+// 		if (selector(ptr) == 1)
+// 		{
+// 			*output = i;
+// 			return DA_SUCCESS;
+// 		}
+// 	}
 
-	return DA_ITEM_NOT_FOUND;
-}
+// 	return DA_ITEM_NOT_FOUND;
+// }
 
-enum DynamicArrayError find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr))
-{
-	if (da == NULL || output == NULL || selector == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+// enum DynamicArrayError find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr))
+// {
+// 	if (da == NULL || output == NULL || selector == NULL)
+// 		return DA_ERR_NULL_ARGUMENT;
 
-	void *ptr = NULL;
-	for (size_t i = da->count - 1; i >= 0; --i)
-	{
-		int err_get_pointer = _get_pointer_at_index(da, i, &ptr);
-		if (err_get_pointer)
-			return err_get_pointer;
+// 	void *ptr = NULL;
+// 	for (size_t i = da->count; i-- > 0;)
+// 	// for (size_t i = da->count - 1; i >= 0; --i)
+// 	{
+// 		int err_get_pointer = _get_pointer_at_index(da, i - 1, &ptr);
+// 		if (err_get_pointer)
+// 			return err_get_pointer;
 
-		if (selector(ptr) == 1)
-		{
-			*output = i;
-			return DA_SUCCESS;
-		}
-	}
+// 		if (selector(ptr) == 1)
+// 		{
+// 			*output = i;
+// 			return DA_SUCCESS;
+// 		}
+// 	}
 
-	return DA_ITEM_NOT_FOUND;
-}
+// 	return DA_ITEM_NOT_FOUND;
+// }
 
-enum DynamicArrayError index_of_da(DynamicArray *const da, size_t *const output, void *const value)
+enum DynamicArrayError index_of_da(DynamicArray *const da, void *const value, size_t *const output)
 {
 	if (da == NULL || output == NULL || value == NULL)
 		return DA_ERR_NULL_ARGUMENT;
+
+	if (da->count == 0)
+		return DA_EMPTY;
 
 	for (size_t i = 0; i < da->count; ++i)
 	{
 		int is_equal = 0;
 		switch (da->type)
 		{
-		case 0:
-			// int
+		case DA_INT:
 			is_equal = ((int)(da->int_arr)[i]) == *(int *)value ? 1 : 0;
 			break;
-		case 1:
-			// char
+		case DA_CHAR:
 			is_equal = ((char)(da->char_arr)[i]) == *(char *)value ? 1 : 0;
 			break;
-		case 2:
-			// float
+		case DA_FLOAT:
 			is_equal = ((float)(da->float_arr)[i]) == *(float *)value ? 1 : 0;
 			break;
-		case 3:
-			// double
+		case DA_DOUBLE:
 			is_equal = ((double)(da->double_arr)[i]) == *(double *)value ? 1 : 0;
 			break;
-		case 4:
-			// void*
+		case DA_PTR:
 			is_equal = ((void *)(da->void_arr)[i]) == (void *)value ? 1 : 0;
 			break;
 		default:
@@ -1348,6 +1463,10 @@ enum DynamicArrayError new_iterator_da(DynamicArray *const da, DynamicArrayItera
 	if (da == NULL || output == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
+	int err_type = _is_type_invalid(da->type);
+	if (err_type)
+		return err_type;
+
 	DynamicArrayIterator *itr = (DynamicArrayIterator *)malloc(sizeof(DynamicArrayIterator));
 	if (itr == NULL)
 		return DA_ERR_MEMORY_ALLOCATION;
@@ -1359,12 +1478,17 @@ enum DynamicArrayError new_iterator_da(DynamicArray *const da, DynamicArrayItera
 	return DA_SUCCESS;
 }
 
-enum DynamicArrayError free_iterator_da(DynamicArrayIterator *itr)
+enum DynamicArrayError free_iterator_da(DynamicArrayIterator **itr)
 {
 	if (itr == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	free(itr);
+	if (*itr == NULL)
+		return DA_SUCCESS;
+
+	free(*itr);
+	*itr = NULL;
+
 	return DA_SUCCESS;
 }
 
@@ -1386,7 +1510,7 @@ enum DynamicArrayError next_int_dai(DynamicArrayIterator *const itr, int *const 
 	if (itr == NULL || output == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (itr->da->type != INT)
+	if (itr->da->type != DA_INT)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_has_next = 0;
@@ -1406,7 +1530,7 @@ enum DynamicArrayError next_char_dai(DynamicArrayIterator *const itr, char *cons
 	if (itr == NULL || output == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (itr->da->type != CHAR)
+	if (itr->da->type != DA_CHAR)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_has_next = 0;
@@ -1426,7 +1550,7 @@ enum DynamicArrayError next_float_dai(DynamicArrayIterator *const itr, float *co
 	if (itr == NULL || output == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (itr->da->type != FLOAT)
+	if (itr->da->type != DA_FLOAT)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_has_next = 0;
@@ -1446,7 +1570,7 @@ enum DynamicArrayError next_double_dai(DynamicArrayIterator *const itr, double *
 	if (itr == NULL || output == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (itr->da->type != DOUBLE)
+	if (itr->da->type != DA_DOUBLE)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_has_next = 0;
@@ -1466,7 +1590,7 @@ enum DynamicArrayError next_ptr_dai(DynamicArrayIterator *const itr, void **cons
 	if (itr == NULL || output == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
-	if (itr->da->type != VOID_PTR)
+	if (itr->da->type != DA_PTR)
 		return DA_ERR_TYPE_MISMATCH;
 
 	int output_has_next = 0;

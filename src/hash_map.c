@@ -448,7 +448,7 @@ enum HashMapError filter_hm(HashMap *const map, int (*selector)(const Entry *con
 	enum HashMapError error_code = HM_SUCCESS;
 
 	DynamicArray *entries_to_keep = NULL;
-	if (new_dynamic_array(VOID_PTR, &entries_to_keep))
+	if (new_dynamic_array(DA_PTR, &entries_to_keep))
 	{
 		error_code = HM_ERR_DYNAMIC_ARRAY;
 		goto _error_case;
@@ -457,7 +457,7 @@ enum HashMapError filter_hm(HashMap *const map, int (*selector)(const Entry *con
 	DynamicArray *entreis_to_estroy = NULL;
 	if (map->value_destructor != NULL)
 	{
-		if (new_dynamic_array(VOID_PTR, &entreis_to_estroy))
+		if (new_dynamic_array(DA_PTR, &entreis_to_estroy))
 		{
 			error_code = HM_ERR_DYNAMIC_ARRAY;
 			goto _error_case;
@@ -507,7 +507,7 @@ enum HashMapError filter_hm(HashMap *const map, int (*selector)(const Entry *con
 		Entry *current_entry = NULL;
 
 		int err_at = at_da(entries_to_keep, i, (void **)&current_entry);
-		if (err_at != DA_SUCCESS && err_at != DA_ARRAY_EMPTY)
+		if (err_at != DA_SUCCESS && err_at != DA_EMPTY)
 		{
 			error_code = HM_ERR_DYNAMIC_ARRAY;
 			goto _error_case;
@@ -536,7 +536,7 @@ _hashmap_manipulation_stage:
 			Entry *current_entry = NULL;
 
 			int err_at = at_da(entreis_to_estroy, i, (void **)&current_entry);
-			if (err_at != DA_SUCCESS && err_at != DA_ARRAY_EMPTY)
+			if (err_at != DA_SUCCESS && err_at != DA_EMPTY)
 			{
 				error_code = HM_ERR_DYNAMIC_ARRAY;
 				goto _error_case;
@@ -554,8 +554,8 @@ _hashmap_manipulation_stage:
 	map->capacity = new_entries_capacity;
 	map->n_ent = entries_to_keep->count;
 
-	free_dynamic_array(entries_to_keep);
-	free_dynamic_array(entreis_to_estroy);
+	free_dynamic_array(&entries_to_keep);
+	free_dynamic_array(&entreis_to_estroy);
 
 	return error_code;
 
@@ -563,9 +563,9 @@ _error_case:
 	if (new_entries != NULL)
 		free(new_entries);
 	if (entries_to_keep != NULL)
-		free_dynamic_array(entries_to_keep);
+		free_dynamic_array(&entries_to_keep);
 	if (entreis_to_estroy != NULL)
-		free_dynamic_array(entreis_to_estroy);
+		free_dynamic_array(&entreis_to_estroy);
 
 	return error_code;
 }

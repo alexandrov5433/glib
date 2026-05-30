@@ -220,7 +220,7 @@ static enum StringError _split_str_pattern_to_empty(
 		return STR_ERR_NULL_ARGUMENT;
 
 	DynamicArray *parts = NULL;
-	int err_da_init = new_dynamic_array(VOID_PTR, &parts);
+	int err_da_init = new_dynamic_array(DA_PTR, &parts);
 	if (err_da_init)
 		return STR_ERR_DYNAMIC_ARRAY;
 
@@ -286,6 +286,7 @@ _main_loop:
 		int err_part_init = new_string_nt(NULL, &part);
 		if (err_part_init)
 		{
+			// TODO: Update clean-up with activate_destructor
 			process_da(parts, (void (*)(void *))free_string);
 			return err_part_init;
 		}
@@ -950,7 +951,7 @@ enum StringError concat_str_da(String **const output, DynamicArray *const string
 	if (output == NULL || strings == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
-	if (strings->type != VOID_PTR)
+	if (strings->type != DA_PTR)
 		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
 
 	String *str_result = NULL;
@@ -1013,7 +1014,7 @@ enum StringError concat_str_da_c(
 	if (output == NULL || strings == NULL)
 		return STR_ERR_NULL_ARGUMENT;
 
-	if (strings->type != VOID_PTR)
+	if (strings->type != DA_PTR)
 		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
 
 	String *str_result = NULL;
@@ -1037,7 +1038,7 @@ enum StringError concat_str_da_c(
 	if (err_has_next)
 	{
 		free_string(str_result);
-		free_iterator_da(dai);
+		free_iterator_da(&dai);
 		return STR_ERR_DYNAMIC_ARRAY;
 	}
 _main_loop:
@@ -1048,7 +1049,7 @@ _main_loop:
 		if (err_next)
 		{
 			free_string(str_result);
-			free_iterator_da(dai);
+			free_iterator_da(&dai);
 			return STR_ERR_DYNAMIC_ARRAY;
 		}
 
@@ -1056,7 +1057,7 @@ _main_loop:
 		if (err_append_str)
 		{
 			free_string(str_result);
-			free_iterator_da(dai);
+			free_iterator_da(&dai);
 			return err_append_str;
 		}
 
@@ -1064,7 +1065,7 @@ _main_loop:
 		if (err_has_next)
 		{
 			free_string(str_result);
-			free_iterator_da(dai);
+			free_iterator_da(&dai);
 			return STR_ERR_DYNAMIC_ARRAY;
 		}
 
@@ -1079,7 +1080,7 @@ _main_loop:
 			if (err_append_str)
 			{
 				free_string(str_result);
-				free_iterator_da(dai);
+				free_iterator_da(&dai);
 				return err_append_str;
 			}
 		}
@@ -1087,7 +1088,7 @@ _main_loop:
 
 _end_stage:
 	*output = str_result;
-	free_iterator_da(dai);
+	free_iterator_da(&dai);
 	return STR_SUCCESS;
 }
 
@@ -1170,7 +1171,7 @@ enum StringError split_str(const String *const str, const String *const pattern,
 	DynamicArray *parts = NULL;
 	DynamicArrayIterator *dai = NULL;
 
-	if (new_dynamic_array(VOID_PTR, &parts))
+	if (new_dynamic_array(DA_PTR, &parts))
 	{
 		error_code = STR_ERR_DYNAMIC_ARRAY;
 		goto _error_case;
@@ -1222,20 +1223,20 @@ enum StringError split_str(const String *const str, const String *const pattern,
 
 _end_stage:
 	*output = parts;
-	free_iterator_da(dai);
-	free_dynamic_array(output_split);
+	free_iterator_da(&dai);
+	free_dynamic_array(&output_split);
 	return error_code;
 
 _error_case:
 	if (NULL != dai)
-		free_iterator_da(dai);
+		free_iterator_da(&dai);
 	if (NULL != output_split)
 	{
 		process_da(output_split, (void (*)(void *))free_string);
-		free_dynamic_array(output_split);
+		free_dynamic_array(&output_split);
 	}
 	if (NULL != parts)
-		free_dynamic_array(parts); // String pointers are copied to parts from output_split.
+		free_dynamic_array(&parts); // String pointers are copied to parts from output_split.
 
 	return error_code;
 }

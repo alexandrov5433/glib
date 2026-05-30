@@ -29,15 +29,16 @@
  */
 enum DynamicArrayError
 {
-	DA_ARRAY_EMPTY = -2,		   /**< (-2) The array does not include any items. */
-	DA_ITEM_NOT_FOUND = -1,		   /**< (-1) The searched item was not found among the items in the array. */
-	DA_SUCCESS = 0,			   /**< (0) Successful execution of the called function. */
-	DA_ERR_NULL_ARGUMENT = 1,	   /**< (1) One or more arguments are NULL. */
-	DA_ERR_MEMORY_ALLOCATION = 2,	   /**< (2) Failed to allocate or reallocate memory. */
-	DA_ERR_TYPE_MISMATCH = 3,	   /**< (3) The type (DynamicArrayType) of the DynamicArray does not match the type, which the called function processes. */
-	DA_ERR_TYPE_UNKNOWN = 4,	   /**< (4) The type (DynamicArrayType) is unknown and not supported. */
-	DA_ERR_INDEX_OUT_OF_BOUNDS = 5,	   /**< (5) The targeted index is outside of the boundaries of the DynamicArray. */
-	DA_ERR_ITEM_SIZE_DETERMINATION = 6 /**< (6) The size in bytes of a single item could not be determined, based on the given type argument. */
+	DA_EMPTY = -2,		    /**< (-2) The array does not include any items. */
+	DA_ITEM_NOT_FOUND = -1,		    /**< (-1) The searched item was not found among the items in the array. */
+	DA_SUCCESS = 0,			    /**< (0) Successful execution of the called function. */
+	DA_ERR_NULL_ARGUMENT = 1,	    /**< (1) One or more arguments are NULL. */
+	DA_ERR_MEMORY_ALLOCATION = 2,	    /**< (2) Failed to allocate or reallocate memory. */
+	DA_ERR_TYPE_MISMATCH = 3,	    /**< (3) The type (DynamicArrayType) of the DynamicArray does not match the type, which the called function processes. */
+	DA_ERR_TYPE_UNKNOWN = 4,	    /**< (4) The type (DynamicArrayType) is unknown and not supported. */
+	DA_ERR_INDEX_OUT_OF_BOUNDS = 5,	    /**< (5) The targeted index is outside of the boundaries of the DynamicArray. */
+	DA_ERR_ITEM_SIZE_DETERMINATION = 6, /**< (6) The size in bytes of a single item could not be determined, based on the given type argument. */
+	DA_ERR_NULL_DESTRUCTOR = 7	    /**< (7) The destructor is NULL - either as a function argument or structure member. */
 };
 
 /**
@@ -46,11 +47,11 @@ enum DynamicArrayError
  */
 enum DynamicArrayType
 {
-	INT = 0,
-	CHAR = 1,
-	FLOAT = 2,
-	DOUBLE = 3,
-	VOID_PTR = 4
+	DA_INT = 0,
+	DA_CHAR = 1,
+	DA_FLOAT = 2,
+	DA_DOUBLE = 3,
+	DA_PTR = 4
 };
 
 /**
@@ -67,10 +68,11 @@ typedef struct DynamicArray
 		double *double_arr;
 		void **void_arr;
 	};
-	size_t count;		    /**< The current number of items in the array. */
-	size_t capacity;	    /**< The total number of places (indexes) in the array. This is not the total allocated memory. */
-	size_t single_item_size;    /**< The size in bytes of a singe item contained in the array. */
-	enum DynamicArrayType type; /**< Indicates the type of items contained in the array. */
+	size_t count;			/**< The current number of items in the array. */
+	size_t capacity;		/**< The total number of places (indexes) in the array. This is not the total allocated memory. */
+	size_t single_item_size;	/**< The size in bytes of a singe item contained in the array. */
+	void (*destructor)(void **ptr); /**< A function - implemented by the user - ment to process and/or free the memory at the addresses (pointers) stored in the DynamicArray only of type DA_PTR. Defaults to NULL. Used either on demand (apply_desturctor) of when freeing the DynamicArray with free_danymic_array_d. */
+	enum DynamicArrayType type;	/**< Indicates the type of items contained in the array. */
 } DynamicArray;
 
 /**
@@ -84,13 +86,15 @@ typedef struct DynamicArrayIterator
 } DynamicArrayIterator;
 
 /**
- * Creates a new DynamicArray.
- * @param type The type of values the array will hold, according to the DynamicArrayType enum.
- * @param output A pointer, which will be updated with the adress of the new DynamicArray.
+ * Creates a new @ref DynamicArray.
+ * @param type The type of values the array will hold, according to the @ref DynamicArrayType enum.
+ * @param output A pointer, which will be updated with the adress of the new @ref DynamicArray.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
  *
+ * - DA_ERR_NULL_ARGUMENT
+ * 
  * - DA_ERR_TYPE_UNKNOWN
  *
  * - DA_ERR_MEMORY_ALLOCATION
@@ -100,8 +104,32 @@ typedef struct DynamicArrayIterator
 GALXLIB_API enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const type, DynamicArray **const output);
 
 /**
- * Frees the memory used by the DynamicArray. The items contained in the array are not freed.
- * @param da A pointer to the DynamicArray, which must be freed.
+ * Creates a new @ref DynamicArray.
+ * @param type The type of values the array will hold, according to the @ref DynamicArrayType enum.
+ * @param destructor A function, which will be added as a member to the @ref DynamicArray.
+ * @param output A pointer, which will be updated with the adress of the new @ref DynamicArray.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ * 
+ * - DA_ERR_TYPE_UNKNOWN
+ *
+ * - DA_ERR_MEMORY_ALLOCATION
+ *
+ * - DA_ERR_ITEM_SIZE_DETERMINATION
+ */
+GALXLIB_API enum DynamicArrayError new_dynamic_array_d(
+    enum DynamicArrayType const type,
+    void (*destructor)(void **ptr),
+    DynamicArray **const output);
+
+/**
+ * Frees the memory used by the @ref DynamicArray. The items contained in the array are not freed.
+ * @param da A pointer to the address of the @ref DynamicArray, which must be freed.
+ * The address of the @ref DynamicArray is set to NULL on successful execution.
+ * If the address is NULL, nothing is done and DA_SUCCESS is returned.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -110,7 +138,30 @@ GALXLIB_API enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const
  *
  * - DA_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError free_dynamic_array(DynamicArray *const da);
+GALXLIB_API enum DynamicArrayError free_dynamic_array(DynamicArray **const da);
+
+/**
+ * Frees the memory used by the @ref DynamicArray. 
+ * This function my be used on a @ref DynamicArray of any @ref DynamicArrayType. 
+ * The destructor function, found as a member of the @ref DynamicArray, is applied on each element only if the @ref DynamicArray
+ * is of @ref DynamicArrayType DA_PTR.
+ * For each other @ref DynamicArrayType the function executes like the free_dynamic_array function.
+ * @param da A pointer to the address of the @ref DynamicArray, which must be freed.
+ * The address of the @ref DynamicArray is set to NULL on successful execution.
+ * If the address is NULL, nothing is done and DA_SUCCESS is returned.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ * 
+ * - DA_ERR_TYPE_MISMATCH
+ *
+ * - DA_ERR_TYPE_UNKNOWN
+ * 
+ * - DA_ERR_NULL_DESTRUCTOR
+ */
+GALXLIB_API enum DynamicArrayError free_dynamic_array_d(DynamicArray **const da);
 
 /**
  * Adds the integer to the end of the DynamicArray.
@@ -520,7 +571,7 @@ GALXLIB_API enum DynamicArrayError remove_at_da(DynamicArray *const da, const si
  * Removes the first matched item from the DynamicArray. The search is done from left to right.
  * @param da A pointer to the DynamicArray.
  * @param target A pointer to the target which is to be removed.
- * If the DynamicArray is of type VOID_PTR the target is used as it is, otherwise it is dereferenced.
+ * If the DynamicArray is of type DA_PTR the target is used as it is, otherwise it is dereferenced.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -580,6 +631,47 @@ GALXLIB_API enum DynamicArrayError apply_at_da(const DynamicArray *const da, con
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API enum DynamicArrayError process_da(DynamicArray *const da, void (*processor)(void *item_ptr));
+
+/**
+ * Applies the destructor function, member of the @ref DynamicArray structure, to each element of the array.
+ * This function must be used only on a @ref DynamicArray of @ref DynamicArrayType DA_PTR, 
+ * otherwise the @ref DynamicArrayError DA_ERR_TYPE_MISMATCH is returned.
+ * @param da A @ref DynamicArray, the destructor of which must be appied on its own elements.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ * 
+ * - DA_ERR_NULL_DESTRUCTOR
+ *
+ * - DA_ERR_TYPE_UNKNOWN
+ * 
+ * - DA_ERR_TYPE_MISMATCH
+ *
+ * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ */
+GALXLIB_API enum DynamicArrayError activate_destructor_da(DynamicArray *const da);
+
+/**
+ * Applies the given destructor function to each element of the @ref DynamicArray.
+ * This function must be used only on a @ref DynamicArray of @ref DynamicArrayType DA_PTR, 
+ * otherwise the @ref DynamicArrayError DA_ERR_TYPE_MISMATCH is returned.
+ * @param da A @ref DynamicArray containing the elements, on which the destructor must be applied.
+ * @param destructor The destructor function, which must be applied on each element of the @ref DynamicArray.
+ * @return A value of the @ref DynamicArrayError:
+ *
+ * - DA_SUCCESS
+ *
+ * - DA_ERR_NULL_ARGUMENT
+ *
+ * - DA_ERR_TYPE_UNKNOWN
+ * 
+ * - DA_ERR_TYPE_MISMATCH
+ *
+ * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ */
+GALXLIB_API enum DynamicArrayError apply_destructor_da(DynamicArray *const da, void (*destructor)(void **value));
 
 /**
  * Filters the given DynamicArray, leaving only the items selected by the filter function.
@@ -649,7 +741,7 @@ GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, size_t index, v
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
+// GALXLIB_API enum DynamicArrayError find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds a specific item in the DynamicArray, without modifing the array. The search is done from right to left.
@@ -673,7 +765,7 @@ GALXLIB_API enum DynamicArrayError find_da(DynamicArray *const da, void **const 
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
+// GALXLIB_API enum DynamicArrayError find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds the index of a specific item in the DynamicArray, without modifing the array.
@@ -697,7 +789,7 @@ GALXLIB_API enum DynamicArrayError find_last_da(DynamicArray *const da, void **c
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
+// GALXLIB_API enum DynamicArrayError find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds the index of a specific item in the DynamicArray, without modifing the array.
@@ -720,7 +812,7 @@ GALXLIB_API enum DynamicArrayError find_index_da(DynamicArray *const da, size_t 
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
+// GALXLIB_API enum DynamicArrayError find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds the index of a specific item in the DynamicArray, without modifing the array, by directly comparing items to the given value.
@@ -740,7 +832,7 @@ GALXLIB_API enum DynamicArrayError find_last_index_da(DynamicArray *const da, si
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError index_of_da(DynamicArray *const da, size_t *const output, void *const value);
+GALXLIB_API enum DynamicArrayError index_of_da(DynamicArray *const da, void *const value, size_t *const output);
 
 /**
  * Creates a new @ref DynamicArrayIterator.
@@ -753,11 +845,14 @@ GALXLIB_API enum DynamicArrayError index_of_da(DynamicArray *const da, size_t *c
  * - DA_ERR_NULL_ARGUMENT
  *
  * - DA_ERR_MEMORY_ALLOCATION
+ * 
+ * - DA_ERR_TYPE_UNKNOWN
  */
 GALXLIB_API enum DynamicArrayError new_iterator_da(DynamicArray *const da, DynamicArrayIterator **const output);
 
 /**
  * Frees the memory of a @ref DynamicArrayIterator.
+ * The address of the @ref DynamicArrayIterator is set to NULL.
  * @param itr The @ref DynamicArrayIterator.
  * @return A value of the @ref DynamicArrayError:
  *
@@ -765,7 +860,7 @@ GALXLIB_API enum DynamicArrayError new_iterator_da(DynamicArray *const da, Dynam
  *
  * - DA_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum DynamicArrayError free_iterator_da(DynamicArrayIterator *itr);
+GALXLIB_API enum DynamicArrayError free_iterator_da(DynamicArrayIterator **itr);
 
 /**
  * Outputs 1 if there are more elements to iterate through, 0 otherwise.
@@ -788,9 +883,9 @@ GALXLIB_API enum DynamicArrayError has_next_dai(const DynamicArrayIterator *cons
  * - DA_SUCCESS
  *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API enum DynamicArrayError next_int_dai(DynamicArrayIterator *const itr, int *const output);
@@ -804,9 +899,9 @@ GALXLIB_API enum DynamicArrayError next_int_dai(DynamicArrayIterator *const itr,
  * - DA_SUCCESS
  *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API enum DynamicArrayError next_char_dai(DynamicArrayIterator *const itr, char *const output);
@@ -820,9 +915,9 @@ GALXLIB_API enum DynamicArrayError next_char_dai(DynamicArrayIterator *const itr
  * - DA_SUCCESS
  *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API enum DynamicArrayError next_float_dai(DynamicArrayIterator *const itr, float *const output);
@@ -836,9 +931,9 @@ GALXLIB_API enum DynamicArrayError next_float_dai(DynamicArrayIterator *const it
  * - DA_SUCCESS
  *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API enum DynamicArrayError next_double_dai(DynamicArrayIterator *const itr, double *const output);
@@ -852,9 +947,9 @@ GALXLIB_API enum DynamicArrayError next_double_dai(DynamicArrayIterator *const i
  * - DA_SUCCESS
  *
  * - DA_ERR_NULL_ARGUMENT
- * 
+ *
  * - DA_ERR_TYPE_MISMATCH
- * 
+ *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
 GALXLIB_API enum DynamicArrayError next_ptr_dai(DynamicArrayIterator *const itr, void **const output);
