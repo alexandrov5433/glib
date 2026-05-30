@@ -26,6 +26,40 @@ static inline enum DynamicArrayError _is_type_invalid(enum DynamicArrayType cons
 	}
 }
 
+static enum DynamicArrayError _validate_da(const DynamicArray *const da)
+{
+	if (NULL == da)
+		return DA_ERR_NULL_ARGUMENT;
+
+	switch (da->type)
+	{
+	case DA_INT:
+		if (NULL == da->int_arr)
+			return DA_ERR_NULL_ARRAY;
+		break;
+	case DA_CHAR:
+		if (NULL == da->char_arr)
+			return DA_ERR_NULL_ARRAY;
+		break;
+	case DA_FLOAT:
+		if (NULL == da->float_arr)
+			return DA_ERR_NULL_ARRAY;
+		break;
+	case DA_DOUBLE:
+		if (NULL == da->double_arr)
+			return DA_ERR_NULL_ARRAY;
+		break;
+	case DA_PTR:
+		if (NULL == da->void_arr)
+			return DA_ERR_NULL_ARRAY;
+		break;
+	default:
+		return DA_ERR_TYPE_UNKNOWN;
+	}
+
+	return DA_SUCCESS;
+}
+
 static enum DynamicArrayError _mem_realloc(DynamicArray *const da, size_t new_capcity)
 {
 	if (da == NULL)
@@ -595,8 +629,9 @@ enum DynamicArrayError free_dynamic_array_d(DynamicArray **const da)
 
 enum DynamicArrayError push_int_da(DynamicArray *const da, int const item)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_INT)
 		return DA_ERR_TYPE_MISMATCH;
@@ -612,8 +647,9 @@ enum DynamicArrayError push_int_da(DynamicArray *const da, int const item)
 
 enum DynamicArrayError push_char_da(DynamicArray *const da, char const item)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_CHAR)
 		return DA_ERR_TYPE_MISMATCH;
@@ -629,8 +665,9 @@ enum DynamicArrayError push_char_da(DynamicArray *const da, char const item)
 
 enum DynamicArrayError push_float_da(DynamicArray *const da, float const item)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_FLOAT)
 		return DA_ERR_TYPE_MISMATCH;
@@ -646,8 +683,9 @@ enum DynamicArrayError push_float_da(DynamicArray *const da, float const item)
 
 enum DynamicArrayError push_double_da(DynamicArray *const da, double const item)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_DOUBLE)
 		return DA_ERR_TYPE_MISMATCH;
@@ -663,8 +701,9 @@ enum DynamicArrayError push_double_da(DynamicArray *const da, double const item)
 
 enum DynamicArrayError push_ptr_da(DynamicArray *const da, void *const item)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_PTR)
 		return DA_ERR_TYPE_MISMATCH;
@@ -680,8 +719,9 @@ enum DynamicArrayError push_ptr_da(DynamicArray *const da, void *const item)
 
 enum DynamicArrayError unshift_int_da(DynamicArray *const da, int const item)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_INT)
 		return DA_ERR_TYPE_MISMATCH;
@@ -703,8 +743,9 @@ enum DynamicArrayError unshift_int_da(DynamicArray *const da, int const item)
 
 enum DynamicArrayError unshift_char_da(DynamicArray *const da, char const item)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_CHAR)
 		return DA_ERR_TYPE_MISMATCH;
@@ -726,8 +767,9 @@ enum DynamicArrayError unshift_char_da(DynamicArray *const da, char const item)
 
 enum DynamicArrayError unshift_float_da(DynamicArray *const da, float const item)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_FLOAT)
 		return DA_ERR_TYPE_MISMATCH;
@@ -749,8 +791,9 @@ enum DynamicArrayError unshift_float_da(DynamicArray *const da, float const item
 
 enum DynamicArrayError unshift_double_da(DynamicArray *const da, double const item)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_DOUBLE)
 		return DA_ERR_TYPE_MISMATCH;
@@ -772,8 +815,9 @@ enum DynamicArrayError unshift_double_da(DynamicArray *const da, double const it
 
 enum DynamicArrayError unshift_ptr_da(DynamicArray *const da, void *const item)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_PTR)
 		return DA_ERR_TYPE_MISMATCH;
@@ -797,8 +841,9 @@ enum DynamicArrayError unshift_ptr_da(DynamicArray *const da, void *const item)
 
 enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const output)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_INT)
 		return DA_ERR_TYPE_MISMATCH;
@@ -821,8 +866,9 @@ enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const output)
 
 enum DynamicArrayError pop_char_da(DynamicArray *const da, char *const output)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_CHAR)
 		return DA_ERR_TYPE_MISMATCH;
@@ -845,8 +891,9 @@ enum DynamicArrayError pop_char_da(DynamicArray *const da, char *const output)
 
 enum DynamicArrayError pop_float_da(DynamicArray *const da, float *const output)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_FLOAT)
 		return DA_ERR_TYPE_MISMATCH;
@@ -869,8 +916,9 @@ enum DynamicArrayError pop_float_da(DynamicArray *const da, float *const output)
 
 enum DynamicArrayError pop_double_da(DynamicArray *const da, double *const output)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_DOUBLE)
 		return DA_ERR_TYPE_MISMATCH;
@@ -893,8 +941,9 @@ enum DynamicArrayError pop_double_da(DynamicArray *const da, double *const outpu
 
 enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **const output)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_PTR)
 		return DA_ERR_TYPE_MISMATCH;
@@ -917,8 +966,9 @@ enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **const output)
 
 enum DynamicArrayError shift_int_da(DynamicArray *const da, int *const output)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_INT)
 		return DA_ERR_TYPE_MISMATCH;
@@ -947,8 +997,9 @@ enum DynamicArrayError shift_int_da(DynamicArray *const da, int *const output)
 
 enum DynamicArrayError shift_char_da(DynamicArray *const da, char *const output)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_CHAR)
 		return DA_ERR_TYPE_MISMATCH;
@@ -977,8 +1028,9 @@ enum DynamicArrayError shift_char_da(DynamicArray *const da, char *const output)
 
 enum DynamicArrayError shift_float_da(DynamicArray *const da, float *const output)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_FLOAT)
 		return DA_ERR_TYPE_MISMATCH;
@@ -1037,8 +1089,9 @@ enum DynamicArrayError shift_double_da(DynamicArray *const da, double *const out
 
 enum DynamicArrayError shift_ptr_da(DynamicArray *const da, void **const output)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (da->type != DA_PTR)
 		return DA_ERR_TYPE_MISMATCH;
@@ -1067,8 +1120,9 @@ enum DynamicArrayError shift_ptr_da(DynamicArray *const da, void **const output)
 
 enum DynamicArrayError remove_at_da(DynamicArray *const da, const size_t index)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
@@ -1086,7 +1140,11 @@ enum DynamicArrayError remove_at_da(DynamicArray *const da, const size_t index)
 
 enum DynamicArrayError remove_first_da(DynamicArray *const da, void *const target)
 {
-	if (da == NULL || target == NULL)
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
+
+	if (target == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
 	int output_is_empty = 0;
@@ -1112,7 +1170,11 @@ enum DynamicArrayError remove_first_da(DynamicArray *const da, void *const targe
 
 enum DynamicArrayError apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr))
 {
-	if (da == NULL || worker == NULL)
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
+
+	if (worker == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
 	int output_is_empty = 0;
@@ -1133,7 +1195,11 @@ enum DynamicArrayError apply_at_da(const DynamicArray *const da, const size_t in
 
 enum DynamicArrayError process_da(DynamicArray *const da, void (*processor)(void *item_ptr))
 {
-	if (da == NULL || processor == NULL)
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
+
+	if (processor == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
 	void *ptr = NULL;
@@ -1154,8 +1220,9 @@ enum DynamicArrayError process_da(DynamicArray *const da, void (*processor)(void
 
 enum DynamicArrayError activate_destructor_da(DynamicArray *const da)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	if (DA_PTR != da->type)
 		return DA_ERR_TYPE_MISMATCH;
@@ -1178,7 +1245,11 @@ enum DynamicArrayError activate_destructor_da(DynamicArray *const da)
 
 enum DynamicArrayError apply_destructor_da(DynamicArray *const da, void (*destructor)(void **value))
 {
-	if (da == NULL || destructor == NULL)
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
+
+	if (destructor == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
 	if (DA_PTR != da->type)
@@ -1199,7 +1270,11 @@ enum DynamicArrayError apply_destructor_da(DynamicArray *const da, void (*destru
 
 enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *item_ptr))
 {
-	if (da == NULL || filter == NULL)
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
+
+	if (filter == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
 	int output_is_empty = 0;
@@ -1308,8 +1383,9 @@ _error_case:
 
 enum DynamicArrayError at_da(DynamicArray *const da, size_t index, void **output)
 {
-	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
@@ -1417,7 +1493,11 @@ enum DynamicArrayError at_da(DynamicArray *const da, size_t index, void **output
 
 enum DynamicArrayError index_of_da(DynamicArray *const da, void *const value, size_t *const output)
 {
-	if (da == NULL || output == NULL || value == NULL)
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
+
+	if (output == NULL || value == NULL)
 		return DA_ERR_NULL_ARGUMENT;
 
 	if (da->count == 0)
@@ -1460,12 +1540,12 @@ enum DynamicArrayError index_of_da(DynamicArray *const da, void *const value, si
 
 enum DynamicArrayError new_iterator_da(DynamicArray *const da, DynamicArrayIterator **const output)
 {
-	if (da == NULL || output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+	int err_validate = _validate_da(da);
+	if (err_validate)
+		return err_validate;
 
-	int err_type = _is_type_invalid(da->type);
-	if (err_type)
-		return err_type;
+	if (output == NULL)
+		return DA_ERR_NULL_ARGUMENT;
 
 	DynamicArrayIterator *itr = (DynamicArrayIterator *)malloc(sizeof(DynamicArrayIterator));
 	if (itr == NULL)

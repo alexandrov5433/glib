@@ -43,7 +43,7 @@ static void _test_activate_destructor_da()
 	assert(activate_destructor_da(da_c) == DA_ERR_TYPE_MISMATCH);
 	assert(activate_destructor_da(da_f) == DA_ERR_TYPE_MISMATCH);
 	assert(activate_destructor_da(da_d) == DA_ERR_TYPE_MISMATCH);
-	assert(activate_destructor_da(da_invalid_type) == DA_ERR_TYPE_MISMATCH);
+	assert(activate_destructor_da(da_invalid_type) == DA_ERR_TYPE_UNKNOWN);
 
 	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
 	assert(da != NULL);
@@ -671,7 +671,7 @@ static void _test_apply_destructor_da()
 	assert(apply_destructor_da(da_c, _test_destructor) == DA_ERR_TYPE_MISMATCH);
 	assert(apply_destructor_da(da_f, _test_destructor) == DA_ERR_TYPE_MISMATCH);
 	assert(apply_destructor_da(da_d, _test_destructor) == DA_ERR_TYPE_MISMATCH);
-	assert(apply_destructor_da(da_invalid_type, _test_destructor) == DA_ERR_TYPE_MISMATCH);
+	assert(apply_destructor_da(da_invalid_type, _test_destructor) == DA_ERR_TYPE_UNKNOWN);
 
 	/* ==================== SUCCESS CASE ==================== */
 
