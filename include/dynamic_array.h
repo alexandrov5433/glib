@@ -619,7 +619,7 @@ GALXLIB_API enum DynamicArrayError apply_at_da(const DynamicArray *const da, con
  * If the DynamicArray is empty, nothing is done and DA_SUCCESS is returned.
  * @param da A pointer to the DynamicArray.
  * @param processor A function pointer to the function, which will process the items.
- * If the type of the array is VOID_PTR, the processor receives the item directly.
+ * If the type of the array is DA_PTR, the processor receives the item directly.
  * For any other type, the processor receives a pointer to the item, regardless of the type of the array.
  * @return A value of the @ref DynamicArrayError:
  *
@@ -679,7 +679,7 @@ GALXLIB_API enum DynamicArrayError apply_destructor_da(DynamicArray *const da, v
  * If the DynamicArray is empty, nothing is done and DA_SUCCESS is returned.
  * @param da A pointer to the DynamicArray.
  * @param filter A function pointer to the function, which will select the wanted items.
- * If the type of the array is VOID_PTR, the filter receives the item directly.
+ * If the type of the array is DA_PTR, the filter receives the item directly.
  * For any other type, the filter receives a pointer to the item, regardless of the type of the array.
  * The filter must return 1 if the item is to stay in the array. Any other value will lead to the removal of the item.
  * @return A value of the @ref DynamicArrayError:
@@ -701,11 +701,11 @@ GALXLIB_API enum DynamicArrayError apply_destructor_da(DynamicArray *const da, v
 GALXLIB_API enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *item_ptr));
 
 /**
- * Gets the item at a given index, without modifing the DynamicArray.
- * @param da A pointer to the DynamicArray.
+ * Retrieves the item at the given index, without modifing the @ref DynamicArray.
+ * @param da A pointer to the @ref DynamicArray.
  * @param output A double void pointer, which will receive the address of the item.
- * If the type of the array is VOID_PTR, the item it self (which is a void pointer) is placed in the output.
- * For any other type, the address of the item, cast to void pointer regardless of the type of the array, is placed in output.
+ * If the @ref DynamicArrayType is DA_PTR, the item itself - which is a pointer - is placed in the output.
+ * For any other @ref DynamicArrayType, the address of the item - contained in the @ref DynamicArray - is placed in the output.
  * @return A value of the @ref DynamicArrayError:
  *
  * - DA_SUCCESS
@@ -718,16 +718,16 @@ GALXLIB_API enum DynamicArrayError filter_da(DynamicArray *const da, int (*filte
  *
  * - DA_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, size_t index, void **output);
+GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, const size_t index, void **const output);
 
 /**
  * Finds a specific item in the DynamicArray, without modifing the array. The search is done from left to right.
  * The search stops as soon as the selector chooses one item.
  * @param da A pointer to the DynamicArray.
  * @param output A double void pointer, which will receive the address of the item.
- * If the type of the array is VOID_PTR, the item it self (which is a void pointer) is placed in the output.
+ * If the type of the array is DA_PTR, the item it self (which is a void pointer) is placed in the output.
  * @param selector A function pointer to the function, which will select the item.
- * If the type of the array is VOID_PTR, the selector receives the item directly.
+ * If the type of the array is DA_PTR, the selector receives the item directly.
  * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array.
  * The selector must return 1 to indicate the desired item. Any other value is treated as false.
  * @return A value of the @ref DynamicArrayError:
@@ -749,9 +749,9 @@ GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, size_t index, v
  * The search stops as soon as the selector chooses one item.
  * @param da A pointer to the DynamicArray.
  * @param output A double void pointer, which will receive the address of the item.
- * If the type of the array is VOID_PTR, the item it self (which is a void pointer) is placed in the output.
+ * If the type of the array is DA_PTR, the item it self (which is a void pointer) is placed in the output.
  * @param selector A function pointer to the function, which will select the item.
- * If the type of the array is VOID_PTR, the selector receives the item directly.
+ * If the type of the array is DA_PTR, the selector receives the item directly.
  * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array.
  * The selector must return 1 to indicate the desired item. Any other value is treated as false.
  * @return A value of the @ref DynamicArrayError:
@@ -775,7 +775,7 @@ GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, size_t index, v
  * @param da A pointer to the DynamicArray.
  * @param output An int pointer, which will receive the index of the item.
  * @param selector A function pointer to the function, which will select the item.
- * If the type of the array is VOID_PTR, the selector receives the item directly.
+ * If the type of the array is DA_PTR, the selector receives the item directly.
  * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array.
  * The selector must return 1 to indicate the desired item. Any other value is treated as false.
  * @return A value of the @ref DynamicArrayError:
@@ -799,7 +799,7 @@ GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, size_t index, v
  * @param da A pointer to the DynamicArray.
  * @param output An int pointer, which will receive the index of the item.
  * @param selector A function pointer to the function, which will select the item.
- * If the type of the array is VOID_PTR, the selector receives the item directly.
+ * If the type of the array is DA_PTR, the selector receives the item directly.
  * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array. The selector must return 1 to indicate the desired item. Any other value is treated as false.
  * @return A value of the @ref DynamicArrayError:
  *

@@ -2468,6 +2468,156 @@ static void _test_next_dai_success_flows(void)
 	}
 }
 
+// static void _test_at_da(void)
+// {
+// 	DynamicArray *da = NULL;
+// 	DynamicArray *da_num = NULL;
+// 	Da_Person p = {.name = "Eli", .age = 1};
+// 	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+	
+// 	assert(push_ptr_da(da, &p) == DA_SUCCESS);
+	
+// 	Da_Person *p_output = NULL;
+// 	assert(at_da(da, 0, (void **)&p_output) == DA_SUCCESS);
+// 	assert(p_output != NULL);
+// 	assert(p_output->age == 1);
+// 	free_dynamic_array(&da);
+	
+// 	assert(new_dynamic_array(DA_INT, &da_num) == DA_SUCCESS);
+// 	assert(push_int_da(da_num, 1) == DA_SUCCESS);
+// 	int *num = NULL;
+// 	assert(at_da(da_num, 0, (void **)&num) == DA_SUCCESS);
+// 	assert(num != NULL);
+// 	assert(*num == 1);
+
+// 	free_dynamic_array(&da_num);
+// }
+
+static void _test_at_da(void) {
+    DynamicArray *da_int = NULL;
+    DynamicArray *da_char = NULL;
+    DynamicArray *da_float = NULL;
+    DynamicArray *da_double = NULL;
+    DynamicArray *da_ptr = NULL;
+    
+    void *output = NULL;
+    enum DynamicArrayError err;
+
+    // =========================================================================
+    // 1. ERROR CASES CHECK
+    // =========================================================================
+
+    // Case A: DA_ERR_NULL_ARGUMENT (da is NULL)
+    err = at_da(NULL, 0, &output);
+    assert(err == DA_ERR_NULL_ARGUMENT);
+
+    // Create a valid instance to test other error combinations
+    err = new_dynamic_array(DA_INT, &da_int);
+    assert(err == DA_SUCCESS);
+
+    // Case B: DA_ERR_NULL_ARGUMENT (output pointer is NULL)
+    err = at_da(da_int, 0, NULL);
+    assert(err == DA_ERR_NULL_ARGUMENT);
+
+    // Case C: DA_EMPTY (The array does not include any items yet)
+    err = at_da(da_int, 0, &output);
+    assert(err == DA_EMPTY);
+
+    // Add a valid item to transition out of the empty state
+    err = push_int_da(da_int, 100);
+    assert(err == DA_SUCCESS);
+
+    // Case D: DA_ERR_INDEX_OUT_OF_BOUNDS (Index equals count)
+    err = at_da(da_int, 1, &output);
+    assert(err == DA_ERR_INDEX_OUT_OF_BOUNDS);
+
+    // Case E: DA_ERR_INDEX_OUT_OF_BOUNDS (Index far greater than count)
+    err = at_da(da_int, 999, &output);
+    assert(err == DA_ERR_INDEX_OUT_OF_BOUNDS);
+
+    // Case F: DA_ERR_TYPE_UNKNOWN
+    // Manually inject an invalid/unsupported type enum to test safety checks
+    enum DynamicArrayType valid_type_backup = da_int->type;
+    da_int->type = (enum DynamicArrayType)999; 
+    err = at_da(da_int, 0, &output);
+    assert(err == DA_ERR_TYPE_UNKNOWN);
+    da_int->type = valid_type_backup; // Restore type safety
+
+    // =========================================================================
+    // 2. DYNAMIC ARRAY TYPE SUCCESS CHECKS
+    // =========================================================================
+
+    // --- Type 1: DA_INT ---
+    // For non-DA_PTR types, output receives the memory address of the element
+    output = NULL;
+    err = at_da(da_int, 0, &output);
+    assert(err == DA_SUCCESS);
+    assert(output != NULL);
+    assert(*(int *)output == 100);
+
+    // --- Type 2: DA_CHAR ---
+    err = new_dynamic_array(DA_CHAR, &da_char);
+    assert(err == DA_SUCCESS);
+    err = push_char_da(da_char, 'X');
+    assert(err == DA_SUCCESS);
+
+    output = NULL;
+    err = at_da(da_char, 0, &output);
+    assert(err == DA_SUCCESS);
+    assert(output != NULL);
+    assert(*(char *)output == 'X');
+
+    // --- Type 3: DA_FLOAT ---
+    err = new_dynamic_array(DA_FLOAT, &da_float);
+    assert(err == DA_SUCCESS);
+    err = push_float_da(da_float, 3.1415f);
+    assert(err == DA_SUCCESS);
+
+    output = NULL;
+    err = at_da(da_float, 0, &output);
+    assert(err == DA_SUCCESS);
+    assert(output != NULL);
+    assert(*(float *)output == 3.1415f);
+
+    // --- Type 4: DA_DOUBLE ---
+    err = new_dynamic_array(DA_DOUBLE, &da_double);
+    assert(err == DA_SUCCESS);
+    err = push_double_da(da_double, 2.7182818284);
+    assert(err == DA_SUCCESS);
+
+    output = NULL;
+    err = at_da(da_double, 0, &output);
+    assert(err == DA_SUCCESS);
+    assert(output != NULL);
+    assert(*(double *)output == 2.7182818284);
+
+    // --- Type 5: DA_PTR ---
+    // For DA_PTR, output receives the underlying pointer itself, not its address
+    err = new_dynamic_array(DA_PTR, &da_ptr);
+    assert(err == DA_SUCCESS);
+    
+    int dummy_value = 42;
+    void *target_ptr = &dummy_value;
+    err = push_ptr_da(da_ptr, target_ptr);
+    assert(err == DA_SUCCESS);
+
+    output = NULL;
+    err = at_da(da_ptr, 0, &output);
+    assert(err == DA_SUCCESS);
+    // Directly matching pointers as described by documentation
+    assert(output == target_ptr); 
+    assert(*(int *)output == 42);
+
+    // =========================================================================
+    // 3. CLEANUP
+    // =========================================================================
+    free_dynamic_array(&da_int);
+    free_dynamic_array(&da_char);
+    free_dynamic_array(&da_float);
+    free_dynamic_array(&da_double);
+    free_dynamic_array(&da_ptr);
+}
+
 void dynamicArrayTest()
 {
 	puts("################## Test: DynamicArray ##################");
@@ -2547,7 +2697,7 @@ void dynamicArrayTest()
 	_test_filter_da();
 
 	// at_da
-	// _test_at_da();
+	_test_at_da();
 
 	// find_da
 

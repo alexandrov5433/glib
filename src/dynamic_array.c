@@ -300,7 +300,7 @@ static enum DynamicArrayError _new_items_array(DynamicArray *const da)
 	return DA_SUCCESS;
 }
 
-static enum DynamicArrayError _get_pointer_at_index(const DynamicArray *const da, const size_t index, void **output)
+static enum DynamicArrayError _get_pointer_at_index(const DynamicArray *const da, const size_t index, void **const output)
 {
 	if (da == NULL || output == NULL)
 		return DA_ERR_NULL_ARGUMENT;
@@ -1381,11 +1381,14 @@ _error_case:
 
 // ##################   searching   ##################
 
-enum DynamicArrayError at_da(DynamicArray *const da, size_t index, void **output)
+enum DynamicArrayError at_da(DynamicArray *const da, const size_t index, void **const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
+
+	if (NULL == output)
+		return DA_ERR_NULL_ARGUMENT;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
@@ -1394,11 +1397,7 @@ enum DynamicArrayError at_da(DynamicArray *const da, size_t index, void **output
 	if (output_is_empty == 1)
 		return DA_EMPTY;
 
-	int err_get_pointer = _get_pointer_at_index(da, index, output);
-	if (err_get_pointer)
-		return err_get_pointer;
-
-	return DA_SUCCESS;
+	return _get_pointer_at_index(da, index, output);
 }
 
 // enum DynamicArrayError find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
