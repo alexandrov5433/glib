@@ -482,7 +482,7 @@ GALXLIB_API enum StringError concat_str(String **const output, const size_t n_st
 GALXLIB_API enum StringError concat_str_da(String **const output, DynamicArray *const strings);
 
 /**
- * Concatenates multiple Strings, from a @ref DynamicArray, into one. 
+ * Concatenates multiple Strings, from a @ref DynamicArray, into one.
  * A connector @ref String is placed between each two parts.
  * The order of the concatenation is the same as in the @ref DynamicArray.
  * The Strings from the DynamicArray are copied and can therefore be freed.
@@ -573,5 +573,33 @@ GALXLIB_API enum StringError includes_str(
     const String *const str,
     const String *const str_search,
     int *const output);
+
+/**
+ * Extracts a section of the @ref String and outputs it as a new String, without modifying the original String.
+ * @param str The String to extract from. If the length of this String is 0, an empty String is outputed.
+ * @param index_start The index of the first character to include in the extracted String.
+ * Must be less than index_end and the length of the given String.
+ * @param index_end The index of the first character to exclude from the extracted String.
+ * Must be less than or equal to the length of the given String.
+ * @param output A pointer, where the new extracted String will be placed.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
+ *
+ * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ *
+ * - STR_ERR_MEMORY_ALLOCATION
+ */
+GALXLIB_API enum StringError slice_str(
+    const String *const str,
+    const size_t index_start,
+    const size_t index_end,
+    String **const output);
 
 #endif

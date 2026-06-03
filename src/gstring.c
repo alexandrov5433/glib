@@ -1289,3 +1289,46 @@ _end_stage:
 	*output = result;
 	return STR_SUCCESS;
 }
+
+enum StringError slice_str(
+    const String *const str,
+    const size_t index_start,
+    const size_t index_end,
+    String **const output)
+{
+	int err_valid = _validate_nsl(str);
+	if (err_valid)
+		return err_valid;
+
+	if (NULL == output)
+		return STR_ERR_NULL_ARGUMENT;
+
+	String *result_str = NULL;
+	int err_result_str = new_string_nt(NULL, &result_str);
+	if (err_result_str)
+		return err_result_str;
+
+	if (0 == str->length)
+		goto _end_stage;
+
+	if (index_start >= index_end || index_end > str->length)
+	{
+		free_string(result_str);
+		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
+	}
+
+	int err_append = STR_SUCCESS;
+	for (size_t i = index_start; i < index_end; ++i)
+	{
+		err_append = append_char(result_str, (str->str)[i]);
+		if (err_append)
+		{
+			free_string(result_str);
+			return err_append;
+		}
+	}
+
+_end_stage:
+	*output = result_str;
+	return STR_SUCCESS;
+}

@@ -500,6 +500,141 @@ static void test_replace_str()
 	free_string(empty);
 }
 
+static void _test_slice_str(void) {
+    String *src = NULL;
+    String *out = NULL;
+    enum StringError err;
+
+    // =========================================================================
+    // 1. ERROR CASES: NULL ARGUMENTS
+    // =========================================================================
+    
+    // Case 1a: Source string pointer is NULL
+    err = slice_str(NULL, 0, 2, &out);
+    assert(err == STR_ERR_NULL_ARGUMENT);
+
+    // Case 1b: Output double-pointer is NULL
+    err = new_string_nt("Hello", &src);
+    assert(err == STR_SUCCESS);
+    err = slice_str(src, 0, 2, NULL);
+    assert(err == STR_ERR_NULL_ARGUMENT);
+    free_string(src);
+    src = NULL;
+
+    // =========================================================================
+    // 2. ERROR CASES: INVALID INTERNAL STRING STRUCT STATES (_validate_nsl)
+    // =========================================================================
+    
+    // Case 2a: The str member is NULL but length is greater than 0
+    String invalid_str_null_ptr;
+    invalid_str_null_ptr.str = NULL;
+    invalid_str_null_ptr.length = 5;
+    err = slice_str(&invalid_str_null_ptr, 0, 2, &out);
+    assert(err == STR_ERR_NULL_STR);
+
+    // Case 2b: The str member is NOT NULL but length is 0
+    String invalid_str_zero_len;
+    invalid_str_zero_len.str = "test";
+    invalid_str_zero_len.length = 0;
+    err = slice_str(&invalid_str_zero_len, 0, 0, &out);
+    assert(err == STR_ERR_ZERO_LENGTH);
+
+    // =========================================================================
+    // 3. ERROR CASES: INVALID ARGUMENT DIMENSIONS
+    // =========================================================================
+    err = new_string_nt("Hello", &src); // Length = 5
+    assert(err == STR_SUCCESS);
+
+    // Case 3a: index_start is greater than index_end
+    err = slice_str(src, 3, 1, &out);
+    assert(err == STR_ERR_INVALID_ARGUMENT_DIMENTIONS);
+
+    // Case 3b: index_start is equal to index_end (violates "must be less than index_end")
+    err = slice_str(src, 2, 2, &out);
+    assert(err == STR_ERR_INVALID_ARGUMENT_DIMENTIONS);
+
+    // Case 3c: index_start is equal to or greater than string length
+    err = slice_str(src, 5, 6, &out);
+    assert(err == STR_ERR_INVALID_ARGUMENT_DIMENTIONS);
+
+    // Case 3d: index_end is strictly greater than string length
+    err = slice_str(src, 1, 6, &out);
+    assert(err == STR_ERR_INVALID_ARGUMENT_DIMENTIONS);
+
+    free_string(src);
+    src = NULL;
+
+    // =========================================================================
+    // 4. SPECIAL CASE: EMPTY STRING BEHAVIOR
+    // =========================================================================
+    
+    // According to documentation: "If the length of this String is 0, an empty String is outputed."
+    err = new_string_nt("", &src); // Valid empty string: length = 0, str = NULL
+    assert(err == STR_SUCCESS);
+    assert(src->length == 0);
+    
+    err = slice_str(src, 0, 0, &out);
+    assert(err == STR_SUCCESS);
+    assert(out != NULL);
+    assert(out->length == 0);
+    
+    free_string(out);
+    out = NULL;
+    free_string(src);
+    src = NULL;
+
+    // =========================================================================
+    // 5. EXTRACTION CASES (VALID SUBSTRINGS)
+    // =========================================================================
+    err = new_string_nt("Beautiful", &src); // Length = 9
+    assert(err == STR_SUCCESS);
+
+    // Case 5a: Full slice matching original length (0 to 9) -> "Beautiful"
+    err = slice_str(src, 0, 9, &out);
+    assert(err == STR_SUCCESS);
+    assert(out != NULL);
+    assert(out->length == 9);
+    assert(memcmp(out->str, "Beautiful", 9) == 0);
+    free_string(out);
+    out = NULL;
+
+    // Case 5b: Slice anchored at the beginning (0 to 4) -> "Beau"
+    err = slice_str(src, 0, 4, &out);
+    assert(err == STR_SUCCESS);
+    assert(out->length == 4);
+    assert(memcmp(out->str, "Beau", 4) == 0);
+    free_string(out);
+    out = NULL;
+
+    // Case 5c: Slice isolated in the middle (3 to 6) -> "uti"
+    err = slice_str(src, 3, 6, &out);
+    assert(err == STR_SUCCESS);
+    assert(out->length == 3);
+    assert(memcmp(out->str, "uti", 3) == 0);
+    free_string(out);
+    out = NULL;
+
+    // Case 5d: Slice extending to the very end (4 to 9) -> "tiful"
+    err = slice_str(src, 4, 9, &out);
+    assert(err == STR_SUCCESS);
+    assert(out->length == 5);
+    assert(memcmp(out->str, "tiful", 5) == 0);
+    free_string(out);
+    out = NULL;
+
+    // Case 5e: Single-character extraction slice (3 to 4) -> "u"
+    err = slice_str(src, 3, 4, &out);
+    assert(err == STR_SUCCESS);
+    assert(out->length == 1);
+    assert(memcmp(out->str, "u", 1) == 0);
+    free_string(out);
+    out = NULL;
+
+    // Cleanup source string
+    free_string(src);
+    src = NULL;
+}
+
 void test_gstring(void)
 {
 	puts("################## Test: String ##################");
@@ -825,6 +960,9 @@ void test_gstring(void)
 
 	// includes_str
 	test_includes_str();
+
+	// slice_str
+	_test_slice_str();
 
 	// free_string
 	free_string(empty);
