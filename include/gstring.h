@@ -119,15 +119,17 @@ GALXLIB_API enum StringError new_string(const char *const char_arr, size_t lengt
 GALXLIB_API enum StringError new_string_nt(const char *const char_arr, String **const output);
 
 /**
- * Frees the memory of the String.
- * @param str A pointer to the String, which must be freed.
+ * Frees the memory of the @ref String.
+ * @param str A pointer to the address of the String, which must be freed.
+ * The address of the String is set to NULL on successful execution.
+ * If the address of the String is NULL, nothing is done and STR_SUCCESS is returned.
  * @return A value of the @ref StringError:
  *
  * - STR_SUCCESS
  *
  * - STR_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum StringError free_string(String *str);
+GALXLIB_API enum StringError free_string(String **str);
 
 /**
  * Appends the character to the end of the String.

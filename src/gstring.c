@@ -445,16 +445,15 @@ _end_stage:
 	return STR_SUCCESS;
 }
 
-enum StringError free_string(String *str)
+enum StringError free_string(String **str)
 {
-	if (str == NULL)
+	if (NULL == str)
 		return STR_ERR_NULL_ARGUMENT;
+	if (NULL == *str)
+		return STR_SUCCESS;
 
-	// TODO for whole library: Set the freed pointer - Dangling pointer - to NULL to avoid potential errors in the future.
-	if (str->str != NULL)
-		free(str->str);
-
-	free(str);
+	free(*str);
+	*str = NULL;
 
 	return STR_SUCCESS;
 }
@@ -589,7 +588,6 @@ enum StringError prepend_char_array(String *const str_dest, const char *const so
 	if (err_shift)
 	{
 
-		// free_string(str_backup);
 		return err_shift;
 	}
 
@@ -821,14 +819,14 @@ enum StringError replace_str(
 	DynamicArrayIterator *dai = NULL;
 	if (new_iterator_da(output_split, &dai))
 	{
-		process_da(output_split, (void (*)(void *))free_string);
+		apply_destructor_da(output_split, (void (*)(void **))free_string);
 		return STR_ERR_DYNAMIC_ARRAY;
 	}
 
 	int dai_has_next = 0;
 	if (has_next_dai(dai, &dai_has_next))
 	{
-		process_da(output_split, (void (*)(void *))free_string);
+		apply_destructor_da(output_split, (void (*)(void **))free_string);
 		return STR_ERR_DYNAMIC_ARRAY;
 	}
 
@@ -838,7 +836,7 @@ enum StringError replace_str(
 		if (next_ptr_dai(dai, (void **)&tmp))
 		{
 
-			process_da(output_split, (void (*)(void *))free_string);
+			apply_destructor_da(output_split, (void (*)(void **))free_string);
 			return STR_ERR_DYNAMIC_ARRAY;
 		}
 		if (0 == tmp->length)
@@ -846,13 +844,13 @@ enum StringError replace_str(
 			int err_append = append_str(str_replacement, tmp);
 			if (err_append)
 			{
-				process_da(output_split, (void (*)(void *))free_string);
+				apply_destructor_da(output_split, (void (*)(void **))free_string);
 				return err_append;
 			}
 		}
 		if (has_next_dai(dai, &dai_has_next))
 		{
-			process_da(output_split, (void (*)(void *))free_string);
+			apply_destructor_da(output_split, (void (*)(void **))free_string);
 			return STR_ERR_DYNAMIC_ARRAY;
 		}
 	}
@@ -860,7 +858,7 @@ enum StringError replace_str(
 	int err_concat = concat_str_da(&str_updated, output_split);
 	if (err_concat)
 	{
-		process_da(output_split, (void (*)(void *))free_string);
+		apply_destructor_da(output_split, (void (*)(void **))free_string);
 		return err_concat;
 	}
 
@@ -869,7 +867,7 @@ _end_stage:
 	str->str = str_updated->str;
 	str->length = str_updated->length;
 	free(str_updated);					 // str_updated->str must NOT be freed
-	process_da(output_split, (void (*)(void *))free_string); // Strigns from output_split are copied and can be freed.
+	apply_destructor_da(output_split, (void (*)(void **))free_string); // Strigns from output_split are copied and can be freed.
 _case_nothing_to_do:
 	return STR_SUCCESS;
 }
@@ -929,13 +927,13 @@ enum StringError concat_str(String **const output, const size_t n_str, ...)
 		String *str = va_arg(list, String *);
 		if (str == NULL)
 		{
-			free_string(str_result);
+			free_string(&str_result);
 			return STR_ERR_NULL_ARGUMENT;
 		}
 		int err_concat = append_str(str, str_result);
 		if (err_concat)
 		{
-			free_string(str_result);
+			free_string(&str_result);
 			return err_concat;
 		}
 	}
@@ -978,21 +976,21 @@ enum StringError concat_str_da(String **const output, DynamicArray *const string
 		int err_next = next_ptr_dai(dai, (void **)&part);
 		if (err_next)
 		{
-			free_string(str_result);
+			free_string(&str_result);
 			return STR_ERR_DYNAMIC_ARRAY;
 		}
 
 		int err_append_str = append_str(part, str_result);
 		if (err_append_str)
 		{
-			free_string(str_result);
+			free_string(&str_result);
 			return err_append_str;
 		}
 
 		err_has_next = has_next_dai(dai, &has_next);
 		if (err_has_next)
 		{
-			free_string(str_result);
+			free_string(&str_result);
 			return STR_ERR_DYNAMIC_ARRAY;
 		}
 	}
@@ -1029,7 +1027,7 @@ enum StringError concat_str_da_c(
 	int err_dai_init = new_iterator_da(strings, &dai);
 	if (err_dai_init)
 	{
-		free_string(str_result);
+		free_string(&str_result);
 		return STR_ERR_DYNAMIC_ARRAY;
 	}
 
@@ -1037,7 +1035,7 @@ enum StringError concat_str_da_c(
 	int err_has_next = has_next_dai(dai, &has_next);
 	if (err_has_next)
 	{
-		free_string(str_result);
+		free_string(&str_result);
 		free_iterator_da(&dai);
 		return STR_ERR_DYNAMIC_ARRAY;
 	}
@@ -1048,7 +1046,7 @@ _main_loop:
 		int err_next = next_ptr_dai(dai, (void **)&part);
 		if (err_next)
 		{
-			free_string(str_result);
+			free_string(&str_result);
 			free_iterator_da(&dai);
 			return STR_ERR_DYNAMIC_ARRAY;
 		}
@@ -1056,7 +1054,7 @@ _main_loop:
 		int err_append_str = append_str(part, str_result);
 		if (err_append_str)
 		{
-			free_string(str_result);
+			free_string(&str_result);
 			free_iterator_da(&dai);
 			return err_append_str;
 		}
@@ -1064,7 +1062,7 @@ _main_loop:
 		err_has_next = has_next_dai(dai, &has_next);
 		if (err_has_next)
 		{
-			free_string(str_result);
+			free_string(&str_result);
 			free_iterator_da(&dai);
 			return STR_ERR_DYNAMIC_ARRAY;
 		}
@@ -1079,7 +1077,7 @@ _main_loop:
 			int err_append_str = append_str(connector, str_result);
 			if (err_append_str)
 			{
-				free_string(str_result);
+				free_string(&str_result);
 				free_iterator_da(&dai);
 				return err_append_str;
 			}
@@ -1215,7 +1213,7 @@ enum StringError split_str(const String *const str, const String *const pattern,
 	}
 
 	// Free memory of empty Strings.
-	if (process_da(output_split, _worker_free_empty_str))
+	if (apply_destructor_da(output_split, (void (*)(void **))free_string))
 	{
 		error_code = STR_ERR_DYNAMIC_ARRAY;
 		goto _error_case;
@@ -1232,7 +1230,7 @@ _error_case:
 		free_iterator_da(&dai);
 	if (NULL != output_split)
 	{
-		process_da(output_split, (void (*)(void *))free_string);
+		apply_destructor_da(output_split, (void (*)(void **))free_string);
 		free_dynamic_array(&output_split);
 	}
 	if (NULL != parts)
@@ -1313,7 +1311,7 @@ enum StringError slice_str(
 
 	if (index_start >= index_end || index_end > str->length)
 	{
-		free_string(result_str);
+		free_string(&result_str);
 		return STR_ERR_INVALID_ARGUMENT_DIMENTIONS;
 	}
 
@@ -1323,7 +1321,7 @@ enum StringError slice_str(
 		err_append = append_char(result_str, (str->str)[i]);
 		if (err_append)
 		{
-			free_string(result_str);
+			free_string(&result_str);
 			return err_append;
 		}
 	}
