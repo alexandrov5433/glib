@@ -16,7 +16,7 @@ static enum HashMapError _new_entry(const char *key, void *value, Entry **const 
 	if (entry == NULL)
 		return HM_ERR_MEMORY_ALLOCATION;
 
-	size_t key_length = strnlen_s(key, HASH_MAP_KEY_MAX_LENGTH);
+	size_t key_length = strnlen(key, HASH_MAP_KEY_MAX_LENGTH);
 	if (key_length == 0)
 		return HM_ERR_KEY_EMPTY;
 	else if (key_length == HASH_MAP_KEY_MAX_LENGTH)
@@ -28,7 +28,7 @@ static enum HashMapError _new_entry(const char *key, void *value, Entry **const 
 	if (key_copy == NULL)
 		return HM_ERR_MEMORY_ALLOCATION;
 
-	if (strcpy_s(key_copy, key_length, key))
+	if (strncpy(key_copy, key, key_length))
 	{
 		free(entry);
 		return HM_ERR_KEY_COPY;
@@ -57,7 +57,7 @@ static enum HashMapError _hash_str(const char *const str, const size_t hm_capaci
 	if (str == NULL || output == NULL)
 		return HM_ERR_NULL_ARGUMENT;
 
-	size_t str_length = strnlen_s(str, HASH_MAP_KEY_MAX_LENGTH);
+	size_t str_length = strnlen(str, HASH_MAP_KEY_MAX_LENGTH);
 	if (str_length == 0)
 		return HM_ERR_KEY_EMPTY;
 	else if (str_length == HASH_MAP_KEY_MAX_LENGTH)

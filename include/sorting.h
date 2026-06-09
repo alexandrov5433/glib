@@ -20,6 +20,9 @@
 #define GALXLIB_API
 #endif
 
+#else
+#define GALXLIB_API
+
 #endif
 
 GALXLIB_API void quickSort(int *nums, size_t length);

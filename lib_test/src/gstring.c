@@ -46,9 +46,9 @@ static void _test_split_str(
 	EXPECT_EQ(str_concat->length, result_length);
 	EXPECT_STR_EQ(str_concat->str, raw_str_result, result_length);
 
-	free_string(str_concat);
+	free_string(&str_concat);
 
-	process_da(da_split_output, (void (*)(void *))free_string);
+	apply_destructor_da(da_split_output, (void (*)(void **))free_string);
 	free_dynamic_array(&da_split_output);
 }
 
@@ -139,19 +139,19 @@ static void test_split_str(String *str_null_str, String *str_zero_length, String
 	// Pattern not included in sentence.
 	_test_split_str(str_sentence, pattern, "The chicken is in the oven.", 27, 1);
 
-	free_string(pattern);
-	free_string(pat);
-	free_string(str_split);
-	free_string(str_split_pattern_end);
-	free_string(str_split_pattern_at_start);
-	free_string(str_split_pattern_at_start_and_end);
-	free_string(str_split_pattern_at_end_partial);
-	free_string(str_split_pattern_at_start_partial);
-	free_string(str_split_pattern_at_start_and_end_partial);
-	free_string(str_split_pattern_at_middle_partial);
+	free_string(&pattern);
+	free_string(&pat);
+	free_string(&str_split);
+	free_string(&str_split_pattern_end);
+	free_string(&str_split_pattern_at_start);
+	free_string(&str_split_pattern_at_start_and_end);
+	free_string(&str_split_pattern_at_end_partial);
+	free_string(&str_split_pattern_at_start_partial);
+	free_string(&str_split_pattern_at_start_and_end_partial);
+	free_string(&str_split_pattern_at_middle_partial);
 
-	free_string(pattern_space);
-	free_string(str_sentence);
+	free_string(&pattern_space);
+	free_string(&str_sentence);
 }
 
 static void test_concat_str_da(String *const empty)
@@ -195,7 +195,7 @@ static void test_concat_str_da(String *const empty)
 	EXPECT_EQ(concat_str_da(&str_output, da_empty), STR_SUCCESS);
 	EXPECT_NOT_NULL(str_output);
 	EXPECT_NULL(str_output->str);
-	free_string(str_output);
+	free_string(&str_output);
 	str_output = NULL;
 
 	EXPECT_EQ(concat_str_da(&str_output, da_strings), STR_SUCCESS);
@@ -203,7 +203,7 @@ static void test_concat_str_da(String *const empty)
 	EXPECT_NOT_NULL(str_output->str);
 	EXPECT_EQ(str_output->length, 30);
 	EXPECT_STR_EQ(str_output->str, "abcdefghijklmnopqrstuvgxyz1234", str_output->length);
-	free_string(str_output);
+	free_string(&str_output);
 	str_output = NULL;
 
 	EXPECT_EQ(concat_str_da(&str_output, da_strings_with_empty), STR_SUCCESS);
@@ -211,14 +211,14 @@ static void test_concat_str_da(String *const empty)
 	EXPECT_NOT_NULL(str_output->str);
 	EXPECT_EQ(str_output->length, 30);
 	EXPECT_STR_EQ(str_output->str, "abcdefghijklmnopqrstuvgxyz1234", str_output->length);
-	free_string(str_output);
+	free_string(&str_output);
 	str_output = NULL;
 
-	free_string(s1);
-	free_string(s2);
-	free_string(s3);
-	free_string(s4);
-	free_string(str_output);
+	free_string(&s1);
+	free_string(&s2);
+	free_string(&s3);
+	free_string(&s4);
+	free_string(&str_output);
 
 	free_dynamic_array(&da_strings);
 	free_dynamic_array(&da_strings_with_empty);
@@ -273,7 +273,7 @@ static void test_concat_str_da_c()
 	EXPECT_NOT_NULL(str_output);
 	EXPECT_NULL(str_output->str);
 	EXPECT_EQ(str_output->length, 0);
-	free_string(str_output);
+	free_string(&str_output);
 	str_output = NULL;
 
 	EXPECT_EQ(concat_str_da_c(&str_output, da_strings, connector), STR_SUCCESS);
@@ -281,7 +281,7 @@ static void test_concat_str_da_c()
 	EXPECT_NOT_NULL(str_output->str);
 	EXPECT_EQ(str_output->length, 39);
 	EXPECT_STR_EQ(str_output->str, "abcCONdefCONghijklmnopqrstuvgxyzCON1234", str_output->length);
-	free_string(str_output);
+	free_string(&str_output);
 	str_output = NULL;
 
 	EXPECT_EQ(concat_str_da_c(&str_output, da_strings_with_empty, connector), STR_SUCCESS);
@@ -289,16 +289,16 @@ static void test_concat_str_da_c()
 	EXPECT_NOT_NULL(str_output->str);
 	EXPECT_EQ(str_output->length, 39);
 	EXPECT_STR_EQ(str_output->str, "abcCONdefCONghijklmnopqrstuvgxyzCON1234", str_output->length);
-	free_string(str_output);
+	free_string(&str_output);
 	str_output = NULL;
 
-	free_string(s1);
-	free_string(s2);
-	free_string(s3);
-	free_string(s4);
-	free_string(str_output);
-	free_string(empty);
-	free_string(connector);
+	free_string(&s1);
+	free_string(&s2);
+	free_string(&s3);
+	free_string(&s4);
+	free_string(&str_output);
+	free_string(&empty);
+	free_string(&connector);
 
 	free_dynamic_array(&da_strings);
 	free_dynamic_array(&da_strings_with_empty);
@@ -382,19 +382,19 @@ static void test_includes_str()
 	EXPECT_EQ(output, 0);
 	output = -1;
 
-	free_string(pattern);
-	free_string(pattern_too_long);
-	free_string(pattern_empty);
-	free_string(s1);
-	free_string(s2);
-	free_string(s3);
-	free_string(s4);
-	free_string(s5);
-	free_string(s6);
-	free_string(s7);
-	free_string(s8);
-	free_string(s9);
-	free_string(empty);
+	free_string(&pattern);
+	free_string(&pattern_too_long);
+	free_string(&pattern_empty);
+	free_string(&s1);
+	free_string(&s2);
+	free_string(&s3);
+	free_string(&s4);
+	free_string(&s5);
+	free_string(&s6);
+	free_string(&s7);
+	free_string(&s8);
+	free_string(&s9);
+	free_string(&empty);
 }
 
 static void test_replace_str()
@@ -486,18 +486,18 @@ static void test_replace_str()
 	EXPECT_EQ(str_pattern_at_middle_partial->length, 13);
 	EXPECT_STR_EQ(str_pattern_at_middle_partial->str, "abcPATdeREPfg", 13);
 
-	free_string(replacement);
-	free_string(pattern);
-	free_string(pat);
-	free_string(str);
-	free_string(str_pattern_end);
-	free_string(str_pattern_at_start);
-	free_string(str_pattern_at_start_and_end);
-	free_string(str_pattern_at_end_partial);
-	free_string(str_pattern_at_start_partial);
-	free_string(str_pattern_at_start_and_end_partial);
-	free_string(str_pattern_at_middle_partial);
-	free_string(empty);
+	free_string(&replacement);
+	free_string(&pattern);
+	free_string(&pat);
+	free_string(&str);
+	free_string(&str_pattern_end);
+	free_string(&str_pattern_at_start);
+	free_string(&str_pattern_at_start_and_end);
+	free_string(&str_pattern_at_end_partial);
+	free_string(&str_pattern_at_start_partial);
+	free_string(&str_pattern_at_start_and_end_partial);
+	free_string(&str_pattern_at_middle_partial);
+	free_string(&empty);
 }
 
 static void _test_slice_str(void) {
@@ -518,7 +518,7 @@ static void _test_slice_str(void) {
     assert(err == STR_SUCCESS);
     err = slice_str(src, 0, 2, NULL);
     assert(err == STR_ERR_NULL_ARGUMENT);
-    free_string(src);
+    free_string(&src);
     src = NULL;
 
     // =========================================================================
@@ -561,7 +561,7 @@ static void _test_slice_str(void) {
     err = slice_str(src, 1, 6, &out);
     assert(err == STR_ERR_INVALID_ARGUMENT_DIMENTIONS);
 
-    free_string(src);
+    free_string(&src);
     src = NULL;
 
     // =========================================================================
@@ -578,9 +578,9 @@ static void _test_slice_str(void) {
     assert(out != NULL);
     assert(out->length == 0);
     
-    free_string(out);
+    free_string(&out);
     out = NULL;
-    free_string(src);
+    free_string(&src);
     src = NULL;
 
     // =========================================================================
@@ -595,7 +595,7 @@ static void _test_slice_str(void) {
     assert(out != NULL);
     assert(out->length == 9);
     assert(memcmp(out->str, "Beautiful", 9) == 0);
-    free_string(out);
+    free_string(&out);
     out = NULL;
 
     // Case 5b: Slice anchored at the beginning (0 to 4) -> "Beau"
@@ -603,7 +603,7 @@ static void _test_slice_str(void) {
     assert(err == STR_SUCCESS);
     assert(out->length == 4);
     assert(memcmp(out->str, "Beau", 4) == 0);
-    free_string(out);
+    free_string(&out);
     out = NULL;
 
     // Case 5c: Slice isolated in the middle (3 to 6) -> "uti"
@@ -611,7 +611,7 @@ static void _test_slice_str(void) {
     assert(err == STR_SUCCESS);
     assert(out->length == 3);
     assert(memcmp(out->str, "uti", 3) == 0);
-    free_string(out);
+    free_string(&out);
     out = NULL;
 
     // Case 5d: Slice extending to the very end (4 to 9) -> "tiful"
@@ -619,7 +619,7 @@ static void _test_slice_str(void) {
     assert(err == STR_SUCCESS);
     assert(out->length == 5);
     assert(memcmp(out->str, "tiful", 5) == 0);
-    free_string(out);
+    free_string(&out);
     out = NULL;
 
     // Case 5e: Single-character extraction slice (3 to 4) -> "u"
@@ -627,11 +627,11 @@ static void _test_slice_str(void) {
     assert(err == STR_SUCCESS);
     assert(out->length == 1);
     assert(memcmp(out->str, "u", 1) == 0);
-    free_string(out);
+    free_string(&out);
     out = NULL;
 
     // Cleanup source string
-    free_string(src);
+    free_string(&src);
     src = NULL;
 }
 
@@ -679,7 +679,7 @@ void test_gstring(void)
 	EXPECT_NOT_NULL(str_nt);
 	EXPECT_NULL(str_nt->str);
 	EXPECT_EQ(str_nt->length, 0);
-	free_string(str_nt);
+	free_string(&str_nt);
 	str_nt = NULL;
 	EXPECT_NULL(str_nt);
 
@@ -688,7 +688,7 @@ void test_gstring(void)
 	EXPECT_NOT_NULL(str_nt->str);
 	EXPECT_EQ(str_nt->length, 3);
 	EXPECT_STR_EQ(str_nt->str, "abc", 3);
-	free_string(str_nt);
+	free_string(&str_nt);
 	str_nt = NULL;
 	EXPECT_NULL(str_nt);
 
@@ -696,7 +696,7 @@ void test_gstring(void)
 	EXPECT_NOT_NULL(str_nt);
 	EXPECT_NULL(str_nt->str);
 	EXPECT_EQ(str_nt->length, 0);
-	free_string(str_nt);
+	free_string(&str_nt);
 	str_nt = NULL;
 	EXPECT_NULL(str_nt);
 
@@ -965,23 +965,23 @@ void test_gstring(void)
 	_test_slice_str();
 
 	// free_string
-	free_string(empty);
-	free_string(s1);
-	free_string(num);
-	free_string(dup);
-	free_string(s2);
-	free_string(con_1);
-	free_string(con_2);
-	free_string(con_result);
-	free_string(str_null_str);
-	free_string(str_trim);
-	free_string(str_trim_left);
-	free_string(str_trim_right);
-	free_string(str_trim_all);
-	free_string(str_trim_not_middle);
-	free_string(str_trim_no_trim);
-	free_string(str_trim_not_middle_no_trim);
-	free_string(str_zero_length);
+	free_string(&empty);
+	free_string(&s1);
+	free_string(&num);
+	free_string(&dup);
+	free_string(&s2);
+	free_string(&con_1);
+	free_string(&con_2);
+	free_string(&con_result);
+	free_string(&str_null_str);
+	free_string(&str_trim);
+	free_string(&str_trim_left);
+	free_string(&str_trim_right);
+	free_string(&str_trim_all);
+	free_string(&str_trim_not_middle);
+	free_string(&str_trim_no_trim);
+	free_string(&str_trim_not_middle_no_trim);
+	free_string(&str_zero_length);
 
 	puts(ANSI_COLOR_GREEN "All tests passed!" ANSI_COLOR_RESET);
 	puts("################## Test: String ##################");

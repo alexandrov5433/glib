@@ -287,7 +287,7 @@ _main_loop:
 		if (err_part_init)
 		{
 			// TODO: Update clean-up with activate_destructor
-			process_da(parts, (void (*)(void *))free_string);
+			apply_destructor_da(parts, (void (*)(void **))free_string);
 			return err_part_init;
 		}
 		size_t part_length = index_str - index_part_start;
@@ -304,7 +304,7 @@ _main_loop:
 			int err_append = append_char(part, (str->str)[index_part_start + i]);
 			if (err_append)
 			{
-				process_da(parts, (void (*)(void *))free_string);
+				apply_destructor_da(parts, (void (*)(void **))free_string);
 				return err_append;
 			}
 		}
@@ -313,7 +313,7 @@ _main_loop:
 		int err_push_part = push_ptr_da(parts, (void *)part);
 		if (err_push_part)
 		{
-			process_da(parts, (void (*)(void *))free_string);
+			apply_destructor_da(parts, (void (*)(void **))free_string);
 			return STR_ERR_DYNAMIC_ARRAY;
 		}
 
@@ -325,13 +325,13 @@ _main_loop:
 			int err_empty_init = new_string_nt(NULL, &empty);
 			if (err_empty_init)
 			{
-				process_da(parts, (void (*)(void *))free_string);
+				apply_destructor_da(parts, (void (*)(void **))free_string);
 				return err_empty_init;
 			}
 			int err_push_empty = push_ptr_da(parts, (void *)empty);
 			if (err_push_empty)
 			{
-				process_da(parts, (void (*)(void *))free_string);
+				apply_destructor_da(parts, (void (*)(void **))free_string);
 				return STR_ERR_DYNAMIC_ARRAY;
 			}
 		}
@@ -353,8 +353,12 @@ _end_stage:
  */
 static inline void _worker_free_empty_str(void *str)
 {
-	if (((String *)str)->length == 0)
-		free_string((String *)str);
+	if (NULL == str)
+		return;
+
+	String *tmp = str;
+	if (tmp->length == 0)
+		free_string(&tmp);
 }
 
 // ##################   public   ##################
@@ -866,7 +870,7 @@ _end_stage:
 	free(str->str);
 	str->str = str_updated->str;
 	str->length = str_updated->length;
-	free(str_updated);					 // str_updated->str must NOT be freed
+	free(str_updated);						   // str_updated->str must NOT be freed
 	apply_destructor_da(output_split, (void (*)(void **))free_string); // Strigns from output_split are copied and can be freed.
 _case_nothing_to_do:
 	return STR_SUCCESS;
@@ -1212,8 +1216,8 @@ enum StringError split_str(const String *const str, const String *const pattern,
 		}
 	}
 
-	// Free memory of empty Strings.
-	if (apply_destructor_da(output_split, (void (*)(void **))free_string))
+	// Free memory ONLY of empty Strings. apply_destructor_da would free ALL Strings.
+	if (process_da(output_split, (void (*)(void *))_worker_free_empty_str))
 	{
 		error_code = STR_ERR_DYNAMIC_ARRAY;
 		goto _error_case;

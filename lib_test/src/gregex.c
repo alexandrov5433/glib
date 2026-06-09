@@ -61,7 +61,7 @@ void test_gregex()
 	assert(group_str != NULL);
 	assert(group_str->length > 0);
 
-	free_string(group_str);
+	free_string(&group_str);
 
 	// match_str
 	String *test_str = NULL;
@@ -72,7 +72,7 @@ void test_gregex()
 
 	assert(match_str(rc, test_str) == RC_SUCCESS);
 
-	free_string(test_str);
+	free_string(&test_str);
 
 	// free_regex_container
 	assert(free_regex_container(NULL) == RC_ERR_NULL_ARGUMENT);

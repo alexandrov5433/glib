@@ -19,6 +19,9 @@
 #define GALXLIB_API
 #endif
 
+#else
+#define GALXLIB_API
+
 #endif
 
 #ifndef HASH_MAP_INIT_CAPACITY

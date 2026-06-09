@@ -17,6 +17,9 @@
 #define GALXLIB_API
 #endif
 
+#else
+#define GALXLIB_API
+
 #endif
 
 #ifndef BINARY_TREE_MAX_DEPTH

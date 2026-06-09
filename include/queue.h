@@ -17,6 +17,9 @@
 #define GALXLIB_API
 #endif
 
+#else
+#define GALXLIB_API
+
 #endif
 
 typedef struct Queue {
