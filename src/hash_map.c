@@ -23,7 +23,6 @@ static enum HashMapError _new_entry(const char *key, void *value, Entry **const 
 		return HM_ERR_KEY_MAX_LENGTH;
 
 	// +1 for the null-terminator
-	//char *key_copy = (char *)malloc((key_length + 1) * sizeof(char));
 	char *key_copy = (char *)calloc(key_length + 1, sizeof(char));
 	if (key_copy == NULL)
 		return HM_ERR_MEMORY_ALLOCATION;
