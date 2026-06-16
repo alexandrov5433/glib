@@ -120,8 +120,7 @@ GALXLIB_API enum HashMapError new_hash_map_d(void (*value_destructor)(void **val
 GALXLIB_API enum HashMapError add_destructor_hm(HashMap *const map, void (*value_destructor)(void **value));
 
 /**
- * Frees the memory of the HashMap. The pointers of the keys and values are not freed.
- * If the HashMap containes a value_destructor, the value_destructor is invoked with every present value from each Entry.
+ * Frees the memory of the HashMap. The values of the Entries are not freed.
  * @param map A pointer to the HashMap, which must be freed.
  * If it points to NULL, nothing is done and HM_SUCCESS is returned.
  * @return A value of the @ref HashMapError:
@@ -131,6 +130,21 @@ GALXLIB_API enum HashMapError add_destructor_hm(HashMap *const map, void (*value
  * - HM_ERR_NULL_ARGUMENT
  */
 GALXLIB_API enum HashMapError free_hash_map(HashMap **map);
+
+/**
+ * Frees the memory of the HashMap. 
+ * The HashMap::value_destructor is invoked with each Entry::value.
+ * @param map A pointer to the HashMap, which must be freed.
+ * If it points to NULL, nothing is done and HM_SUCCESS is returned.
+ * @return A value of the @ref HashMapError:
+ *
+ * - HM_SUCCESS
+ *
+ * - HM_ERR_NULL_ARGUMENT
+ * 
+ * - HM_ERR_NULL_DESTRUCTOR
+ */
+GALXLIB_API enum HashMapError free_hash_map_d(HashMap **map);
 
 /**
  * Adds a new Entry (key-value pair) to the HashMap.

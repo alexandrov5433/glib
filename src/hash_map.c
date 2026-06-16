@@ -484,9 +484,6 @@ enum HashMapError remove_hm(HashMap *const map, const char *const key)
 
 		if (strcmp(key, ent->key) == 0)
 		{
-			if (map->value_destructor != NULL)
-				(map->value_destructor)(ent->value);
-
 			_free_entry_d(&ent, map->value_destructor);
 			(map->entries)[i] = NULL;
 			_decrement_n_ent(map);
@@ -501,9 +498,6 @@ enum HashMapError remove_hm(HashMap *const map, const char *const key)
 
 		if (strcmp(key, ent->key) == 0)
 		{
-			if (map->value_destructor != NULL)
-				(map->value_destructor)(ent->value);
-
 			_free_entry_d(&ent, map->value_destructor);
 			(map->entries)[i] = NULL;
 			_decrement_n_ent(map);
