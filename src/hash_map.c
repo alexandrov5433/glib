@@ -180,7 +180,6 @@ static enum HashMapError _incert_entry_ri(
 			_free_entry_d(&current_entry, hm->value_destructor);
 
 			hm_entries[i] = new_entry;
-			(hm->n_ent)++;
 			return HM_SUCCESS;
 		}
 	}
@@ -198,7 +197,6 @@ static enum HashMapError _incert_entry_ri(
 			_free_entry_d(&current_entry, hm->value_destructor);
 
 			hm_entries[i] = new_entry;
-			(hm->n_ent)++;
 			return HM_SUCCESS;
 		}
 	}
