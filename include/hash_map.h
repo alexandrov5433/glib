@@ -38,7 +38,7 @@
  */
 enum HashMapError
 {
-	HM_EMPTY = -2,				/**< (-2) The HashMap does not include any entries. */
+	HM_EMPTY = -2,				/**< (-2) The HashMap does not include any Entries. */
 	HM_NOT_FOUND = -1,			/**< (-1) An entry with the given key was not found among those in the HashMap. */
 	HM_SUCCESS = 0,				/**< (0) Successful execution of the called function. */
 	HM_ERR_NULL_ARGUMENT = 1,		/**< (1) One or more arguments are NULL. */
@@ -49,6 +49,7 @@ enum HashMapError
 	HM_ERR_FULL = 6,			/**< (6) The HashMap is full. */
 	HM_ERR_INVALID_ARGUMENT_DIMENTIONS = 7, /**< (7) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
 	HM_ERR_DYNAMIC_ARRAY = 8,		/**< (8) A DynamicArray function returned a @ref DynamicArrayError error code. */
+	HM_ERR_NULL_DESTRUCTOR = 9		/**< (9) The HashMap does not have a set value_destructor member. *HashMap::value_destructor is NULL. */
 };
 
 /**
@@ -67,14 +68,15 @@ typedef struct Entry
  */
 typedef struct HashMap
 {
-	struct Entry **entries;		       /**< An array of Entry pointers, which is expanded and shrunken based on the need. */
-	size_t n_ent;			       /**< The number of Entries present in the HashMap. This value is not constant. */
-	size_t capacity;		       /**< The number of Entries the HashMap can contain. This value is not constant. */
-	void (*value_destructor)(void *value); /**< A pointer to a function, implemented by the user. It is ment to free the memory of the value when it is removed from the HashMap. Defaults to NULL. */
+	struct Entry **entries;			/**< An array of Entry pointers, which is expanded and shrunken based on the need. */
+	size_t n_ent;				/**< The number of Entries present in the HashMap. This value is not constant. */
+	size_t capacity;			/**< The number of Entries the HashMap can contain. This value is not constant. */
+	void (*value_destructor)(void **value); /**< A function, implemented by the user. It is ment to free the memory of the Entry::value when it is removed from the HashMap. Defaults to NULL. */
 } HashMap;
 
 /**
- * Creates a new HashMap.
+ * Creates a new @ref HashMap.
+ * @param output A pointer where the the new HashMap will be outputed.
  * @return A value of the @ref HashMapError:
  *
  * - HM_SUCCESS
@@ -83,7 +85,21 @@ typedef struct HashMap
  *
  * - HM_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum HashMapError new_hash_map(void (*value_destructor)(void *value), HashMap **const output);
+GALXLIB_API enum HashMapError new_hash_map(HashMap **const output);
+
+/**
+ * Creates a new @ref HashMap.
+ * @param value_destructor A function, which will be placed in the HashMap as the value_destructor.
+ * @param output A pointer where the the new HashMap will be outputed.
+ * @return A value of the @ref HashMapError:
+ *
+ * - HM_SUCCESS
+ *
+ * - HM_ERR_NULL_ARGUMENT
+ *
+ * - HM_ERR_MEMORY_ALLOCATION
+ */
+GALXLIB_API enum HashMapError new_hash_map_d(void (*value_destructor)(void **value), HashMap **const output);
 
 /**
  * Adds a destructor function to the HashMap. If one is already present, it is replaced with the new one.
@@ -96,23 +112,25 @@ GALXLIB_API enum HashMapError new_hash_map(void (*value_destructor)(void *value)
  *
  * - HM_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum HashMapError add_destructor_hm(HashMap *const map, void (*value_destructor)(void *value));
+GALXLIB_API enum HashMapError add_destructor_hm(HashMap *const map, void (*value_destructor)(void **value));
 
 /**
- * Frees the memory of the HashMap. The pointer of the keys and values are not freed.
+ * Frees the memory of the HashMap. The pointers of the keys and values are not freed.
  * If the HashMap containes a value_destructor, the value_destructor is invoked with every present value from each Entry.
- * @param map A pointer to the HashMap, which must be freed.
+ * @param map A pointer to the HashMap, which must be freed. 
+ * If it points to NULL, nothing is done and HM_SUCCESS is returned.
  * @return A value of the @ref HashMapError:
  *
  * - HM_SUCCESS
  *
  * - HM_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum HashMapError free_hash_map(HashMap *map);
+GALXLIB_API enum HashMapError free_hash_map(HashMap **map);
 
 /**
  * Adds a new Entry (key-value pair) to the HashMap.
- * If an Entry with the same key already exists, it is replaced with the new one.
+ * If an (old) Entry with the same key already exists, it is replaced with the new one.
+ * If the HashMap has a value_destructor, it is invoked with the value of the removed (old) Entry.
  * @param map A pointer to the HashMap, in which the new Entry must be added.
  * @param key A null-terminated string, which is copied to create the key for the given value.
  * @param value A pointer, which will be added as the value in the HashMap for the given key.
@@ -155,6 +173,7 @@ GALXLIB_API enum HashMapError get_hm(const HashMap *const map, const char *const
 
 /**
  * Removes an Entry from the HashMap.
+ * If the HashMap has a value_destructor, it is invoked with the value of the Entry.
  * @param map A pointer to the HashMap, from which the Entry must be removed.
  * @param key A null-terminated string, which is the key of the Entry.
  * @return A value of the @ref HashMapError:
@@ -177,20 +196,33 @@ GALXLIB_API enum HashMapError remove_hm(HashMap *const map, const char *const ke
 
 /**
  * Applies a processor function to every Entry in the HashMap.
- * @param map A pointer to the HashMap, the Entries of which must be processed.
- * @param processor A function pointer to the function, which will receive a pointer to every currently available Entry in the HashMap.
+ * @param map A pointer to the HashMap, which must be processed.
+ * @param processor A function, which will receive a pointer to every available Entry in the HashMap.
  * @return A value of the @ref HashMapError:
  *
  * - HM_SUCCESS
  *
  * - HM_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum HashMapError process_hm(const HashMap *const map, void (*processor)(const Entry *const ptr));
+GALXLIB_API enum HashMapError process_e_hm(const HashMap *const map, void (*processor)(const Entry *const ptr));
+
+/**
+ * Applies a processor function to value in the HashMap.
+ * @param map A pointer to the HashMap, which must be processed.
+ * @param processor A function, which will receive every value (a pointer) in the HashMap.
+ * @return A value of the @ref HashMapError:
+ *
+ * - HM_SUCCESS
+ *
+ * - HM_ERR_NULL_ARGUMENT
+ */
+GALXLIB_API enum HashMapError process_v_hm(const HashMap *const map, void (*processor)(const void *const ptr));
 
 /**
  * Filters the Entries of the HashMap, leaving only the selected ones.
+ * If the HashMap has a value_destructor, it is invoked with the value of the removed Entries.
  * @param map A pointer to the HashMap, which must be filtered.
- * @param selector A function pointer to the function, which will receive a pointer to every currently available Entry in the HashMap.
+ * @param selector A function, which will receive a pointer to every currently available Entry in the HashMap.
  * The selector returns 1 if the Entry must STAY, 0 if it must be REMOVED.
  * @return A value of the @ref HashMapError:
  *

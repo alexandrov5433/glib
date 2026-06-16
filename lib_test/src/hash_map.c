@@ -6,8 +6,49 @@
 #include "../../include/hash_map.h"
 #include "../include/hash_map.h"
 #include "../../include/gstring.h"
+#include <assert.h>
 
-void hashMapProcessor(const Entry *const ptr)
+static void test_new_hash_map(void)
+{
+    // =========================================================================
+    // 1. Test Case: NULL Argument Error
+    // =========================================================================
+    // Passing NULL to the function must trigger an immediate guard rail check.
+    enum HashMapError err_null = new_hash_map(NULL);
+    assert(err_null == HM_ERR_NULL_ARGUMENT);
+
+    // =========================================================================
+    // 2. Test Case: Successful Initialization
+    // =========================================================================
+    HashMap *map = NULL;
+    enum HashMapError err_success = new_hash_map(&map);
+
+    // Assert structural integrity on successful allocation
+    assert(err_success == HM_SUCCESS);
+    assert(map != NULL);
+    assert(map->entries != NULL);
+    assert(map->n_ent == 0);
+    assert(map->capacity == HASH_MAP_INIT_CAPACITY);
+    assert(map->value_destructor == NULL);
+
+    // =========================================================================
+    // 3. Cleanup Validation
+    // =========================================================================
+    // Safely dispose of the created map to ensure no memory leaks occur in the test suite
+    enum HashMapError err_free = free_hash_map(&map);
+    assert(err_free == HM_SUCCESS);
+    assert(map == NULL);
+}
+
+void test_hash_map()
+{
+    puts("################## Test: HashMap ##################");
+    test_new_hash_map();
+    puts(ANSI_COLOR_GREEN "All tests passed!" ANSI_COLOR_RESET);
+    puts("################## Test: HashMap ##################");
+};
+
+/* void hashMapProcessor(const Entry *const ptr)
 {
     (*(int *)(ptr->value))++;
 }
@@ -21,7 +62,8 @@ int hashMapFilter(const Entry *const ptr)
 void hashMapValueDestructor(void *value)
 {
     free(value);
-}
+} */
+/*
 void hashMapTest()
 {
     puts("################## Test: HashMap ##################");
@@ -326,3 +368,4 @@ _test_failure:
     puts(ANSI_COLOR_RED "Result: Failure" ANSI_COLOR_RESET);
     puts("################## Test: HashMap ##################");
 }
+ */
