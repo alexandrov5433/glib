@@ -28,6 +28,10 @@
 #define HASH_MAP_INIT_CAPACITY 10
 #endif
 
+#ifndef HASH_MAP_MAX_CAPACITY
+#define HASH_MAP_MAX_CAPACITY __SIZE_MAX__
+#endif
+
 #ifndef HASH_MAP_KEY_MAX_LENGTH
 #define HASH_MAP_KEY_MAX_LENGTH 2000000000UL
 #endif
@@ -49,7 +53,8 @@ enum HashMapError
 	HM_ERR_FULL = 6,			/**< (6) The HashMap is full. */
 	HM_ERR_INVALID_ARGUMENT_DIMENTIONS = 7, /**< (7) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
 	HM_ERR_DYNAMIC_ARRAY = 8,		/**< (8) A DynamicArray function returned a @ref DynamicArrayError error code. */
-	HM_ERR_NULL_DESTRUCTOR = 9		/**< (9) The HashMap does not have a set value_destructor member. *HashMap::value_destructor is NULL. */
+	HM_ERR_NULL_DESTRUCTOR = 9,		/**< (9) The HashMap does not have a set value_destructor member. *HashMap::value_destructor is NULL. */
+	HM_ERR_MAX_CAPACITY = 10		/**< (10) The number of Entries in the HashMap - HashMap::n_ent - has reached the limit of HASH_MAP_MAX_CAPACITY. */
 };
 
 /**
@@ -117,7 +122,7 @@ GALXLIB_API enum HashMapError add_destructor_hm(HashMap *const map, void (*value
 /**
  * Frees the memory of the HashMap. The pointers of the keys and values are not freed.
  * If the HashMap containes a value_destructor, the value_destructor is invoked with every present value from each Entry.
- * @param map A pointer to the HashMap, which must be freed. 
+ * @param map A pointer to the HashMap, which must be freed.
  * If it points to NULL, nothing is done and HM_SUCCESS is returned.
  * @return A value of the @ref HashMapError:
  *

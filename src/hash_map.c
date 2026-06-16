@@ -134,6 +134,18 @@ static inline enum HashMapError _decrement_n_ent(HashMap *const map)
 	return HM_SUCCESS;
 }
 
+// TODO: Add Entry limit and the needed functions.
+/* static inline enum HashMapError _is_max_capacity_reached(HashMap *const map)
+{
+	if (NULL == map)
+		return HM_ERR_NULL_ARGUMENT;
+
+	if (map->capacity >= HASH_MAP_MAX_CAPACITY)
+		return HM_ERR_MAX_CAPACITY;
+
+	return HM_SUCCESS;
+} */
+
 /**
  * @brief Incerts the Entry into the HashMap and increments (i) the n_ent counter.
  * If an Entry with the same key is found, the old one is replaced (r) with the new one.
