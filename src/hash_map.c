@@ -122,6 +122,18 @@ static enum HashMapError _incert_entry(Entry *const new_entry, const size_t hm_c
 	return HM_ERR_FULL;
 }
 
+static inline enum HashMapError _decrement_n_ent(HashMap *const map)
+{
+	if (NULL == map)
+		return HM_ERR_NULL_ARGUMENT;
+
+	if ((size_t)0 == map->n_ent)
+		return HM_EMPTY;
+
+	(map->n_ent)--;
+	return HM_SUCCESS;
+}
+
 /**
  * @brief Incerts the Entry into the HashMap and increments (i) the n_ent counter.
  * If an Entry with the same key is found, the old one is replaced (r) with the new one.
@@ -467,7 +479,7 @@ enum HashMapError remove_hm(HashMap *const map, const char *const key)
 
 			_free_entry_d(&ent, map->value_destructor);
 			(map->entries)[i] = NULL;
-			(map->n_ent)--;
+			_decrement_n_ent(map);
 			return HM_SUCCESS;
 		}
 	}
@@ -484,7 +496,7 @@ enum HashMapError remove_hm(HashMap *const map, const char *const key)
 
 			_free_entry_d(&ent, map->value_destructor);
 			(map->entries)[i] = NULL;
-			(map->n_ent)--; // TODO: Implement a static decrementation function.
+			_decrement_n_ent(map);
 			return HM_SUCCESS;
 		}
 	}
