@@ -545,6 +545,289 @@ static void test_remove_hm(void)
 	assert(map_d == NULL);
 }
 
+static int test_processor_invocation_count = 0;
+static int test_seen_alpha = 0;
+static int test_seen_beta = 0;
+
+static void test_mock_entry_processor(const Entry *const ptr)
+{
+	if (ptr != NULL)
+	{
+		test_processor_invocation_count++;
+
+		// Inspect the contents of the visited Entry to verify data integrity
+		if (strcmp(ptr->key, "alpha_key") == 0)
+		{
+			assert(strcmp((char *)ptr->value, "alpha_value") == 0);
+			test_seen_alpha = 1;
+		}
+		else if (strcmp(ptr->key, "beta_key") == 0)
+		{
+			assert(strcmp((char *)ptr->value, "beta_value") == 0);
+			test_seen_beta = 1;
+		}
+	}
+}
+
+static void test_process_e_hm(void)
+{
+	// Initialize a temporary HashMap for verification
+	HashMap *map = NULL;
+	enum HashMapError err = new_hash_map(&map);
+	assert(err == HM_SUCCESS);
+	assert(map != NULL);
+
+	// =========================================================================
+	// 1. Error Cases: NULL Argument Protections
+	// =========================================================================
+	// Both arguments must be non-NULL to pass safety boundaries
+	assert(process_e_hm(NULL, test_mock_entry_processor) == HM_ERR_NULL_ARGUMENT);
+	assert(process_e_hm(map, NULL) == HM_ERR_NULL_ARGUMENT);
+
+	// =========================================================================
+	// 2. Success Case: Running over an Empty Map
+	// =========================================================================
+	// On an empty map, the loop executes up to capacity but shouldn't find non-NULL entries
+	test_processor_invocation_count = 0;
+
+	enum HashMapError err_empty = process_e_hm(map, test_mock_entry_processor);
+	assert(err_empty == HM_SUCCESS);
+	assert(test_processor_invocation_count == 0); // Processor callback should never execute
+
+	// =========================================================================
+	// 3. Success Case: Processing a Populated Map
+	// =========================================================================
+	// Populate the table with test items
+	assert(put_hm(map, "alpha_key", "alpha_value") == HM_SUCCESS);
+	assert(put_hm(map, "beta_key", "beta_value") == HM_SUCCESS);
+	assert(map->n_ent == 2); // Confirm internal item counts
+
+	// Reset tracking indicators prior to triggering the iteration pipeline
+	test_processor_invocation_count = 0;
+	test_seen_alpha = 0;
+	test_seen_beta = 0;
+
+	// Execute the entry processing function over the table
+	enum HashMapError err_populated = process_e_hm(map, test_mock_entry_processor);
+	assert(err_populated == HM_SUCCESS);
+
+	// CRITICAL ASSERTIONS:
+	// Ensure every single entry was processed exactly once
+	assert(test_processor_invocation_count == 2);
+	assert(test_seen_alpha == 1);
+	assert(test_seen_beta == 1);
+
+	// =========================================================================
+	// 4. Clean Up
+	// =========================================================================
+	err = free_hash_map(&map);
+	assert(err == HM_SUCCESS);
+	assert(map == NULL);
+}
+
+static int test_v_processor_invocation_count = 0;
+static int test_v_seen_alpha = 0;
+static int test_v_seen_beta = 0;
+
+static void test_mock_value_processor(const void *const ptr)
+{
+	if (ptr != NULL)
+	{
+		test_v_processor_invocation_count++;
+
+		// Inspect the underlying value payloads to ensure data integrity
+		if (strcmp((char *)ptr, "alpha_value") == 0)
+		{
+			test_v_seen_alpha = 1;
+		}
+		else if (strcmp((char *)ptr, "beta_value") == 0)
+		{
+			test_v_seen_beta = 1;
+		}
+	}
+}
+
+static void test_process_v_hm(void)
+{
+	// Initialize a temporary HashMap for verification
+	HashMap *map = NULL;
+	enum HashMapError err = new_hash_map(&map);
+	assert(err == HM_SUCCESS);
+	assert(map != NULL);
+
+	// =========================================================================
+	// 1. Error Cases: NULL Argument Protections
+	// =========================================================================
+	// Both arguments must be non-NULL to pass safety boundaries
+	assert(process_v_hm(NULL, test_mock_value_processor) == HM_ERR_NULL_ARGUMENT);
+	assert(process_v_hm(map, NULL) == HM_ERR_NULL_ARGUMENT);
+
+	// =========================================================================
+	// 2. Success Case: Running over an Empty Map
+	// =========================================================================
+	// On an empty map, the loop executes up to capacity but shouldn't find non-NULL entries
+	test_v_processor_invocation_count = 0;
+
+	enum HashMapError err_empty = process_v_hm(map, test_mock_value_processor);
+	assert(err_empty == HM_SUCCESS);
+	assert(test_v_processor_invocation_count == 0); // Value callback should never execute
+
+	// =========================================================================
+	// 3. Success Case: Processing a Populated Map
+	// =========================================================================
+	// Populate the table with test items
+	assert(put_hm(map, "alpha_key", "alpha_value") == HM_SUCCESS);
+	assert(put_hm(map, "beta_key", "beta_value") == HM_SUCCESS);
+	assert(map->n_ent == 2); // Confirm internal item counts
+
+	// Reset tracking indicators prior to triggering the iteration pipeline
+	test_v_processor_invocation_count = 0;
+	test_v_seen_alpha = 0;
+	test_v_seen_beta = 0;
+
+	// Execute the value processing function over the table
+	enum HashMapError err_populated = process_v_hm(map, test_mock_value_processor);
+	assert(err_populated == HM_SUCCESS);
+
+	// CRITICAL ASSERTIONS:
+	// Ensure every single value was processed exactly once
+	assert(test_v_processor_invocation_count == 2);
+	assert(test_v_seen_alpha == 1);
+	assert(test_v_seen_beta == 1);
+
+	// =========================================================================
+	// 4. Clean Up
+	// =========================================================================
+	err = free_hash_map(&map);
+	assert(err == HM_SUCCESS);
+	assert(map == NULL);
+}
+
+static int test_filter_destructor_count = 0;
+
+static void test_filter_value_destructor(void **value)
+{
+	if (value && *value)
+	{
+		test_filter_destructor_count++;
+		free(*value);
+		*value = NULL;
+	}
+}
+
+/**
+ * @brief Selector callback function for filter_hm.
+ * Keeps entries starting with 'k' (keep), discards entries starting with 'r' (remove).
+ */
+static int test_filter_selector(const Entry *const ptr)
+{
+	if (ptr == NULL || ptr->key == NULL)
+	{
+		return 0;
+	}
+	return (ptr->key[0] == 'k');
+}
+
+static void test_filter_hm(void)
+{
+	// =========================================================================
+	// 1. Error Cases: NULL Argument Boundary Testing
+	// =========================================================================
+	HashMap *map = NULL;
+	enum HashMapError err = new_hash_map(&map);
+	assert(err == HM_SUCCESS);
+	assert(map != NULL);
+
+	// Ensure missing pointer mutations are caught gracefully
+	assert(filter_hm(NULL, test_filter_selector) == HM_ERR_NULL_ARGUMENT);
+	assert(filter_hm(map, NULL) == HM_ERR_NULL_ARGUMENT);
+
+	// =========================================================================
+	// 2. Success Case: Filtering an Empty Map
+	// =========================================================================
+	// If n_ent is 0, filter_hm returns HM_SUCCESS early without modifying structures
+	assert(map->n_ent == 0);
+	assert(filter_hm(map, test_filter_selector) == HM_SUCCESS);
+	assert(map->n_ent == 0);
+
+	// =========================================================================
+	// 3. Success Case: Filtering Populated Map WITHOUT a Value Destructor
+	// =========================================================================
+	assert(put_hm(map, "keep_alpha", "payload_1") == HM_SUCCESS);
+	assert(put_hm(map, "remove_alpha", "payload_2") == HM_SUCCESS);
+	assert(put_hm(map, "keep_beta", "payload_3") == HM_SUCCESS);
+	assert(put_hm(map, "remove_beta", "payload_4") == HM_SUCCESS);
+	assert(map->n_ent == 4);
+
+	// Execute filter algorithm
+	assert(filter_hm(map, test_filter_selector) == HM_SUCCESS);
+
+	// Post-filter structural verification
+	assert(map->n_ent == 2);
+
+	void *out_val = NULL;
+	// Retained elements should still be found
+	assert(get_hm(map, "keep_alpha", &out_val) == HM_SUCCESS && out_val == "payload_1");
+	assert(get_hm(map, "keep_beta", &out_val) == HM_SUCCESS && out_val == "payload_3");
+	// Removed elements should now be gone
+	assert(get_hm(map, "remove_alpha", &out_val) == HM_NOT_FOUND);
+	assert(get_hm(map, "remove_beta", &out_val) == HM_NOT_FOUND);
+
+	// Clean up first map instance safely
+	assert(free_hash_map(&map) == HM_SUCCESS);
+
+	// =========================================================================
+	// 4. Success Case: Filtering Populated Map WITH a Value Destructor
+	// =========================================================================
+	HashMap *map_d = NULL;
+	err = new_hash_map_d(test_filter_value_destructor, &map_d);
+	assert(err == HM_SUCCESS);
+	assert(map_d != NULL);
+
+	// Allocate dynamic objects on the heap so they can be securely freed
+	int *val1 = (int *)malloc(sizeof(int));
+	int *val2 = (int *)malloc(sizeof(int));
+	int *val3 = (int *)malloc(sizeof(int));
+	int *val4 = (int *)malloc(sizeof(int));
+	assert(val1 && val2 && val3 && val4);
+	*val1 = 10;
+	*val2 = 20;
+	*val3 = 30;
+	*val4 = 40;
+
+	assert(put_hm(map_d, "keep_one", val1) == HM_SUCCESS);
+	assert(put_hm(map_d, "remove_one", val2) == HM_SUCCESS);
+	assert(put_hm(map_d, "keep_two", val3) == HM_SUCCESS);
+	assert(put_hm(map_d, "remove_two", val4) == HM_SUCCESS);
+	assert(map_d->n_ent == 4);
+
+	// Reset global metrics tracking custom destructor passes
+	test_filter_destructor_count = 0;
+
+	// Trigger filter processing cycle
+	assert(filter_hm(map_d, test_filter_selector) == HM_SUCCESS);
+
+	// VERIFY CRITICAL LIFE CYCLE COUNTS:
+	// Exactly 2 items ("remove_one" and "remove_two") should have been processed and freed
+	assert(map_d->n_ent == 2);
+	assert(test_filter_destructor_count == 2);
+
+	// Verify retained entries still provide valid address pointer references
+	assert(get_hm(map_d, "keep_one", &out_val) == HM_SUCCESS && *(int *)out_val == 10);
+	assert(get_hm(map_d, "keep_two", &out_val) == HM_SUCCESS && *(int *)out_val == 30);
+	assert(get_hm(map_d, "remove_one", &out_val) == HM_NOT_FOUND);
+
+	// =========================================================================
+	// 5. Cleanup Verification Cascade
+	// =========================================================================
+	// Disposing the map container completely must flush out the remaining 2 items
+	assert(free_hash_map_d(&map_d) == HM_SUCCESS);
+	assert(map_d == NULL);
+
+	// 2 (from filtering phase) + 2 (from map disposal cascade) = 4 total passes
+	assert(test_filter_destructor_count == 4);
+}
+
 void test_hash_map()
 {
 	puts("################## Test: HashMap ##################");
@@ -557,6 +840,9 @@ void test_hash_map()
 	test_put_hm();
 	test_get_hm();
 	test_remove_hm();
+	test_process_e_hm();
+	test_process_v_hm();
+	test_filter_hm();
 
 	puts(ANSI_COLOR_GREEN "All tests passed!" ANSI_COLOR_RESET);
 	puts("################## Test: HashMap ##################");
