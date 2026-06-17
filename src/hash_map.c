@@ -134,14 +134,24 @@ static inline enum HashMapError _decrement_n_ent(HashMap *const map)
 	return HM_SUCCESS;
 }
 
-// TODO: Add Entry limit and the needed functions.
-/* static inline enum HashMapError _is_max_capacity_reached(HashMap *const map)
+/**
+ * Checks if HashMap::n_ent has reached the limit of HashMap::capacity.
+ * If the limit is reached HM_ERR_FULL is returned.
+ * @return A value of the @ref HashMapError:
+ *
+ * - HM_SUCCESS
+ *
+ * - HM_ERR_NULL_ARGUMENT
+ *
+ * - HM_ERR_FULL
+ */
+/* static inline enum HashMapError _is_n_ent_limit_reached(HashMap *const map)
 {
 	if (NULL == map)
 		return HM_ERR_NULL_ARGUMENT;
 
-	if (map->capacity >= HASH_MAP_MAX_CAPACITY)
-		return HM_ERR_MAX_CAPACITY;
+	if (map->n_ent >= map->capacity)
+		return HM_ERR_FULL;
 
 	return HM_SUCCESS;
 } */
