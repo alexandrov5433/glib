@@ -243,7 +243,17 @@ static enum HashMapError _extend_hm(HashMap *const map)
 	if (empty_space > (map->capacity * 0.25))
 		return HM_SUCCESS;
 
+	int is_max_capacity_reached = map->capacity >= HASH_MAP_MAX_CAPACITY;
+	int is_map_full = map->n_ent >= map->capacity;
+	if (is_max_capacity_reached && is_map_full)
+		return HM_ERR_MAX_CAPACITY;
+	else if (is_max_capacity_reached && !is_map_full) // Notice: ! (not-operator)
+		return HM_SUCCESS;
+
 	size_t new_capacity = ceil(map->n_ent * 1.5);
+	if (new_capacity > HASH_MAP_MAX_CAPACITY)
+		new_capacity = HASH_MAP_MAX_CAPACITY;
+
 	Entry **new_entries = (Entry **)calloc(new_capacity, sizeof(Entry *));
 	if (new_entries == NULL)
 		return HM_ERR_MEMORY_ALLOCATION;

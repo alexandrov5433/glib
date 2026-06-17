@@ -25,7 +25,7 @@
 #endif
 
 #ifndef HASH_MAP_INIT_CAPACITY
-#define HASH_MAP_INIT_CAPACITY 10
+#define HASH_MAP_INIT_CAPACITY 100UL
 #endif
 
 #ifndef HASH_MAP_MAX_CAPACITY
@@ -166,6 +166,8 @@ GALXLIB_API enum HashMapError free_hash_map_d(HashMap **map);
  * - HM_ERR_KEY_MAX_LENGTH
  *
  * - HM_ERR_MEMORY_ALLOCATION
+ * 
+ * - HM_ERR_MAX_CAPACITY
  */
 GALXLIB_API enum HashMapError put_hm(HashMap *const map, char *const key, void *const value);
 
