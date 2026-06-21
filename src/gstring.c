@@ -1334,3 +1334,42 @@ _end_stage:
 	*output = result_str;
 	return STR_SUCCESS;
 }
+
+enum StringError starts_with_nt(
+    const String *const str,
+    const char *const part,
+    int *const output)
+{
+	int err_valid = _validate_nsl(str);
+	if (err_valid)
+		return err_valid;
+
+	if (NULL == output)
+		return STR_ERR_NULL_ARGUMENT;
+
+	int result = 1;
+
+	size_t part_length = 0;
+	int err_index = _index_of_nt(part, &part_length);
+	if (err_index)
+		return err_index;
+
+	if (0 == part_length || part_length > str->length)
+		goto _negative_result;
+
+	for (size_t i = 0; i < part_length; ++i)
+	{
+		if ((str->str)[i] != part[i])
+		{
+			result = 0;
+			break;
+		}
+	}
+
+	*output = result;
+	return STR_SUCCESS;
+
+_negative_result:
+	*output = 0;
+	return STR_SUCCESS;
+}

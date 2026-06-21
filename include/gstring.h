@@ -62,15 +62,15 @@
  */
 enum StringError
 {
-	STR_SUCCESS = 0,			 /**< (0) Successful execution of the called function. */
-	STR_ERR_NULL_ARGUMENT = 1,		 /**< (1) One or more arguments are NULL. */
-	STR_ERR_MEMORY_ALLOCATION = 2,		 /**< (2) Failed to allocate or reallocate memory. */
-	STR_ERR_INDEX_OUT_OF_BOUNDS = 3,	 /**< (3) The targeted index is outside of the boundaries of the String. */
-	STR_ERR_INVALID_ARGUMENT_DIMENTIONS = 4, /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
-	STR_ERR_LOOP_MAX_LIMIT = 5,		 /**< (5) A null-terminator character '\0' was not found among the first GSTRING_LOOP_MAX_LIMIT characters of the given character array. */
-	STR_ERR_NULL_STR = 6,			 /**< (6) The str member of the @ref String is NULL. */
-	STR_ERR_ZERO_LENGTH = 7,		 /**< (7) The length member of the @ref String is 0. */
-	STR_ERR_DYNAMIC_ARRAY = 8,		 /**< (8) A DynamicArray function returned a @ref DynamicArrayError error code. */
+    STR_SUCCESS = 0,                         /**< (0) Successful execution of the called function. */
+    STR_ERR_NULL_ARGUMENT = 1,               /**< (1) One or more arguments are NULL. */
+    STR_ERR_MEMORY_ALLOCATION = 2,           /**< (2) Failed to allocate or reallocate memory. */
+    STR_ERR_INDEX_OUT_OF_BOUNDS = 3,         /**< (3) The targeted index is outside of the boundaries of the String. */
+    STR_ERR_INVALID_ARGUMENT_DIMENTIONS = 4, /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
+    STR_ERR_LOOP_MAX_LIMIT = 5,              /**< (5) A null-terminator character '\0' was not found among the first GSTRING_LOOP_MAX_LIMIT characters of the given character array. */
+    STR_ERR_NULL_STR = 6,                    /**< (6) The str member of the @ref String is NULL. */
+    STR_ERR_ZERO_LENGTH = 7,                 /**< (7) The length member of the @ref String is 0. */
+    STR_ERR_DYNAMIC_ARRAY = 8,               /**< (8) A DynamicArray function returned a @ref DynamicArrayError error code. */
 };
 
 /**
@@ -79,8 +79,8 @@ enum StringError
  */
 typedef struct String
 {
-	size_t length; /**< The number of characters in the array. */
-	char *str;     /**< The character array. */
+    size_t length; /**< The number of characters in the array. */
+    char *str;     /**< The character array. */
 } String;
 
 /**
@@ -606,5 +606,29 @@ GALXLIB_API enum StringError slice_str(
     const size_t index_start,
     const size_t index_end,
     String **const output);
+
+/**
+ * Checks if the @ref String begins with the given characters.
+ * @param str The String to check.
+ * @param part The characters to check for, as a null-ternimated character array.
+ * If empty - "\0" or "" -, a negative result (0) is outputed.
+ * If the length of the given character array is greater than String::length, a negative result (0) is outputed.
+ * @param output A pointer, where the result will be outputed. 1 if the String starts with the given characters and 0 otherwise.
+ * @return A value of the @ref StringError:
+ *
+ * - STR_SUCCESS
+ *
+ * - STR_ERR_NULL_ARGUMENT
+ *
+ * - STR_ERR_NULL_STR
+ *
+ * - STR_ERR_ZERO_LENGTH
+ *
+ * - STR_ERR_LOOP_MAX_LIMIT
+ */
+GALXLIB_API enum StringError starts_with_nt(
+    const String *const str,
+    const char *const part,
+    int *const output);
 
 #endif
