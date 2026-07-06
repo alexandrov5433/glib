@@ -1,4 +1,4 @@
-# Glib
+# Galxlib
 A general purpose C library. 
 
 ## Linux Installation
