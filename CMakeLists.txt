@@ -39,11 +39,7 @@ endif()
 
 target_sources(galxlib
     PRIVATE
-        src/linkedList.c
         src/hash_map.c
-        src/sorting.c
-        src/binary_tree.c
-        src/stack.c
         src/dynamic_array.c
         src/gstring.c
         src/gregex.c
@@ -52,11 +48,7 @@ target_sources(galxlib
         BASE_DIRS
             include
         FILES
-            include/linkedList.h
             include/hash_map.h
-            include/sorting.h
-            include/binary_tree.h
-            include/stack.h
             include/dynamic_array.h
             include/gstring.h
             include/gregex.h
@@ -74,11 +66,7 @@ target_sources(lib_test
         lib_test/src/dynamic_array.c
         lib_test/src/gstring.c
         lib_test/src/hash_map.c
-        lib_test/src/sorting.c
-        lib_test/src/stack.c
-        lib_test/src/linked_list.c
         lib_test/src/gregex.c
-        lib_test/src/binary_tree.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
@@ -87,12 +75,7 @@ target_sources(lib_test
             lib_test/include/dynamic_array.h
             lib_test/include/gstring.h
             lib_test/include/hash_map.h
-            lib_test/include/sorting.h
-            lib_test/include/stack.h
-            lib_test/include/linked_list.h
             lib_test/include/gregex.h
-            lib_test/include/binary_tree.h
-
 )
 # compile lib code with -g flag, enabling debugging of lib_test.exe with working breakpoints
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
