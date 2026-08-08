@@ -10,3 +10,8 @@ A general purpose C library.
 Including in a project -> #include "galxlib/***.h"    (#include "galxlib/hash_map.h")
 
 When using galxlib, the project must be compiled with linker flags -lgalxlib -lm: 'gcc test.c -o test -lgalxlib -lm'
+
+## Doxygen Documentation
+The following environment variables are used in the Doxyfile and must be declared:
+- INPUT = $(DOXYGEN_GALXLIB_INPUT_DIR)
+- OUTPUT_DIRECTORY = $(DOXYGEN_GALXLIB_OUTPUT_DIR)

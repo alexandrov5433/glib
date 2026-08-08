@@ -1,3 +1,8 @@
+/**
+ * @file dynamic_array.h
+ * @brief Header file for dynamic array implementation.
+ */
+
 #ifndef GALXLIB_DYNAMIC_ARRAY_H
 #define GALXLIB_DYNAMIC_ARRAY_H
 
@@ -51,11 +56,11 @@ enum DynamicArrayError
  */
 enum DynamicArrayType
 {
-	DA_INT = 0,
-	DA_CHAR = 1,
-	DA_FLOAT = 2,
-	DA_DOUBLE = 3,
-	DA_PTR = 4
+	DA_INT = 0,    /**< DynamicArray of integers. */
+	DA_CHAR = 1,   /**< DynamicArray of characters. */
+	DA_FLOAT = 2,  /**< DynamicArray of floating-point-numbers. */
+	DA_DOUBLE = 3, /**< DynamicArray of double-precision floating-point-numbers. */
+	DA_PTR = 4     /**< DynamicArray of pointers. */
 };
 
 /**
@@ -80,7 +85,7 @@ typedef struct DynamicArray
 } DynamicArray;
 
 /**
- * @struct DynamicArrayiterator
+ * @struct DynamicArrayIterator
  * @brief A stucture used to securely iterate through the element of the @ref DynamicArray.
  */
 typedef struct DynamicArrayIterator

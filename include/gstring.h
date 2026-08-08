@@ -1,3 +1,8 @@
+/**
+ * @file gstring.h
+ * @brief Header file for string implementation.
+ */
+
 #ifndef GALXLIB_STRING_H
 #define GALXLIB_STRING_H
 

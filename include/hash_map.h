@@ -1,3 +1,8 @@
+/**
+ * @file hash_map.h
+ * @brief Header file for hash map implementation.
+ */
+
 #ifndef GALXLIB_HASH_MAP_H
 #define GALXLIB_HASH_MAP_H
 

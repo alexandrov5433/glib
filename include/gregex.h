@@ -1,3 +1,8 @@
+/**
+ * @file gregex.h
+ * @brief Header file for regex implementation.
+ */
+
 #ifndef GALXLIB_GREGEX_H
 #define GALXLIB_GREGEX_H
 

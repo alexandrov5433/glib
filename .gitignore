@@ -4,3 +4,4 @@ library_build_commands.txt
 build
 build/**
 install_lib.sh
+docs
