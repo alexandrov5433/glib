@@ -40,12 +40,15 @@ https://pubs.opengroup.org/onlinepubs/009696899/functions/regcomp.html
  */
 enum RegexContainerError
 {
-	RC_SUCCESS = 0,				/**< (0) Successful execution of the called function. */
-	RC_ERR_NULL_ARGUMENT = 1,		/**< (1) One or more arguments are NULL. */
-	RC_ERR_MEMORY_ALLOCATION = 2,		/**< (2) Failed to allocate or reallocate memory. */
-	RC_ERR_PATTERN_COMPILATION = 3,		/**< (3) Failed to compile the regex pattern using the regcomp function. */
-	RC_ERR_INVALID_ARGUMENT_DIMENTIONS = 4, /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
-	RC_ERR_NO_MATCH = 5,			/**< (5) The given RegexContainer has not matched a string (character array or String). */
+    RC_SUCCESS = 0,                             /**< (0) Successful execution of the called function. */
+    RC_ERR_NULL_ARGUMENT = 1,                   /**< (1) One or more arguments are NULL. */
+    RC_ERR_MEMORY_ALLOCATION = 2,               /**< (2) Failed to allocate or reallocate memory. */
+    RC_ERR_PATTERN_COMPILATION = 3,             /**< (3) Failed to compile the regex pattern using the regcomp function. */
+    RC_ERR_INVALID_ARGUMENT_DIMENTIONS = 4,     /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
+    RC_ERR_NO_MATCH = 5,                        /**< (5) The given @ref RegexContainer has not matched a string (character array or String). */
+    RC_ERR_MISSING_COMPILED_PATTERN_BUFFER = 6, /**< (6) The given @ref RegexContainer does not contain a compiled pattern buffer. The structure member, pointing to a regex_t structure, is NULL (container->regex == NULL). */
+    RC_ERR_MISSING_MATCH_GROUPS = 7,            /**< (7) The given @ref RegexContainer does not contain any match groups. The structure member, pointing to a regmatch_t array, is NULL (container->groups == NULL). */
+    RC_ERR_EXECUTION = 8,                       /**< (8) The regexec function has returned an error code (different than 0 and REG_NOMATCH), while trying to match. */
 };
 
 /**
@@ -54,20 +57,20 @@ enum RegexContainerError
  */
 typedef struct RegexContainer
 {
-	regex_t *regex;	     /**< A ponter to the compiled regex. */
-	size_t max_groups;   /**< The number of gpoups, which the regex will hold. */
-	regmatch_t *groups;  /**< A ponter to the groups specified in the regex pattern. The groups count will equal max_groups. The groups counting stats from 0 - index based. The first group (index 0) indicates the whole matched_input string. */
-	char *matched_input; /**< A pointer to the input string, against which the compiled regex was matched. Initialized as NULL. */
-	int is_match;	     /**< 1 if a match was made, 0 otherwise. Initialized as 0. The matched_input and is_match properties are changed by the match function. */
+    regex_t *regex;      /**< A ponter to the compiled regex_t structure, containing the compiled pattern buffer of the regex. */
+    size_t max_groups;   /**< The number of gpoups, which the regex will hold. The group with index 0 is the whole matched string. */
+    regmatch_t *groups;  /**< A ponter to the groups specified in the regex pattern. The groups count will equal max_groups. The groups counting stats from 0 - index based. The first group (index 0) indicates the whole matched_input string. */
+    char *matched_input; /**< A pointer to the input string, against which the compiled regex was matched. Initialized as NULL. */
+    int is_match;        /**< 1 if a match was made, 0 otherwise. Initialized as 0. The matched_input and is_match properties are changed by the match function. */
 } RegexContainer;
 
 /**
  * Creates a new RegexContainer.
  * @param pattern A pointer to the string pattern, which will be compiled into a regex. If NULL, NULL is returned.
  * @param max_groups The maximum count of groups, which will be present in the regex.
- * The first (index 0) is always the whole matched string.
- * @param flag A regex flag to use in the regcomp function.
- * Example REG_EXTENDED (int 1) for compiling an Extended Regular Expression.
+ * The first (index 0) is always the whole matched string. Must be 1 or greater.
+ * @param compilation_flags The flags to use in the regcomp function. The biwise OR of zero or more regex flags.
+ * The flags are defined in the standard C library documentaion under regex: REG_EXTENDED, REG_ICASE, REG_NOSUB and REG_NEWLINE.
  * @return A value of the @ref RegexContainerError:
  *
  * - RC_SUCCESS
@@ -81,36 +84,40 @@ typedef struct RegexContainer
 GALXLIB_API enum RegexContainerError new_regex_container(
     const char *const pattern,
     const size_t max_groups,
-    const int flag,
+    const int compilation_flags,
     RegexContainer **const output);
 
 /**
  * Frees the memory for the RegexContainer.
- * @param container The pointer to the RegexContainer, which is to be freed.
+ * @param container The pointer to the RegexContainer, which is to be freed. The rerefenced pointer is set to NULL.
  * @return A value of the @ref RegexContainerError:
  *
  * - RC_SUCCESS
  *
  * - RC_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum RegexContainerError free_regex_container(RegexContainer *container);
+GALXLIB_API enum RegexContainerError free_regex_container(RegexContainer **container);
 
 /**
- * Attempts to match the given character array against the regex in the RegexContainer.
- * @param input The null-terminated character array to match.
- * @param container The RegexContainer holding all regex related data, including the compiled regex pattern.
+ * Attempts to match the given null-terminated character array against the previously compiled pattern buffer (regex) in the @ref RegexContainer.
+ * @param container The RegexContainer holding all regex-related data, including the compiled pattern buffer (regex).
+ * @param input The null-terminated character array to match against the pattern.
+ * @param execution_flags The flag to give to the regexec function. The biwise OR of zero or more regex flags.
+ * The flags are defined in the standard C library documentaion under regex: REG_NOTBOL, REG_NOTEOL and REG_STARTEND.
  * @return A value of the @ref RegexContainerError:
  *
  * - RC_SUCCESS
  *
  * - RC_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum RegexContainerError match(RegexContainer *const container, char *const input);
+GALXLIB_API enum RegexContainerError match(RegexContainer *const container, const char *const input, const int execution_flags);
 
 /**
  * Attempts to match the given String against the regex in the RegexContainer.
- * @param str The String to match.
  * @param container The RegexContainer holding all regex related data, including the compiled regex pattern.
+ * @param str The @ref String to match.
+ * @param execution_flags The flag to give to the regexec function. The biwise OR of zero or more regex flags.
+ * The flags are defined in the standard C library documentaion under regex: REG_NOTBOL, REG_NOTEOL and REG_STARTEND.
  * @return A value of the @ref RegexContainerError:
  *
  * - RC_SUCCESS
@@ -119,7 +126,7 @@ GALXLIB_API enum RegexContainerError match(RegexContainer *const container, char
  *
  * - RC_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum RegexContainerError match_str(RegexContainer *const container, const String *const str);
+GALXLIB_API enum RegexContainerError match_str(RegexContainer *const container, const String *const str, const int execution_flags);
 
 /**
  * Get the matched character array from a group. This is the raw match, without adding a null-terminator.

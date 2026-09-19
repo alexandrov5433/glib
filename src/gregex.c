@@ -3,58 +3,58 @@
 #include <regex.h>
 #include <stdlib.h>
 
-enum RegexContainerError free_regex_container(RegexContainer *container)
+enum RegexContainerError free_regex_container(RegexContainer **container)
 {
-        if (container == NULL)
+        if (NULL == (*container))
                 return RC_ERR_NULL_ARGUMENT;
 
-        if (container->regex != NULL)
-                regfree(container->regex);
+        if ((*container)->regex != NULL)
+                regfree((*container)->regex);
 
-        if (container->groups != NULL)
-                free(container->groups);
+        if ((*container)->groups != NULL)
+                free((*container)->groups);
 
-        free(container);
+        if ((*container)->matched_input != NULL)
+                free((*container)->matched_input);
+
+        free(*container);
+        *container = NULL;
+
         return RC_SUCCESS;
 }
 
 enum RegexContainerError new_regex_container(
     const char *const pattern,
     const size_t max_groups,
-    const int flag,
+    const int compilation_flags,
     RegexContainer **const output)
 {
-        int error_code = 0;
-        if (pattern == NULL || output == NULL)
-        {
-                error_code = RC_ERR_NULL_ARGUMENT;
-                goto _err;
-        }
+        if (NULL == pattern || NULL == output)
+                return RC_ERR_NULL_ARGUMENT;
+
+        enum RegexContainerError rv = RC_SUCCESS;
 
         RegexContainer *container = malloc(sizeof(RegexContainer));
         if (container == NULL)
-        {
-                error_code = RC_ERR_MEMORY_ALLOCATION;
-                goto _err;
-        }
+                return RC_ERR_MEMORY_ALLOCATION;
 
         regex_t *regex = malloc(sizeof(regex_t));
-        if (regex == NULL)
+        if (NULL == regex)
         {
-                error_code = RC_ERR_MEMORY_ALLOCATION;
+                rv = RC_ERR_MEMORY_ALLOCATION;
                 goto _err;
         }
 
         regmatch_t *groups = malloc(max_groups * sizeof(regmatch_t));
-        if (groups == NULL)
+        if (NULL == groups)
         {
-                error_code = RC_ERR_MEMORY_ALLOCATION;
+                rv = RC_ERR_MEMORY_ALLOCATION;
                 goto _err;
         }
 
-        if (regcomp(regex, pattern, flag))
+        if (regcomp(regex, pattern, compilation_flags))
         {
-                error_code = RC_ERR_PATTERN_COMPILATION;
+                rv = RC_ERR_PATTERN_COMPILATION;
                 goto _err;
         }
 
@@ -66,19 +66,22 @@ enum RegexContainerError new_regex_container(
 
         *output = container;
 
-        return RC_SUCCESS;
+        return rv;
 
 _err:
-        if (error_code >= RC_ERR_MEMORY_ALLOCATION)
-                free_regex_container(container);
+        free_regex_container(&container);
 
-        return error_code;
+        return rv;
 }
 
-enum RegexContainerError match(RegexContainer *const container, char *const input)
+enum RegexContainerError match(RegexContainer *const container, const char *const input, const int execution_flags)
 {
-        if (container == NULL || input == NULL)
+        if (NULL == container || NULL == input)
                 return RC_ERR_NULL_ARGUMENT;
+        if (NULL == container->regex)
+                return RC_ERR_MISSING_COMPILED_PATTERN_BUFFER;
+        if (NULL == container->groups)
+                return RC_ERR_MISSING_MATCH_GROUPS;
 
         /**
          * The regexec() function compares the null-terminated string specified by string with the compiled
@@ -86,15 +89,27 @@ enum RegexContainerError match(RegexContainer *const container, char *const inpu
          * If it finds a match, regexec() shall return 0; otherwise, it shall return non-zero indicating
          * either no match or an error. The eflags argument is the bitwise-inclusive
          * OR of zero or more of the following flags, which are defined in the <regex.h> header:
+         * Returns: 0 on success, REG_NOMATCH (== _REG_NOMATCH == 1) on failure and an error code on error.
          */
-        int status = regexec(container->regex, input, container->max_groups, container->groups, 0);
-        container->is_match = status == 0 ? 1 : 0;
-        container->matched_input = status == 0 ? input : NULL;
+        int status = regexec(container->regex, input, container->max_groups, container->groups, execution_flags);
+        if (0 == status)
+        {
+                container->is_match = 1;
+                container->matched_input = status == 0 ? input : NULL;
+        }
+        else if (REG_NOMATCH == status)
+        {
+                container->is_match = 0;
+        }
+        else
+        {
+                return RC_ERR_EXECUTION;
+        }
 
         return RC_SUCCESS;
 }
 
-enum RegexContainerError match_str(RegexContainer *const container, const String *const str)
+enum RegexContainerError match_str(RegexContainer *const container, const String *const str, const int execution_flags)
 {
         if (str == NULL || container == NULL)
                 return RC_ERR_NULL_ARGUMENT;
@@ -112,9 +127,20 @@ enum RegexContainerError match_str(RegexContainer *const container, const String
         else if (err_str == STR_ERR_MEMORY_ALLOCATION)
                 return RC_ERR_MEMORY_ALLOCATION;
 
-        int status = regexec(container->regex, str_nt, container->max_groups, container->groups, 0);
-        container->is_match = status == 0 ? 1 : 0;
-        container->matched_input = status == 0 ? str_nt : NULL;
+        int status = regexec(container->regex, str_nt, container->max_groups, container->groups, execution_flags);
+        if (0 == status)
+        {
+                container->is_match = 1;
+                container->matched_input = status == 0 ? str_nt : NULL;
+        }
+        else if (REG_NOMATCH == status)
+        {
+                container->is_match = 0;
+        }
+        else
+        {
+                return RC_ERR_EXECUTION;
+        }
 
         return RC_SUCCESS;
 }
