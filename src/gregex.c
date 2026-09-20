@@ -5,8 +5,11 @@
 
 enum RegexContainerError free_regex_container(RegexContainer **container)
 {
-        if (NULL == (*container))
+        if (NULL == container)
                 return RC_ERR_NULL_ARGUMENT;
+
+        if (NULL == (*container))
+                return RC_SUCCESS;
 
         if ((*container)->regex != NULL)
                 regfree((*container)->regex);
@@ -74,7 +77,10 @@ _err:
         return rv;
 }
 
-enum RegexContainerError match(RegexContainer *const container, const char *const input, const int execution_flags)
+enum RegexContainerError match(
+        RegexContainer *const container, 
+        char *const input, 
+        const int execution_flags)
 {
         if (NULL == container || NULL == input)
                 return RC_ERR_NULL_ARGUMENT;
@@ -109,7 +115,10 @@ enum RegexContainerError match(RegexContainer *const container, const char *cons
         return RC_SUCCESS;
 }
 
-enum RegexContainerError match_str(RegexContainer *const container, const String *const str, const int execution_flags)
+enum RegexContainerError match_str(
+        RegexContainer *const container, 
+        const String *const str, 
+        const int execution_flags)
 {
         if (str == NULL || container == NULL)
                 return RC_ERR_NULL_ARGUMENT;

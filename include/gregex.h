@@ -110,7 +110,7 @@ GALXLIB_API enum RegexContainerError free_regex_container(RegexContainer **conta
  *
  * - RC_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum RegexContainerError match(RegexContainer *const container, const char *const input, const int execution_flags);
+GALXLIB_API enum RegexContainerError match(RegexContainer *const container, char *const input, const int execution_flags);
 
 /**
  * Attempts to match the given String against the regex in the RegexContainer.
