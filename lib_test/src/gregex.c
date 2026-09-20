@@ -13,30 +13,30 @@ void test_gregex()
 
 	// new_regex_container
 	RegexContainer *rc = NULL;
-	assert(new_regex_container(NULL, 1, REG_EXTENDED, &rc) == RC_ERR_NULL_ARGUMENT);
+	assert(new_regex_container(NULL, 1, REG_EXTENDED, &rc) == GLX_ERR_NULL_ARGUMENT);
 
-	assert(new_regex_container("([a-z]+)", 2, REG_EXTENDED, NULL) == RC_ERR_NULL_ARGUMENT);
+	assert(new_regex_container("([a-z]+)", 2, REG_EXTENDED, NULL) == GLX_ERR_NULL_ARGUMENT);
 
-	assert(new_regex_container("([a-z]+)", 2, REG_EXTENDED, &rc) == RC_SUCCESS);
+	assert(new_regex_container("([a-z]+)", 2, REG_EXTENDED, &rc) == GLX_SUCCESS);
 	assert(rc != NULL);
 
 	// match
-	assert(match(NULL, "test", 0) == RC_ERR_NULL_ARGUMENT);
-	assert(match(rc, NULL, 0) == RC_ERR_NULL_ARGUMENT);
+	assert(match(NULL, "test", 0) == GLX_ERR_NULL_ARGUMENT);
+	assert(match(rc, NULL, 0) == GLX_ERR_NULL_ARGUMENT);
 
-	assert(match(rc, "hello", 0) == RC_SUCCESS);
+	assert(match(rc, "hello", 0) == GLX_SUCCESS);
 	assert(rc->is_match == 1);
 
 	// get_group_value
 	char *group = NULL;
 	size_t group_len = 0;
 
-	assert(get_group_value(NULL, 0, &group, &group_len) == RC_ERR_NULL_ARGUMENT);
-	assert(get_group_value(rc, 0, NULL, &group_len) == RC_ERR_NULL_ARGUMENT);
-	assert(get_group_value(rc, 0, &group, NULL) == RC_ERR_NULL_ARGUMENT);
-	assert(get_group_value(rc, 999, &group, &group_len) == RC_ERR_INVALID_ARGUMENT_DIMENTIONS);
+	assert(get_group_value(NULL, 0, &group, &group_len) == GLX_ERR_NULL_ARGUMENT);
+	assert(get_group_value(rc, 0, NULL, &group_len) == GLX_ERR_NULL_ARGUMENT);
+	assert(get_group_value(rc, 0, &group, NULL) == GLX_ERR_NULL_ARGUMENT);
+	assert(get_group_value(rc, 999, &group, &group_len) == GLX_ERR_INVALID_ARGUMENT_DIMENTIONS);
 
-	assert(get_group_value(rc, 0, &group, &group_len) == RC_SUCCESS);
+	assert(get_group_value(rc, 0, &group, &group_len) == GLX_SUCCESS);
 	assert(group != NULL);
 	assert(group_len > 0);
 	free(group);
@@ -45,19 +45,19 @@ void test_gregex()
 	char *group_nt = NULL;
 	size_t group_nt_len = 0;
 
-	assert(get_group_value_nt(NULL, 0, &group_nt, &group_nt_len) == RC_ERR_NULL_ARGUMENT);
-	assert(get_group_value_nt(rc, 0, NULL, &group_nt_len) == RC_ERR_NULL_ARGUMENT);
-	assert(get_group_value_nt(rc, 0, &group_nt, NULL) == RC_ERR_NULL_ARGUMENT);
-	assert(get_group_value_nt(rc, 0, &group_nt, &group_nt_len) == RC_SUCCESS);
+	assert(get_group_value_nt(NULL, 0, &group_nt, &group_nt_len) == GLX_ERR_NULL_ARGUMENT);
+	assert(get_group_value_nt(rc, 0, NULL, &group_nt_len) == GLX_ERR_NULL_ARGUMENT);
+	assert(get_group_value_nt(rc, 0, &group_nt, NULL) == GLX_ERR_NULL_ARGUMENT);
+	assert(get_group_value_nt(rc, 0, &group_nt, &group_nt_len) == GLX_SUCCESS);
 	assert(group_nt != NULL);
 	assert(strlen(group_nt) == group_nt_len);
 	free(group_nt);
 
 	// get_group_value_str
 	String *group_str = NULL;
-	assert(get_group_value_str(NULL, 0, &group_str) == RC_ERR_NULL_ARGUMENT);
-	assert(get_group_value_str(rc, 0, NULL) == RC_ERR_NULL_ARGUMENT);
-	assert(get_group_value_str(rc, 0, &group_str) == RC_SUCCESS);
+	assert(get_group_value_str(NULL, 0, &group_str) == GLX_ERR_NULL_ARGUMENT);
+	assert(get_group_value_str(rc, 0, NULL) == GLX_ERR_NULL_ARGUMENT);
+	assert(get_group_value_str(rc, 0, &group_str) == GLX_SUCCESS);
 	assert(group_str != NULL);
 	assert(group_str->length > 0);
 
@@ -65,18 +65,18 @@ void test_gregex()
 
 	// match_str
 	String *test_str = NULL;
-	assert(new_string("world", 5, &test_str) == STR_SUCCESS);
+	assert(new_string("world", 5, &test_str) == GLX_SUCCESS);
 
-	assert(match_str(NULL, test_str, 0) == RC_ERR_NULL_ARGUMENT);
-	assert(match_str(rc, NULL, 0) == RC_ERR_NULL_ARGUMENT);
+	assert(match_str(NULL, test_str, 0) == GLX_ERR_NULL_ARGUMENT);
+	assert(match_str(rc, NULL, 0) == GLX_ERR_NULL_ARGUMENT);
 
-	assert(match_str(rc, test_str, 0) == RC_SUCCESS);
+	assert(match_str(rc, test_str, 0) == GLX_SUCCESS);
 
 	free_string(&test_str);
 
 	// free_regex_container
-	assert(free_regex_container(NULL) == RC_ERR_NULL_ARGUMENT);
-	assert(free_regex_container(&rc) == RC_SUCCESS);
+	assert(free_regex_container(NULL) == GLX_ERR_NULL_ARGUMENT);
+	assert(free_regex_container(&rc) == GLX_SUCCESS);
 	assert(rc == NULL);
 
 	printf("All gregex tests passed!\n");

@@ -52,6 +52,7 @@ target_sources(galxlib
         BASE_DIRS
             include
         FILES
+            include/error.h
             include/hash_map.h
             include/dynamic_array.h
             include/gstring.h

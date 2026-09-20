@@ -14,7 +14,7 @@ int main()
 
     test_gstring();
     test_hash_map();
-    dynamicArrayTest();
+    dynamic_array_test();
     test_gregex();
     clock_t c2 = clock();
     double dur = 1000.0 * (c2 - c1) / CLOCKS_PER_SEC;

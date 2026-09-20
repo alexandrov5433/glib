@@ -5,109 +5,109 @@
 // ##################   static   ##################
 
 /**
- * @return DA_SUCCESS for a valid type and DA_ERR_TYPE_UNKNOWN for an invalid one.
+ * @return GLX_SUCCESS for a valid type and GLX_ERR_TYPE_UNKNOWN for an invalid one.
  */
-static inline enum DynamicArrayError _is_type_invalid(enum DynamicArrayType const type)
+static inline enum GalxlibError _is_type_invalid(enum DynamicArrayType const type)
 {
 	switch (type)
 	{
 	case DA_INT:
-		return DA_SUCCESS;
+		return GLX_SUCCESS;
 	case DA_CHAR:
-		return DA_SUCCESS;
+		return GLX_SUCCESS;
 	case DA_FLOAT:
-		return DA_SUCCESS;
+		return GLX_SUCCESS;
 	case DA_DOUBLE:
-		return DA_SUCCESS;
+		return GLX_SUCCESS;
 	case DA_PTR:
-		return DA_SUCCESS;
+		return GLX_SUCCESS;
 	default:
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 	}
 }
 
-static enum DynamicArrayError _validate_da(const DynamicArray *const da)
+static enum GalxlibError _validate_da(const DynamicArray *const da)
 {
 	if (NULL == da)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	switch (da->type)
 	{
 	case DA_INT:
 		if (NULL == da->int_arr)
-			return DA_ERR_NULL_ARRAY;
+			return GLX_ERR_NULL_ARRAY;
 		break;
 	case DA_CHAR:
 		if (NULL == da->char_arr)
-			return DA_ERR_NULL_ARRAY;
+			return GLX_ERR_NULL_ARRAY;
 		break;
 	case DA_FLOAT:
 		if (NULL == da->float_arr)
-			return DA_ERR_NULL_ARRAY;
+			return GLX_ERR_NULL_ARRAY;
 		break;
 	case DA_DOUBLE:
 		if (NULL == da->double_arr)
-			return DA_ERR_NULL_ARRAY;
+			return GLX_ERR_NULL_ARRAY;
 		break;
 	case DA_PTR:
 		if (NULL == da->void_arr)
-			return DA_ERR_NULL_ARRAY;
+			return GLX_ERR_NULL_ARRAY;
 		break;
 	default:
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 	}
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static enum DynamicArrayError _mem_realloc(DynamicArray *const da, size_t new_capcity)
+static enum GalxlibError _mem_realloc(DynamicArray *const da, size_t new_capcity)
 {
 	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	switch (da->type)
 	{
 	case DA_INT:
 		int *int_arr = realloc(da->int_arr, new_capcity * da->single_item_size);
 		if (int_arr == NULL)
-			return DA_ERR_MEMORY_ALLOCATION;
+			return GLX_ERR_MEMORY_ALLOCATION;
 		da->int_arr = int_arr;
 		break;
 	case DA_CHAR:
 		char *char_arr = realloc(da->char_arr, new_capcity * da->single_item_size);
 		if (char_arr == NULL)
-			return DA_ERR_MEMORY_ALLOCATION;
+			return GLX_ERR_MEMORY_ALLOCATION;
 		da->char_arr = char_arr;
 		break;
 	case DA_FLOAT:
 		float *float_arr = realloc(da->float_arr, new_capcity * da->single_item_size);
 		if (float_arr == NULL)
-			return DA_ERR_MEMORY_ALLOCATION;
+			return GLX_ERR_MEMORY_ALLOCATION;
 		da->float_arr = float_arr;
 		break;
 	case DA_DOUBLE:
 		double *double_arr = realloc(da->double_arr, new_capcity * da->single_item_size);
 		if (double_arr == NULL)
-			return DA_ERR_MEMORY_ALLOCATION;
+			return GLX_ERR_MEMORY_ALLOCATION;
 		da->double_arr = double_arr;
 		break;
 	case DA_PTR:
 		void **void_arr = realloc(da->void_arr, new_capcity * da->single_item_size);
 		if (void_arr == NULL)
-			return DA_ERR_MEMORY_ALLOCATION;
+			return GLX_ERR_MEMORY_ALLOCATION;
 		da->void_arr = void_arr;
 		break;
 	default:
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 	}
 	da->capacity = new_capcity;
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static enum DynamicArrayError _expand_da(DynamicArray *const da)
+static enum GalxlibError _expand_da(DynamicArray *const da)
 {
 	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	size_t free_space = da->capacity - da->count;
 	if (free_space < DYNAMIC_ARRAY_INIT_CAPACITY * 0.25)
@@ -120,13 +120,13 @@ static enum DynamicArrayError _expand_da(DynamicArray *const da)
 		if (err)
 			return err;
 	}
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static enum DynamicArrayError _shrink_da(DynamicArray *const da)
+static enum GalxlibError _shrink_da(DynamicArray *const da)
 {
 	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	size_t free_space = da->capacity - da->count;
 	if (free_space > DYNAMIC_ARRAY_INIT_CAPACITY * 2)
@@ -143,10 +143,10 @@ static enum DynamicArrayError _shrink_da(DynamicArray *const da)
 		if (err)
 			return err;
 	}
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static enum DynamicArrayError _move_one_right(DynamicArray *const da)
+static enum GalxlibError _move_one_right(DynamicArray *const da)
 {
 	switch (da->type)
 	{
@@ -171,13 +171,13 @@ static enum DynamicArrayError _move_one_right(DynamicArray *const da)
 			da->void_arr[i] = da->void_arr[i - 1];
 		break;
 	default:
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 	}
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static enum DynamicArrayError _move_one_left(DynamicArray *const da)
+static enum GalxlibError _move_one_left(DynamicArray *const da)
 {
 	switch (da->type)
 	{
@@ -202,36 +202,36 @@ static enum DynamicArrayError _move_one_left(DynamicArray *const da)
 			da->void_arr[i] = da->void_arr[i + 1];
 		break;
 	default:
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 	}
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static inline enum DynamicArrayError _is_empty(const DynamicArray *const da, int *const output)
+static inline enum GalxlibError _is_empty(const DynamicArray *const da, int *const output)
 {
 	if (da == NULL || output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	*output = da->count <= 0 ? 1 : 0;
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static inline enum DynamicArrayError _is_out_of_bounds(const DynamicArray *const da, size_t index)
+static inline enum GalxlibError _is_out_of_bounds(const DynamicArray *const da, size_t index)
 {
 	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (index < 0 || index >= da->count)
-		return DA_ERR_INDEX_OUT_OF_BOUNDS;
+		return GLX_ERR_INDEX_OUT_OF_BOUNDS;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static enum DynamicArrayError _single_item_size(enum DynamicArrayType type, size_t *const output)
+static enum GalxlibError _single_item_size(enum DynamicArrayType type, size_t *const output)
 {
 	if (NULL == output)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	switch (type)
 	{
@@ -251,59 +251,59 @@ static enum DynamicArrayError _single_item_size(enum DynamicArrayType type, size
 		*output = sizeof(void *);
 		break;
 	default:
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 	}
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static enum DynamicArrayError _new_items_array(DynamicArray *const da)
+static enum GalxlibError _new_items_array(DynamicArray *const da)
 {
 	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	switch (da->type)
 	{
 	case DA_INT:
 		int *int_arr = malloc(da->capacity * da->single_item_size);
 		if (int_arr == NULL)
-			return DA_ERR_MEMORY_ALLOCATION;
+			return GLX_ERR_MEMORY_ALLOCATION;
 		da->int_arr = int_arr;
 		break;
 	case DA_CHAR:
 		char *char_arr = malloc(da->capacity * da->single_item_size);
 		if (char_arr == NULL)
-			return DA_ERR_MEMORY_ALLOCATION;
+			return GLX_ERR_MEMORY_ALLOCATION;
 		da->char_arr = char_arr;
 		break;
 	case DA_FLOAT:
 		float *float_arr = malloc(da->capacity * da->single_item_size);
 		if (float_arr == NULL)
-			return DA_ERR_MEMORY_ALLOCATION;
+			return GLX_ERR_MEMORY_ALLOCATION;
 		da->float_arr = float_arr;
 		break;
 	case DA_DOUBLE:
 		double *double_arr = malloc(da->capacity * da->single_item_size);
 		if (double_arr == NULL)
-			return DA_ERR_MEMORY_ALLOCATION;
+			return GLX_ERR_MEMORY_ALLOCATION;
 		da->double_arr = double_arr;
 		break;
 	case DA_PTR:
 		void **void_arr = malloc(da->capacity * da->single_item_size);
 		if (void_arr == NULL)
-			return DA_ERR_MEMORY_ALLOCATION;
+			return GLX_ERR_MEMORY_ALLOCATION;
 		da->void_arr = void_arr;
 		break;
 	default:
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 	}
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static enum DynamicArrayError _get_pointer_at_index(const DynamicArray *const da, const size_t index, void **const output)
+static enum GalxlibError _get_pointer_at_index(const DynamicArray *const da, const size_t index, void **const output)
 {
 	if (da == NULL || output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	int err_bounds_check = _is_out_of_bounds(da, index);
 	if (err_bounds_check)
@@ -327,21 +327,21 @@ static enum DynamicArrayError _get_pointer_at_index(const DynamicArray *const da
 		*output = (void *)(da->void_arr)[index];
 		break;
 	default:
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 	}
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static enum DynamicArrayError _get_address_of_pointer_at_index(
+static enum GalxlibError _get_address_of_pointer_at_index(
     const DynamicArray *const da,
     const size_t index,
     void ***output)
 {
 	if (da == NULL || output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (DA_PTR != da->type)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int err_bounds_check = _is_out_of_bounds(da, index);
 	if (err_bounds_check)
@@ -349,16 +349,16 @@ static enum DynamicArrayError _get_address_of_pointer_at_index(
 
 	*output = (void *)&((da->void_arr)[index]);
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-static enum DynamicArrayError _remove_at(DynamicArray *const da, const size_t index)
+static enum GalxlibError _remove_at(DynamicArray *const da, const size_t index)
 {
 	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (da->count <= 0)
-		return DA_SUCCESS;
+		return GLX_SUCCESS;
 
 	int err_bounds_check = _is_out_of_bounds(da, index);
 	if (err_bounds_check)
@@ -373,7 +373,7 @@ static enum DynamicArrayError _remove_at(DynamicArray *const da, const size_t in
 	if (err_new_da_init)
 		return err_new_da_init;
 	if (tmp == NULL)
-		return DA_ERR_MEMORY_ALLOCATION;
+		return GLX_ERR_MEMORY_ALLOCATION;
 
 	int err_code = 0;
 
@@ -410,7 +410,7 @@ static enum DynamicArrayError _remove_at(DynamicArray *const da, const size_t in
 				goto _error_case;
 			break;
 		default:
-			err_code = DA_ERR_TYPE_UNKNOWN;
+			err_code = GLX_ERR_TYPE_UNKNOWN;
 			goto _error_case;
 		}
 	}
@@ -438,7 +438,7 @@ static enum DynamicArrayError _remove_at(DynamicArray *const da, const size_t in
 		da->void_arr = tmp->void_arr;
 		break;
 	default:
-		err_code = DA_ERR_TYPE_UNKNOWN;
+		err_code = GLX_ERR_TYPE_UNKNOWN;
 		goto _error_case;
 	}
 
@@ -448,7 +448,7 @@ static enum DynamicArrayError _remove_at(DynamicArray *const da, const size_t in
 	Thats why free() and not free_dynamic_array().
 	*/
 	free(tmp);
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 
 _error_case:
 	free_dynamic_array(&tmp);
@@ -457,19 +457,19 @@ _error_case:
 
 // ##################   creation and destruction  ##################
 
-enum DynamicArrayError new_dynamic_array(
+enum GalxlibError new_dynamic_array(
     enum DynamicArrayType const type,
     DynamicArray **const output)
 {
 	if (output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (_is_type_invalid(type))
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 
 	DynamicArray *da = (DynamicArray *)malloc(sizeof(DynamicArray));
 	if (da == NULL)
-		return DA_ERR_MEMORY_ALLOCATION;
+		return GLX_ERR_MEMORY_ALLOCATION;
 
 	da->count = 0;
 	da->capacity = DYNAMIC_ARRAY_INIT_CAPACITY;
@@ -480,7 +480,7 @@ enum DynamicArrayError new_dynamic_array(
 	if (err_item_size)
 	{
 		free(da);
-		return DA_ERR_ITEM_SIZE_DETERMINATION;
+		return GLX_ERR_ITEM_SIZE_DETERMINATION;
 	}
 	da->single_item_size = item_size;
 	da->destructor = NULL;
@@ -494,23 +494,23 @@ enum DynamicArrayError new_dynamic_array(
 
 	*output = da;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError new_dynamic_array_d(
+enum GalxlibError new_dynamic_array_d(
     enum DynamicArrayType const type,
     void (*destructor)(void **ptr),
     DynamicArray **const output)
 {
 	if (output == NULL || destructor == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (_is_type_invalid(type))
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 
 	DynamicArray *da = (DynamicArray *)malloc(sizeof(DynamicArray));
 	if (da == NULL)
-		return DA_ERR_MEMORY_ALLOCATION;
+		return GLX_ERR_MEMORY_ALLOCATION;
 
 	da->count = 0;
 	da->capacity = DYNAMIC_ARRAY_INIT_CAPACITY;
@@ -521,7 +521,7 @@ enum DynamicArrayError new_dynamic_array_d(
 	if (err_item_size)
 	{
 		free(da);
-		return DA_ERR_ITEM_SIZE_DETERMINATION;
+		return GLX_ERR_ITEM_SIZE_DETERMINATION;
 	}
 	da->single_item_size = item_size;
 	da->destructor = destructor;
@@ -535,16 +535,16 @@ enum DynamicArrayError new_dynamic_array_d(
 
 	*output = da;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError free_dynamic_array(DynamicArray **const da)
+enum GalxlibError free_dynamic_array(DynamicArray **const da)
 {
 	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (*da == NULL)
-		return DA_SUCCESS;
+		return GLX_SUCCESS;
 
 	switch ((*da)->type)
 	{
@@ -569,22 +569,22 @@ enum DynamicArrayError free_dynamic_array(DynamicArray **const da)
 		(*da)->void_arr = NULL;
 		break;
 	default:
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 	}
 
 	free(*da);
 	*da = NULL;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError free_dynamic_array_d(DynamicArray **const da)
+enum GalxlibError free_dynamic_array_d(DynamicArray **const da)
 {
 	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (*da == NULL)
-		return DA_SUCCESS;
+		return GLX_SUCCESS;
 
 	switch ((*da)->type)
 	{
@@ -606,7 +606,7 @@ enum DynamicArrayError free_dynamic_array_d(DynamicArray **const da)
 		break;
 	case DA_PTR:
 		if ((*da)->destructor == NULL)
-			return DA_ERR_NULL_DESTRUCTOR;
+			return GLX_ERR_NULL_DESTRUCTOR;
 
 		int err = activate_destructor_da(*da);
 		if (err)
@@ -616,25 +616,25 @@ enum DynamicArrayError free_dynamic_array_d(DynamicArray **const da)
 		(*da)->void_arr = NULL;
 		break;
 	default:
-		return DA_ERR_TYPE_UNKNOWN;
+		return GLX_ERR_TYPE_UNKNOWN;
 	}
 
 	free(*da);
 	*da = NULL;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
 // ##################   add items   ##################
 
-enum DynamicArrayError push_int_da(DynamicArray *const da, int const item)
+enum GalxlibError push_int_da(DynamicArray *const da, int const item)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_INT)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int err = _expand_da(da);
 	if (err)
@@ -642,17 +642,17 @@ enum DynamicArrayError push_int_da(DynamicArray *const da, int const item)
 
 	(da->int_arr)[(da->count)++] = item;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError push_char_da(DynamicArray *const da, char const item)
+enum GalxlibError push_char_da(DynamicArray *const da, char const item)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_CHAR)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int err = _expand_da(da);
 	if (err)
@@ -660,17 +660,17 @@ enum DynamicArrayError push_char_da(DynamicArray *const da, char const item)
 
 	(da->char_arr)[(da->count)++] = item;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError push_float_da(DynamicArray *const da, float const item)
+enum GalxlibError push_float_da(DynamicArray *const da, float const item)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_FLOAT)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int err = _expand_da(da);
 	if (err)
@@ -678,17 +678,17 @@ enum DynamicArrayError push_float_da(DynamicArray *const da, float const item)
 
 	(da->float_arr)[(da->count)++] = item;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError push_double_da(DynamicArray *const da, double const item)
+enum GalxlibError push_double_da(DynamicArray *const da, double const item)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_DOUBLE)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int err = _expand_da(da);
 	if (err)
@@ -696,17 +696,17 @@ enum DynamicArrayError push_double_da(DynamicArray *const da, double const item)
 
 	(da->double_arr)[(da->count)++] = item;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError push_ptr_da(DynamicArray *const da, void *const item)
+enum GalxlibError push_ptr_da(DynamicArray *const da, void *const item)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_PTR)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int err = _expand_da(da);
 	if (err)
@@ -714,17 +714,17 @@ enum DynamicArrayError push_ptr_da(DynamicArray *const da, void *const item)
 
 	(da->void_arr)[(da->count)++] = item;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError unshift_int_da(DynamicArray *const da, int const item)
+enum GalxlibError unshift_int_da(DynamicArray *const da, int const item)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_INT)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int expansion_err = _expand_da(da);
 	if (expansion_err)
@@ -738,17 +738,17 @@ enum DynamicArrayError unshift_int_da(DynamicArray *const da, int const item)
 
 	(da->count)++;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError unshift_char_da(DynamicArray *const da, char const item)
+enum GalxlibError unshift_char_da(DynamicArray *const da, char const item)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_CHAR)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int expansion_err = _expand_da(da);
 	if (expansion_err)
@@ -762,17 +762,17 @@ enum DynamicArrayError unshift_char_da(DynamicArray *const da, char const item)
 
 	(da->count)++;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError unshift_float_da(DynamicArray *const da, float const item)
+enum GalxlibError unshift_float_da(DynamicArray *const da, float const item)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_FLOAT)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int expansion_err = _expand_da(da);
 	if (expansion_err)
@@ -786,17 +786,17 @@ enum DynamicArrayError unshift_float_da(DynamicArray *const da, float const item
 
 	(da->count)++;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError unshift_double_da(DynamicArray *const da, double const item)
+enum GalxlibError unshift_double_da(DynamicArray *const da, double const item)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_DOUBLE)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int expansion_err = _expand_da(da);
 	if (expansion_err)
@@ -810,17 +810,17 @@ enum DynamicArrayError unshift_double_da(DynamicArray *const da, double const it
 
 	(da->count)++;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError unshift_ptr_da(DynamicArray *const da, void *const item)
+enum GalxlibError unshift_ptr_da(DynamicArray *const da, void *const item)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_PTR)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int expansion_err = _expand_da(da);
 	if (expansion_err)
@@ -834,26 +834,26 @@ enum DynamicArrayError unshift_ptr_da(DynamicArray *const da, void *const item)
 
 	(da->count)++;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
 // ##################   remove items   ##################
 
-enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const output)
+enum GalxlibError pop_int_da(DynamicArray *const da, int *const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_INT)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	*output = (int)((da->int_arr)[--(da->count)]);
 
@@ -861,24 +861,24 @@ enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const output)
 	if (shrink_err)
 		return shrink_err;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError pop_char_da(DynamicArray *const da, char *const output)
+enum GalxlibError pop_char_da(DynamicArray *const da, char *const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_CHAR)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	*output = (char)((da->char_arr)[--(da->count)]);
 
@@ -886,24 +886,24 @@ enum DynamicArrayError pop_char_da(DynamicArray *const da, char *const output)
 	if (shrink_err)
 		return shrink_err;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError pop_float_da(DynamicArray *const da, float *const output)
+enum GalxlibError pop_float_da(DynamicArray *const da, float *const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_FLOAT)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	*output = (float)((da->float_arr)[--(da->count)]);
 
@@ -911,24 +911,24 @@ enum DynamicArrayError pop_float_da(DynamicArray *const da, float *const output)
 	if (shrink_err)
 		return shrink_err;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError pop_double_da(DynamicArray *const da, double *const output)
+enum GalxlibError pop_double_da(DynamicArray *const da, double *const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_DOUBLE)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	*output = (double)((da->double_arr)[--(da->count)]);
 
@@ -936,24 +936,24 @@ enum DynamicArrayError pop_double_da(DynamicArray *const da, double *const outpu
 	if (shrink_err)
 		return shrink_err;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **const output)
+enum GalxlibError pop_ptr_da(DynamicArray *const da, void **const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_PTR)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	*output = (void *)((da->void_arr)[--(da->count)]);
 
@@ -961,24 +961,24 @@ enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **const output)
 	if (shrink_err)
 		return shrink_err;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError shift_int_da(DynamicArray *const da, int *const output)
+enum GalxlibError shift_int_da(DynamicArray *const da, int *const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_INT)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	*output = (int)((da->int_arr)[0]);
 
@@ -992,24 +992,24 @@ enum DynamicArrayError shift_int_da(DynamicArray *const da, int *const output)
 	if (shrink_err)
 		return shrink_err;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError shift_char_da(DynamicArray *const da, char *const output)
+enum GalxlibError shift_char_da(DynamicArray *const da, char *const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_CHAR)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	*output = (char)((da->char_arr)[0]);
 
@@ -1023,24 +1023,24 @@ enum DynamicArrayError shift_char_da(DynamicArray *const da, char *const output)
 	if (shrink_err)
 		return shrink_err;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError shift_float_da(DynamicArray *const da, float *const output)
+enum GalxlibError shift_float_da(DynamicArray *const da, float *const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_FLOAT)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	*output = (float)((da->float_arr)[0]);
 
@@ -1054,23 +1054,23 @@ enum DynamicArrayError shift_float_da(DynamicArray *const da, float *const outpu
 	if (shrink_err)
 		return shrink_err;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError shift_double_da(DynamicArray *const da, double *const output)
+enum GalxlibError shift_double_da(DynamicArray *const da, double *const output)
 {
 	if (da == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (da->type != DA_DOUBLE)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	*output = (double)((da->double_arr)[0]);
 
@@ -1084,24 +1084,24 @@ enum DynamicArrayError shift_double_da(DynamicArray *const da, double *const out
 	if (shrink_err)
 		return shrink_err;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError shift_ptr_da(DynamicArray *const da, void **const output)
+enum GalxlibError shift_ptr_da(DynamicArray *const da, void **const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (da->type != DA_PTR)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	*output = (void *)((da->void_arr)[0]);
 
@@ -1115,10 +1115,10 @@ enum DynamicArrayError shift_ptr_da(DynamicArray *const da, void **const output)
 	if (shrink_err)
 		return shrink_err;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError remove_at_da(DynamicArray *const da, const size_t index)
+enum GalxlibError remove_at_da(DynamicArray *const da, const size_t index)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
@@ -1129,30 +1129,30 @@ enum DynamicArrayError remove_at_da(DynamicArray *const da, const size_t index)
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	int err_remove = _remove_at(da, index);
 	if (err_remove)
 		return err_remove;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError remove_first_da(DynamicArray *const da, void *const target)
+enum GalxlibError remove_first_da(DynamicArray *const da, void *const target)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (target == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	size_t target_index = 0;
 	int err_index_of = index_of_da(da, target, &target_index);
@@ -1163,26 +1163,26 @@ enum DynamicArrayError remove_first_da(DynamicArray *const da, void *const targe
 	if (err_remove)
 		return err_remove;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
 // ##################   processing   ##################
 
-enum DynamicArrayError apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr))
+enum GalxlibError apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr))
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (worker == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	void *ptr = NULL;
 	int err_get_pointer = _get_pointer_at_index(da, index, &ptr);
@@ -1190,17 +1190,17 @@ enum DynamicArrayError apply_at_da(const DynamicArray *const da, const size_t in
 		return err_get_pointer;
 
 	worker(ptr);
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError process_da(DynamicArray *const da, void (*processor)(void *item_ptr))
+enum GalxlibError process_da(DynamicArray *const da, void (*processor)(void *item_ptr))
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (processor == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	void *ptr = NULL;
 	/**
@@ -1215,20 +1215,20 @@ enum DynamicArrayError process_da(DynamicArray *const da, void (*processor)(void
 		processor(ptr);
 	}
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError activate_destructor_da(DynamicArray *const da)
+enum GalxlibError activate_destructor_da(DynamicArray *const da)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (DA_PTR != da->type)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	if (da->destructor == NULL)
-		return DA_ERR_NULL_DESTRUCTOR;
+		return GLX_ERR_NULL_DESTRUCTOR;
 
 	void **ptr = NULL;
 	for (size_t i = 0; i < da->count; ++i)
@@ -1240,20 +1240,20 @@ enum DynamicArrayError activate_destructor_da(DynamicArray *const da)
 		(da->destructor)(ptr);
 	}
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError apply_destructor_da(DynamicArray *const da, void (*destructor)(void **value))
+enum GalxlibError apply_destructor_da(DynamicArray *const da, void (*destructor)(void **value))
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (destructor == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (DA_PTR != da->type)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	void **ptr = NULL;
 	for (size_t i = 0; i < da->count; ++i)
@@ -1265,17 +1265,17 @@ enum DynamicArrayError apply_destructor_da(DynamicArray *const da, void (*destru
 		destructor(ptr);
 	}
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *item_ptr))
+enum GalxlibError filter_da(DynamicArray *const da, int (*filter)(void *item_ptr))
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (filter == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
@@ -1285,7 +1285,7 @@ enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *ite
 	 * If the array is empty there is nothing to filter. A success error code must be returned.
 	 */
 	if (output_is_empty == 1)
-		return DA_SUCCESS;
+		return GLX_SUCCESS;
 
 	DynamicArray *tempDA = NULL;
 	int err_new_da_init = new_dynamic_array(da->type, &tempDA);
@@ -1293,7 +1293,7 @@ enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *ite
 		return err_new_da_init;
 
 	if (tempDA == NULL)
-		return DA_ERR_MEMORY_ALLOCATION;
+		return GLX_ERR_MEMORY_ALLOCATION;
 
 	void *ptr = NULL;
 	int err_code = 0;
@@ -1333,7 +1333,7 @@ enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *ite
 					goto _error_case;
 				break;
 			default:
-				err_code = DA_ERR_TYPE_UNKNOWN;
+				err_code = GLX_ERR_TYPE_UNKNOWN;
 				goto _error_case;
 			}
 		}
@@ -1366,13 +1366,13 @@ enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *ite
 		free(da->void_arr);
 		break;
 	default:
-		err_code = DA_ERR_TYPE_UNKNOWN;
+		err_code = GLX_ERR_TYPE_UNKNOWN;
 		goto _error_case;
 	}
 	memcpy(da, tempDA, sizeof(DynamicArray));
 	free(tempDA); // The memory of tempDA::itemsArr is not freed. It is pointed to by da::itemsArr.
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 
 _error_case:
 	free_dynamic_array(&tempDA);
@@ -1381,29 +1381,29 @@ _error_case:
 
 // ##################   searching   ##################
 
-enum DynamicArrayError at_da(DynamicArray *const da, const size_t index, void **const output)
+enum GalxlibError at_da(DynamicArray *const da, const size_t index, void **const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (NULL == output)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	int output_is_empty = 0;
 	int err_is_empty = _is_empty(da, &output_is_empty);
 	if (err_is_empty)
 		return err_is_empty;
 	if (output_is_empty == 1)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	return _get_pointer_at_index(da, index, output);
 }
 
-// enum DynamicArrayError find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
+// enum GalxlibError find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
 // {
 // 	if (da == NULL || output == NULL || selector == NULL)
-// 		return DA_ERR_NULL_ARGUMENT;
+// 		return GLX_ERR_NULL_ARGUMENT;
 
 // 	void *ptr = NULL;
 // 	for (size_t i = 0; i < da->count; ++i)
@@ -1415,17 +1415,17 @@ enum DynamicArrayError at_da(DynamicArray *const da, const size_t index, void **
 // 		if (selector(ptr) == 1)
 // 		{
 // 			*output = ptr;
-// 			return DA_SUCCESS;
+// 			return GLX_SUCCESS;
 // 		}
 // 	}
 
-// 	return DA_ITEM_NOT_FOUND;
+// 	return GLX_ERR_NO_MATCH;
 // }
 
-// enum DynamicArrayError find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
+// enum GalxlibError find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr))
 // {
 // 	if (da == NULL || output == NULL || selector == NULL)
-// 		return DA_ERR_NULL_ARGUMENT;
+// 		return GLX_ERR_NULL_ARGUMENT;
 
 // 	void *ptr = NULL;
 // 	for (size_t i = da->count; i-- > 0;)
@@ -1438,17 +1438,17 @@ enum DynamicArrayError at_da(DynamicArray *const da, const size_t index, void **
 // 		if (selector(ptr) == 1)
 // 		{
 // 			*output = ptr;
-// 			return DA_SUCCESS;
+// 			return GLX_SUCCESS;
 // 		}
 // 	}
 
-// 	return DA_ITEM_NOT_FOUND;
+// 	return GLX_ERR_NO_MATCH;
 // }
 
-// enum DynamicArrayError find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr))
+// enum GalxlibError find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr))
 // {
 // 	if (da == NULL || output == NULL || selector == NULL)
-// 		return DA_ERR_NULL_ARGUMENT;
+// 		return GLX_ERR_NULL_ARGUMENT;
 
 // 	void *ptr = NULL;
 // 	for (size_t i = 0; i < da->count; ++i)
@@ -1460,17 +1460,17 @@ enum DynamicArrayError at_da(DynamicArray *const da, const size_t index, void **
 // 		if (selector(ptr) == 1)
 // 		{
 // 			*output = i;
-// 			return DA_SUCCESS;
+// 			return GLX_SUCCESS;
 // 		}
 // 	}
 
-// 	return DA_ITEM_NOT_FOUND;
+// 	return GLX_ERR_NO_MATCH;
 // }
 
-// enum DynamicArrayError find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr))
+// enum GalxlibError find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr))
 // {
 // 	if (da == NULL || output == NULL || selector == NULL)
-// 		return DA_ERR_NULL_ARGUMENT;
+// 		return GLX_ERR_NULL_ARGUMENT;
 
 // 	void *ptr = NULL;
 // 	for (size_t i = da->count; i-- > 0;)
@@ -1483,24 +1483,24 @@ enum DynamicArrayError at_da(DynamicArray *const da, const size_t index, void **
 // 		if (selector(ptr) == 1)
 // 		{
 // 			*output = i;
-// 			return DA_SUCCESS;
+// 			return GLX_SUCCESS;
 // 		}
 // 	}
 
-// 	return DA_ITEM_NOT_FOUND;
+// 	return GLX_ERR_NO_MATCH;
 // }
 
-enum DynamicArrayError index_of_da(DynamicArray *const da, void *const value, size_t *const output)
+enum GalxlibError index_of_da(DynamicArray *const da, void *const value, size_t *const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (output == NULL || value == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (da->count == 0)
-		return DA_EMPTY;
+		return GLX_ERR_ZERO_LENGTH;
 
 	for (size_t i = 0; i < da->count; ++i)
 	{
@@ -1523,163 +1523,163 @@ enum DynamicArrayError index_of_da(DynamicArray *const da, void *const value, si
 			is_equal = ((void *)(da->void_arr)[i]) == (void *)value ? 1 : 0;
 			break;
 		default:
-			return DA_ERR_TYPE_UNKNOWN;
+			return GLX_ERR_TYPE_UNKNOWN;
 		}
 
 		if (is_equal)
 		{
 			*output = i;
-			return DA_SUCCESS;
+			return GLX_SUCCESS;
 		}
 	}
-	return DA_ITEM_NOT_FOUND;
+	return GLX_ERR_NO_MATCH;
 }
 
 // ##################   DynamicArrayIterator   ##################
 
-enum DynamicArrayError new_iterator_da(DynamicArray *const da, DynamicArrayIterator **const output)
+enum GalxlibError new_iterator_da(DynamicArray *const da, DynamicArrayIterator **const output)
 {
 	int err_validate = _validate_da(da);
 	if (err_validate)
 		return err_validate;
 
 	if (output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	DynamicArrayIterator *itr = (DynamicArrayIterator *)malloc(sizeof(DynamicArrayIterator));
 	if (itr == NULL)
-		return DA_ERR_MEMORY_ALLOCATION;
+		return GLX_ERR_MEMORY_ALLOCATION;
 
 	itr->da = da;
 	itr->current_index = 0;
 	*output = itr;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError free_iterator_da(DynamicArrayIterator **itr)
+enum GalxlibError free_iterator_da(DynamicArrayIterator **itr)
 {
 	if (itr == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (*itr == NULL)
-		return DA_SUCCESS;
+		return GLX_SUCCESS;
 
 	free(*itr);
 	*itr = NULL;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError has_next_dai(const DynamicArrayIterator *const itr, int *const output)
+enum GalxlibError has_next_dai(const DynamicArrayIterator *const itr, int *const output)
 {
 	if (itr == NULL || output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (itr->current_index + 1 <= itr->da->count)
 		*output = 1;
 	else
 		*output = 0;
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError next_int_dai(DynamicArrayIterator *const itr, int *const output)
+enum GalxlibError next_int_dai(DynamicArrayIterator *const itr, int *const output)
 {
 	if (itr == NULL || output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (itr->da->type != DA_INT)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_has_next = 0;
 	int err_has_next = has_next_dai(itr, &output_has_next);
 	if (err_has_next)
 		return err_has_next;
 	if (output_has_next == 0)
-		return DA_ERR_INDEX_OUT_OF_BOUNDS;
+		return GLX_ERR_INDEX_OUT_OF_BOUNDS;
 
 	*output = (int)((itr->da->int_arr)[(itr->current_index)++]);
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError next_char_dai(DynamicArrayIterator *const itr, char *const output)
+enum GalxlibError next_char_dai(DynamicArrayIterator *const itr, char *const output)
 {
 	if (itr == NULL || output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (itr->da->type != DA_CHAR)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_has_next = 0;
 	int err_has_next = has_next_dai(itr, &output_has_next);
 	if (err_has_next)
 		return err_has_next;
 	if (output_has_next == 0)
-		return DA_ERR_INDEX_OUT_OF_BOUNDS;
+		return GLX_ERR_INDEX_OUT_OF_BOUNDS;
 
 	*output = (char)((itr->da->char_arr)[(itr->current_index)++]);
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError next_float_dai(DynamicArrayIterator *const itr, float *const output)
+enum GalxlibError next_float_dai(DynamicArrayIterator *const itr, float *const output)
 {
 	if (itr == NULL || output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (itr->da->type != DA_FLOAT)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_has_next = 0;
 	int err_has_next = has_next_dai(itr, &output_has_next);
 	if (err_has_next)
 		return err_has_next;
 	if (output_has_next == 0)
-		return DA_ERR_INDEX_OUT_OF_BOUNDS;
+		return GLX_ERR_INDEX_OUT_OF_BOUNDS;
 
 	*output = (float)((itr->da->float_arr)[(itr->current_index)++]);
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError next_double_dai(DynamicArrayIterator *const itr, double *const output)
+enum GalxlibError next_double_dai(DynamicArrayIterator *const itr, double *const output)
 {
 	if (itr == NULL || output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (itr->da->type != DA_DOUBLE)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_has_next = 0;
 	int err_has_next = has_next_dai(itr, &output_has_next);
 	if (err_has_next)
 		return err_has_next;
 	if (output_has_next == 0)
-		return DA_ERR_INDEX_OUT_OF_BOUNDS;
+		return GLX_ERR_INDEX_OUT_OF_BOUNDS;
 
 	*output = (double)((itr->da->double_arr)[(itr->current_index)++]);
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }
 
-enum DynamicArrayError next_ptr_dai(DynamicArrayIterator *const itr, void **const output)
+enum GalxlibError next_ptr_dai(DynamicArrayIterator *const itr, void **const output)
 {
 	if (itr == NULL || output == NULL)
-		return DA_ERR_NULL_ARGUMENT;
+		return GLX_ERR_NULL_ARGUMENT;
 
 	if (itr->da->type != DA_PTR)
-		return DA_ERR_TYPE_MISMATCH;
+		return GLX_ERR_TYPE_MISMATCH;
 
 	int output_has_next = 0;
 	int err_has_next = has_next_dai(itr, &output_has_next);
 	if (err_has_next)
 		return err_has_next;
 	if (output_has_next == 0)
-		return DA_ERR_INDEX_OUT_OF_BOUNDS;
+		return GLX_ERR_INDEX_OUT_OF_BOUNDS;
 
 	*output = (void *)((itr->da->void_arr)[(itr->current_index)++]);
 
-	return DA_SUCCESS;
+	return GLX_SUCCESS;
 }

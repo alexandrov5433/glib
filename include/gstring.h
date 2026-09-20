@@ -62,23 +62,6 @@
 #endif
 
 /**
- * @enum StringError
- * @brief The error codes returned by the String functions.
- */
-enum StringError
-{
-    STR_SUCCESS = 0,                         /**< (0) Successful execution of the called function. */
-    STR_ERR_NULL_ARGUMENT = 1,               /**< (1) One or more arguments are NULL. */
-    STR_ERR_MEMORY_ALLOCATION = 2,           /**< (2) Failed to allocate or reallocate memory. */
-    STR_ERR_INDEX_OUT_OF_BOUNDS = 3,         /**< (3) The targeted index is outside of the boundaries of the String. */
-    STR_ERR_INVALID_ARGUMENT_DIMENTIONS = 4, /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
-    STR_ERR_LOOP_MAX_LIMIT = 5,              /**< (5) A null-terminator character '\0' was not found among the first GSTRING_LOOP_MAX_LIMIT characters of the given character array. */
-    STR_ERR_NULL_STR = 6,                    /**< (6) The str member of the @ref String is NULL. */
-    STR_ERR_ZERO_LENGTH = 7,                 /**< (7) The length member of the @ref String is 0. */
-    STR_ERR_DYNAMIC_ARRAY = 8,               /**< (8) A DynamicArray function returned a @ref DynamicArrayError error code. */
-};
-
-/**
  * @struct String
  * @brief The structure containing the actual character array and number of elements contained in it.
  */
@@ -97,15 +80,15 @@ typedef struct String
  * @param output A pointer, where the newly created @ref String will be outputed.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum StringError new_string(const char *const char_arr, size_t length, String **const output);
+GALXLIB_API enum GalxlibError new_string(const char *const char_arr, size_t length, String **const output);
 
 /**
  * Creates a new @ref String from a null-terminated character array.
@@ -114,30 +97,30 @@ GALXLIB_API enum StringError new_string(const char *const char_arr, size_t lengt
  * @param output A pointer, where the newly created @ref String will be outputed.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_LOOP_MAX_LIMIT
+ * - GLX_ERR_LOOP_MAX_LIMIT
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum StringError new_string_nt(const char *const char_arr, String **const output);
+GALXLIB_API enum GalxlibError new_string_nt(const char *const char_arr, String **const output);
 
 /**
  * Frees the memory of the @ref String.
  * @param str A pointer to the address of the String, which must be freed.
  * The address of the String is set to NULL on successful execution.
- * If the address of the String is NULL, nothing is done and STR_SUCCESS is returned.
+ * If the address of the String is NULL, nothing is done and GLX_SUCCESS is returned.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum StringError free_string(String **str);
+GALXLIB_API enum GalxlibError free_string(String **str);
 
 /**
  * Appends the character to the end of the String.
@@ -145,19 +128,19 @@ GALXLIB_API enum StringError free_string(String **str);
  * @param c The character to append.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError append_char(String *const str, const char c);
+GALXLIB_API enum GalxlibError append_char(String *const str, const char c);
 
 /**
  * Appends a given count of the characters of a character array to the String.
@@ -166,19 +149,19 @@ GALXLIB_API enum StringError append_char(String *const str, const char c);
  * @param source_length This is the number of characters, which will be copied, starting from index 0.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError append_char_array(String *const str_dest, const char *const source, size_t source_length);
+GALXLIB_API enum GalxlibError append_char_array(String *const str_dest, const char *const source, size_t source_length);
 
 /**
  * Appends all characters from a character array, until a null-terminator '\0', to the end of the String.
@@ -188,21 +171,21 @@ GALXLIB_API enum StringError append_char_array(String *const str_dest, const cha
  * The null-terminator '\0' must be among the first GSTRING_LOOP_MAX_LIMIT characters.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_LOOP_MAX_LIMIT
+ * - GLX_ERR_LOOP_MAX_LIMIT
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError append_nt(String *const str_dest, const char *const source);
+GALXLIB_API enum GalxlibError append_nt(String *const str_dest, const char *const source);
 
 /**
  * Appends all the characters from one String to an other.
@@ -210,19 +193,19 @@ GALXLIB_API enum StringError append_nt(String *const str_dest, const char *const
  * @param str_dest A pointer to the String, to which the characters will be appended.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError append_str(const String *const str_source, String *const str_dest);
+GALXLIB_API enum GalxlibError append_str(const String *const str_source, String *const str_dest);
 
 /**
  * Prepends the character to the start of the String.
@@ -230,19 +213,19 @@ GALXLIB_API enum StringError append_str(const String *const str_source, String *
  * @param c The character to prepend.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError prepend_char(String *const str, const char c);
+GALXLIB_API enum GalxlibError prepend_char(String *const str, const char c);
 
 /**
  * Prepends a given count of the characters of a character array to the start of the String.
@@ -251,19 +234,19 @@ GALXLIB_API enum StringError prepend_char(String *const str, const char c);
  * @param source_length This is the number of characters, which will be copied, starting from index 0.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError prepend_char_array(String *const str_dest, const char *const source, const size_t source_length);
+GALXLIB_API enum GalxlibError prepend_char_array(String *const str_dest, const char *const source, const size_t source_length);
 
 /**
  * Prepends all the characters of a character array, until a null-terminator '\0', to the start of the String.
@@ -273,21 +256,21 @@ GALXLIB_API enum StringError prepend_char_array(String *const str_dest, const ch
  * The null-terminator '\0' must be among the first GSTRING_LOOP_MAX_LIMIT characters.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_LOOP_MAX_LIMIT
+ * - GLX_ERR_LOOP_MAX_LIMIT
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError prepend_nt(String *const str_dest, const char *const source);
+GALXLIB_API enum GalxlibError prepend_nt(String *const str_dest, const char *const source);
 
 /**
  * Prepends all the characters from one String to the start of the other.
@@ -295,19 +278,19 @@ GALXLIB_API enum StringError prepend_nt(String *const str_dest, const char *cons
  * @param dest A pointer to the String, to which the characters will be prepended.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError prepend_str(const String *const source, String *const dest);
+GALXLIB_API enum GalxlibError prepend_str(const String *const source, String *const dest);
 
 /**
  * Duplicates a String.
@@ -315,17 +298,17 @@ GALXLIB_API enum StringError prepend_str(const String *const source, String *con
  * @param output A double String pointer, where the address of the duplicate will be placed.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError duplicate_str(const String *const source, String **const output);
+GALXLIB_API enum GalxlibError duplicate_str(const String *const source, String **const output);
 
 /**
  * Gives a copy of the character array found in the String.
@@ -333,17 +316,17 @@ GALXLIB_API enum StringError duplicate_str(const String *const source, String **
  * @param output A double character array pointer, where the copy will be placed.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError get_raw(const String *const source, char **const output);
+GALXLIB_API enum GalxlibError get_raw(const String *const source, char **const output);
 
 /**
  * Gives a null-terminated copy of the character array found in the String.
@@ -351,17 +334,17 @@ GALXLIB_API enum StringError get_raw(const String *const source, char **const ou
  * @param output A character array pointer, where the copy will be placed.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError get_raw_nt(const String *const source, char **const output);
+GALXLIB_API enum GalxlibError get_raw_nt(const String *const source, char **const output);
 
 /**
  * Filters the characters in the String.
@@ -370,17 +353,17 @@ GALXLIB_API enum StringError get_raw_nt(const String *const source, char **const
  * The filter returns 1 if the character is to STAY, 0 otherwise.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError filter_str(String *const str, int (*filter)(char c));
+GALXLIB_API enum GalxlibError filter_str(String *const str, int (*filter)(char c));
 
 /**
  * Replaces all characters in the String, which match, with the given character.
@@ -391,15 +374,15 @@ GALXLIB_API enum StringError filter_str(String *const str, int (*filter)(char c)
  * @param replacement The character which will be placed on the index of the character to_replace.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError replace_char(String *const str, const char to_replace, const char replacement);
+GALXLIB_API enum GalxlibError replace_char(String *const str, const char to_replace, const char replacement);
 
 /**
  * Removes all instances of the character from the String.
@@ -407,17 +390,17 @@ GALXLIB_API enum StringError replace_char(String *const str, const char to_repla
  * @param to_remove The character which must be removed. All instances are removed.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError remove_char(String *const str, const char to_remove);
+GALXLIB_API enum GalxlibError remove_char(String *const str, const char to_remove);
 
 /**
  * Removes all instances of the character from the String.
@@ -425,21 +408,21 @@ GALXLIB_API enum StringError remove_char(String *const str, const char to_remove
  * @param to_remove The character which must be removed. All instances are removed.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  *
- * - STR_ERR_DYNAMIC_ARRAY
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum StringError replace_str(
+GALXLIB_API enum GalxlibError replace_str(
     String *const str,
     const String *const str_to_replace,
     const String *const str_replacement);
@@ -453,19 +436,19 @@ GALXLIB_API enum StringError replace_str(
  * The concatenation is done from left to right.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError concat_str(String **const output, const size_t n_str, ...);
+GALXLIB_API enum GalxlibError concat_str(String **const output, const size_t n_str, ...);
 
 /**
  * Concatenates multiple Strings, from a @ref DynamicArray, into one.
@@ -475,21 +458,21 @@ GALXLIB_API enum StringError concat_str(String **const output, const size_t n_st
  * @param strings A @ref DynamicArray containing the pointers to the Strings for concatenation.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  *
- * - STR_ERR_DYNAMIC_ARRAY
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum StringError concat_str_da(String **const output, DynamicArray *const strings);
+GALXLIB_API enum GalxlibError concat_str_da(String **const output, DynamicArray *const strings);
 
 /**
  * Concatenates multiple Strings, from a @ref DynamicArray, into one.
@@ -502,21 +485,21 @@ GALXLIB_API enum StringError concat_str_da(String **const output, DynamicArray *
  * Will not be placed at the start or end of the resulting @ref String.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  *
- * - STR_ERR_DYNAMIC_ARRAY
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum StringError concat_str_da_c(
+GALXLIB_API enum GalxlibError concat_str_da_c(
     String **const output,
     DynamicArray *const strings,
     const String *const connector);
@@ -526,17 +509,17 @@ GALXLIB_API enum StringError concat_str_da_c(
  * @param str The @ref String which must be trimmed.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError trim(String *const str);
+GALXLIB_API enum GalxlibError trim(String *const str);
 
 /**
  * Splits the @ref String into an ordered list of substrings (@ref String) by searching for the pattern.
@@ -547,21 +530,21 @@ GALXLIB_API enum StringError trim(String *const str);
  * @param output A pointer, where the @ref DynamicArray with substrings will be outputed.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  *
- * - STR_ERR_DYNAMIC_ARRAY
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum StringError split_str(const String *const str, const String *const pattern, DynamicArray **const output);
+GALXLIB_API enum GalxlibError split_str(const String *const str, const String *const pattern, DynamicArray **const output);
 
 /**
  * Determines whether a given @ref String is present at least once in the given @ref String.
@@ -571,15 +554,15 @@ GALXLIB_API enum StringError split_str(const String *const str, const String *co
  * @param output A pointer for the output. If the str_search @ref String is present 1 is outputed, 0 otherwise.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  */
-GALXLIB_API enum StringError includes_str(
+GALXLIB_API enum GalxlibError includes_str(
     const String *const str,
     const String *const str_search,
     int *const output);
@@ -594,19 +577,19 @@ GALXLIB_API enum StringError includes_str(
  * @param output A pointer, where the new extracted String will be placed.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  *
- * - STR_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - STR_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum StringError slice_str(
+GALXLIB_API enum GalxlibError slice_str(
     const String *const str,
     const size_t index_start,
     const size_t index_end,
@@ -621,17 +604,17 @@ GALXLIB_API enum StringError slice_str(
  * @param output A pointer, where the result will be outputed. 1 if the String starts with the given characters and 0 otherwise.
  * @return A value of the @ref StringError:
  *
- * - STR_SUCCESS
+ * - GLX_SUCCESS
  *
- * - STR_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - STR_ERR_NULL_STR
+ * - GLX_ERR_NULL_STR
  *
- * - STR_ERR_ZERO_LENGTH
+ * - GLX_ERR_ZERO_LENGTH
  *
- * - STR_ERR_LOOP_MAX_LIMIT
+ * - GLX_ERR_LOOP_MAX_LIMIT
  */
-GALXLIB_API enum StringError starts_with_nt(
+GALXLIB_API enum GalxlibError starts_with_nt(
     const String *const str,
     const char *const part,
     int *const output);

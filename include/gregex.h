@@ -9,6 +9,7 @@
 #include <stddef.h>
 #include <regex.h>
 #include "./gstring.h"
+#include "./error.h"
 
 #ifdef _WIN32
 
@@ -35,23 +36,6 @@ https://pubs.opengroup.org/onlinepubs/009696899/functions/regcomp.html
 */
 
 /**
- * @enum RegexError
- * @brief The error codes returned by the RegexContainer functions.
- */
-enum RegexContainerError
-{
-    RC_SUCCESS = 0,                             /**< (0) Successful execution of the called function. */
-    RC_ERR_NULL_ARGUMENT = 1,                   /**< (1) One or more arguments are NULL. */
-    RC_ERR_MEMORY_ALLOCATION = 2,               /**< (2) Failed to allocate or reallocate memory. */
-    RC_ERR_PATTERN_COMPILATION = 3,             /**< (3) Failed to compile the regex pattern using the regcomp function. */
-    RC_ERR_INVALID_ARGUMENT_DIMENTIONS = 4,     /**< (4) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
-    RC_ERR_NO_MATCH = 5,                        /**< (5) The given @ref RegexContainer has not matched a string (character array or String). */
-    RC_ERR_MISSING_COMPILED_PATTERN_BUFFER = 6, /**< (6) The given @ref RegexContainer does not contain a compiled pattern buffer. The structure member, pointing to a regex_t structure, is NULL (container->regex == NULL). */
-    RC_ERR_MISSING_MATCH_GROUPS = 7,            /**< (7) The given @ref RegexContainer does not contain any match groups. The structure member, pointing to a regmatch_t array, is NULL (container->groups == NULL). */
-    RC_ERR_EXECUTION = 8,                       /**< (8) The regexec function has returned an error code (different than 0 and REG_NOMATCH), while trying to match. */
-};
-
-/**
  * @struct RegexContainer
  * @brief A container for all regex related data.
  */
@@ -73,15 +57,15 @@ typedef struct RegexContainer
  * The flags are defined in the standard C library documentaion under regex: REG_EXTENDED, REG_ICASE, REG_NOSUB and REG_NEWLINE.
  * @return A value of the @ref RegexContainerError:
  *
- * - RC_SUCCESS
+ * - GLX_SUCCESS
  *
- * - RC_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - RC_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - RC_ERR_PATTERN_COMPILATION
+ * - GLX_ERR_PATTERN_COMPILATION
  */
-GALXLIB_API enum RegexContainerError new_regex_container(
+GALXLIB_API enum GalxlibError new_regex_container(
     const char *const pattern,
     const size_t max_groups,
     const int compilation_flags,
@@ -92,11 +76,11 @@ GALXLIB_API enum RegexContainerError new_regex_container(
  * @param container The pointer to the RegexContainer, which is to be freed. The rerefenced pointer is set to NULL.
  * @return A value of the @ref RegexContainerError:
  *
- * - RC_SUCCESS
+ * - GLX_SUCCESS
  *
- * - RC_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum RegexContainerError free_regex_container(RegexContainer **container);
+GALXLIB_API enum GalxlibError free_regex_container(RegexContainer **container);
 
 /**
  * Attempts to match the given null-terminated character array against the previously compiled pattern buffer (regex) in the @ref RegexContainer.
@@ -106,11 +90,11 @@ GALXLIB_API enum RegexContainerError free_regex_container(RegexContainer **conta
  * The flags are defined in the standard C library documentaion under regex: REG_NOTBOL, REG_NOTEOL and REG_STARTEND.
  * @return A value of the @ref RegexContainerError:
  *
- * - RC_SUCCESS
+ * - GLX_SUCCESS
  *
- * - RC_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum RegexContainerError match(RegexContainer *const container, char *const input, const int execution_flags);
+GALXLIB_API enum GalxlibError match(RegexContainer *const container, char *const input, const int execution_flags);
 
 /**
  * Attempts to match the given String against the regex in the RegexContainer.
@@ -120,13 +104,13 @@ GALXLIB_API enum RegexContainerError match(RegexContainer *const container, char
  * The flags are defined in the standard C library documentaion under regex: REG_NOTBOL, REG_NOTEOL and REG_STARTEND.
  * @return A value of the @ref RegexContainerError:
  *
- * - RC_SUCCESS
+ * - GLX_SUCCESS
  *
- * - RC_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - RC_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum RegexContainerError match_str(RegexContainer *const container, const String *const str, const int execution_flags);
+GALXLIB_API enum GalxlibError match_str(RegexContainer *const container, const String *const str, const int execution_flags);
 
 /**
  * Get the matched character array from a group. This is the raw match, without adding a null-terminator.
@@ -138,17 +122,17 @@ GALXLIB_API enum RegexContainerError match_str(RegexContainer *const container, 
  * @param output_length A pointer to where the length of the matched character array will be placed.
  * @return A value of the @ref RegexContainerError:
  *
- * - RC_SUCCESS
+ * - GLX_SUCCESS
  *
- * - RC_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - RC_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - RC_ERR_NO_MATCH
+ * - GLX_ERR_NO_MATCH
  *
- * - RC_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum RegexContainerError get_group_value(
+GALXLIB_API enum GalxlibError get_group_value(
     const RegexContainer *const container,
     const size_t group_index,
     char **const output,
@@ -164,17 +148,17 @@ GALXLIB_API enum RegexContainerError get_group_value(
  * @param output_length A pointer to where the length of the matched character array will be placed.
  * @return A value of the @ref RegexContainerError:
  *
- * - RC_SUCCESS
+ * - GLX_SUCCESS
  *
- * - RC_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - RC_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - RC_ERR_NO_MATCH
+ * - GLX_ERR_NO_MATCH
  *
- * - RC_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum RegexContainerError get_group_value_nt(
+GALXLIB_API enum GalxlibError get_group_value_nt(
     const RegexContainer *const container,
     const size_t group_index,
     char **const output,
@@ -189,17 +173,17 @@ GALXLIB_API enum RegexContainerError get_group_value_nt(
  * @param output A pointer to where the String will be placed.
  * @return A value of the @ref RegexContainerError:
  *
- * - RC_SUCCESS
+ * - GLX_SUCCESS
  *
- * - RC_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - RC_ERR_INVALID_ARGUMENT_DIMENTIONS
+ * - GLX_ERR_INVALID_ARGUMENT_DIMENTIONS
  *
- * - RC_ERR_NO_MATCH
+ * - GLX_ERR_NO_MATCH
  *
- * - RC_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum RegexContainerError get_group_value_str(
+GALXLIB_API enum GalxlibError get_group_value_str(
     const RegexContainer *const container,
     const size_t group_index,
     String **const output);

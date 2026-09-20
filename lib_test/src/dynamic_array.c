@@ -38,26 +38,26 @@ static void _test_activate_destructor_da()
 	p2->age = 2;
 
 	DynamicArray *da = NULL;
-	assert(activate_destructor_da(da) == DA_ERR_NULL_ARGUMENT);
-	assert(activate_destructor_da(da_i) == DA_ERR_TYPE_MISMATCH);
-	assert(activate_destructor_da(da_c) == DA_ERR_TYPE_MISMATCH);
-	assert(activate_destructor_da(da_f) == DA_ERR_TYPE_MISMATCH);
-	assert(activate_destructor_da(da_d) == DA_ERR_TYPE_MISMATCH);
-	assert(activate_destructor_da(da_invalid_type) == DA_ERR_TYPE_UNKNOWN);
+	assert(activate_destructor_da(da) == GLX_ERR_NULL_ARGUMENT);
+	assert(activate_destructor_da(da_i) == GLX_ERR_TYPE_MISMATCH);
+	assert(activate_destructor_da(da_c) == GLX_ERR_TYPE_MISMATCH);
+	assert(activate_destructor_da(da_f) == GLX_ERR_TYPE_MISMATCH);
+	assert(activate_destructor_da(da_d) == GLX_ERR_TYPE_MISMATCH);
+	assert(activate_destructor_da(da_invalid_type) == GLX_ERR_TYPE_UNKNOWN);
 
-	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da) == GLX_SUCCESS);
 	assert(da != NULL);
-	assert(push_ptr_da(da, p1) == DA_SUCCESS);
-	assert(push_ptr_da(da, p2) == DA_SUCCESS);
+	assert(push_ptr_da(da, p1) == GLX_SUCCESS);
+	assert(push_ptr_da(da, p2) == GLX_SUCCESS);
 	assert((da->void_arr)[0] == p1);
 	assert((da->void_arr)[1] == p2);
 
-	assert(activate_destructor_da(da) == DA_ERR_NULL_DESTRUCTOR);
+	assert(activate_destructor_da(da) == GLX_ERR_NULL_DESTRUCTOR);
 	assert((da->void_arr)[0] == p1);
 	assert((da->void_arr)[1] == p2);
 
 	da->destructor = _person_destructor;
-	assert(activate_destructor_da(da) == DA_SUCCESS);
+	assert(activate_destructor_da(da) == GLX_SUCCESS);
 	assert(da != NULL);
 	assert((da->void_arr)[0] == NULL);
 	assert((da->void_arr)[1] == NULL);
@@ -65,98 +65,98 @@ static void _test_activate_destructor_da()
 
 static void _test_free()
 {
-	assert(free_dynamic_array(NULL) == DA_ERR_NULL_ARGUMENT);
-	assert(free_dynamic_array(&da_invalid_type) == DA_ERR_TYPE_UNKNOWN);
+	assert(free_dynamic_array(NULL) == GLX_ERR_NULL_ARGUMENT);
+	assert(free_dynamic_array(&da_invalid_type) == GLX_ERR_TYPE_UNKNOWN);
 
 	DynamicArray *da = NULL;
 
 	/* Free NULL DynamicArray pointer */
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 	assert(da == NULL);
 
 	/* ==================== INT ==================== */
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 	assert(da != NULL);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_int_da(da, i) == DA_SUCCESS);
+		assert(push_int_da(da, i) == GLX_SUCCESS);
 	}
 
 	assert(da->count == 10);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 	assert(da == NULL);
 
 	/* ==================== CHAR ==================== */
 
-	assert(new_dynamic_array(DA_CHAR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_CHAR, &da) == GLX_SUCCESS);
 	assert(da != NULL);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_char_da(da, 'a' + i) == DA_SUCCESS);
+		assert(push_char_da(da, 'a' + i) == GLX_SUCCESS);
 	}
 
 	assert(da->count == 10);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 	assert(da == NULL);
 
 	/* ==================== FLOAT ==================== */
 
-	assert(new_dynamic_array(DA_FLOAT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_FLOAT, &da) == GLX_SUCCESS);
 	assert(da != NULL);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_float_da(da, (float)i) == DA_SUCCESS);
+		assert(push_float_da(da, (float)i) == GLX_SUCCESS);
 	}
 
 	assert(da->count == 10);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 	assert(da == NULL);
 
 	/* ==================== DOUBLE ==================== */
 
-	assert(new_dynamic_array(DA_DOUBLE, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_DOUBLE, &da) == GLX_SUCCESS);
 	assert(da != NULL);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_double_da(da, (double)i) == DA_SUCCESS);
+		assert(push_double_da(da, (double)i) == GLX_SUCCESS);
 	}
 
 	assert(da->count == 10);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 	assert(da == NULL);
 
 	/* ==================== PTR ==================== */
 
 	int values[10];
 
-	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da) == GLX_SUCCESS);
 	assert(da != NULL);
 
 	for (int i = 0; i < 10; i++)
 	{
 		values[i] = i;
-		assert(push_ptr_da(da, &values[i]) == DA_SUCCESS);
+		assert(push_ptr_da(da, &values[i]) == GLX_SUCCESS);
 	}
 
 	assert(da->count == 10);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 	assert(da == NULL);
 
 	// free_dynamic_array_d
-	assert(free_dynamic_array_d(&da_invalid_type) == DA_ERR_TYPE_UNKNOWN);
-	assert(free_dynamic_array_d(&da_p) == DA_ERR_NULL_DESTRUCTOR);
+	assert(free_dynamic_array_d(&da_invalid_type) == GLX_ERR_TYPE_UNKNOWN);
+	assert(free_dynamic_array_d(&da_p) == GLX_ERR_NULL_DESTRUCTOR);
 
-	assert(new_dynamic_array_d(DA_PTR, _person_destructor, &da) == DA_SUCCESS);
+	assert(new_dynamic_array_d(DA_PTR, _person_destructor, &da) == GLX_SUCCESS);
 	assert(da != NULL);
 
 	for (int i = 0; i < 2; i++)
@@ -165,135 +165,135 @@ static void _test_free()
 		assert(p != NULL);
 		p->name = "Name";
 		p->age = i;
-		assert(push_ptr_da(da, p) == DA_SUCCESS);
+		assert(push_ptr_da(da, p) == GLX_SUCCESS);
 	}
 
 	assert(da->count == 2);
 
-	assert(free_dynamic_array_d(&da) == DA_SUCCESS);
+	assert(free_dynamic_array_d(&da) == GLX_SUCCESS);
 	assert(da == NULL);
 }
 
 static void _test_push()
 {
 	int tmp = 0;
-	assert(push_int_da(NULL, 1) == DA_ERR_NULL_ARGUMENT);
-	assert(push_int_da(da_c, 1) == DA_ERR_TYPE_MISMATCH);
-	assert(push_int_da(da_f, 1) == DA_ERR_TYPE_MISMATCH);
-	assert(push_int_da(da_d, 1) == DA_ERR_TYPE_MISMATCH);
-	assert(push_int_da(da_p, 1) == DA_ERR_TYPE_MISMATCH);
+	assert(push_int_da(NULL, 1) == GLX_ERR_NULL_ARGUMENT);
+	assert(push_int_da(da_c, 1) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_int_da(da_f, 1) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_int_da(da_d, 1) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_int_da(da_p, 1) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(push_char_da(NULL, 1) == DA_ERR_NULL_ARGUMENT);
-	assert(push_char_da(da_i, 1) == DA_ERR_TYPE_MISMATCH);
-	assert(push_char_da(da_f, 1) == DA_ERR_TYPE_MISMATCH);
-	assert(push_char_da(da_d, 1) == DA_ERR_TYPE_MISMATCH);
-	assert(push_char_da(da_p, 1) == DA_ERR_TYPE_MISMATCH);
+	assert(push_char_da(NULL, 1) == GLX_ERR_NULL_ARGUMENT);
+	assert(push_char_da(da_i, 1) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_char_da(da_f, 1) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_char_da(da_d, 1) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_char_da(da_p, 1) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(push_float_da(NULL, 1.0) == DA_ERR_NULL_ARGUMENT);
-	assert(push_float_da(da_i, 1.0) == DA_ERR_TYPE_MISMATCH);
-	assert(push_float_da(da_c, 1.0) == DA_ERR_TYPE_MISMATCH);
-	assert(push_float_da(da_d, 1.0) == DA_ERR_TYPE_MISMATCH);
-	assert(push_float_da(da_p, 1.0) == DA_ERR_TYPE_MISMATCH);
+	assert(push_float_da(NULL, 1.0) == GLX_ERR_NULL_ARGUMENT);
+	assert(push_float_da(da_i, 1.0) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_float_da(da_c, 1.0) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_float_da(da_d, 1.0) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_float_da(da_p, 1.0) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(push_double_da(NULL, 1.0) == DA_ERR_NULL_ARGUMENT);
-	assert(push_double_da(da_i, 1.0) == DA_ERR_TYPE_MISMATCH);
-	assert(push_double_da(da_c, 1.0) == DA_ERR_TYPE_MISMATCH);
-	assert(push_double_da(da_f, 1.0) == DA_ERR_TYPE_MISMATCH);
-	assert(push_double_da(da_p, 1.0) == DA_ERR_TYPE_MISMATCH);
+	assert(push_double_da(NULL, 1.0) == GLX_ERR_NULL_ARGUMENT);
+	assert(push_double_da(da_i, 1.0) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_double_da(da_c, 1.0) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_double_da(da_f, 1.0) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_double_da(da_p, 1.0) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(push_ptr_da(NULL, &tmp) == DA_ERR_NULL_ARGUMENT);
-	assert(push_ptr_da(da_i, &tmp) == DA_ERR_TYPE_MISMATCH);
-	assert(push_ptr_da(da_c, &tmp) == DA_ERR_TYPE_MISMATCH);
-	assert(push_ptr_da(da_f, &tmp) == DA_ERR_TYPE_MISMATCH);
-	assert(push_ptr_da(da_d, &tmp) == DA_ERR_TYPE_MISMATCH);
+	assert(push_ptr_da(NULL, &tmp) == GLX_ERR_NULL_ARGUMENT);
+	assert(push_ptr_da(da_i, &tmp) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_ptr_da(da_c, &tmp) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_ptr_da(da_f, &tmp) == GLX_ERR_TYPE_MISMATCH);
+	assert(push_ptr_da(da_d, &tmp) == GLX_ERR_TYPE_MISMATCH);
 
 	DynamicArray *da_int = NULL;
-	assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da_int) == GLX_SUCCESS);
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_int_da(da_int, i) == DA_SUCCESS);
+		assert(push_int_da(da_int, i) == GLX_SUCCESS);
 	}
 	assert(da_int->count == 10);
 
 	DynamicArray *da_char = NULL;
-	assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_CHAR, &da_char) == GLX_SUCCESS);
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_char_da(da_char, 'c') == DA_SUCCESS);
+		assert(push_char_da(da_char, 'c') == GLX_SUCCESS);
 	}
 	assert(da_char->count == 10);
 
 	DynamicArray *da_float = NULL;
-	assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_FLOAT, &da_float) == GLX_SUCCESS);
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_float_da(da_float, (float)i) == DA_SUCCESS);
+		assert(push_float_da(da_float, (float)i) == GLX_SUCCESS);
 	}
 	assert(da_float->count == 10);
 
 	DynamicArray *da_double = NULL;
-	assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_DOUBLE, &da_double) == GLX_SUCCESS);
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_double_da(da_double, (double)i) == DA_SUCCESS);
+		assert(push_double_da(da_double, (double)i) == GLX_SUCCESS);
 	}
 	assert(da_double->count == 10);
 
 	DynamicArray *da_ptr = NULL;
-	assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da_ptr) == GLX_SUCCESS);
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_ptr_da(da_ptr, &tmp) == DA_SUCCESS);
+		assert(push_ptr_da(da_ptr, &tmp) == GLX_SUCCESS);
 	}
 	assert(da_ptr->count == 10);
 
-	assert(free_dynamic_array(&da_int) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_char) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_float) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_double) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+	assert(free_dynamic_array(&da_int) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_char) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_float) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_double) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_ptr) == GLX_SUCCESS);
 }
 
 static void _test_unshift()
 {
 	int tmp = 0;
 
-	assert(unshift_int_da(NULL, 1) == DA_ERR_NULL_ARGUMENT);
-	assert(unshift_int_da(da_c, 1) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_int_da(da_f, 1) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_int_da(da_d, 1) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_int_da(da_p, 1) == DA_ERR_TYPE_MISMATCH);
+	assert(unshift_int_da(NULL, 1) == GLX_ERR_NULL_ARGUMENT);
+	assert(unshift_int_da(da_c, 1) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_int_da(da_f, 1) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_int_da(da_d, 1) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_int_da(da_p, 1) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(unshift_char_da(NULL, 'a') == DA_ERR_NULL_ARGUMENT);
-	assert(unshift_char_da(da_i, 'a') == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_char_da(da_f, 'a') == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_char_da(da_d, 'a') == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_char_da(da_p, 'a') == DA_ERR_TYPE_MISMATCH);
+	assert(unshift_char_da(NULL, 'a') == GLX_ERR_NULL_ARGUMENT);
+	assert(unshift_char_da(da_i, 'a') == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_char_da(da_f, 'a') == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_char_da(da_d, 'a') == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_char_da(da_p, 'a') == GLX_ERR_TYPE_MISMATCH);
 
-	assert(unshift_float_da(NULL, 1.0f) == DA_ERR_NULL_ARGUMENT);
-	assert(unshift_float_da(da_i, 1.0f) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_float_da(da_c, 1.0f) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_float_da(da_d, 1.0f) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_float_da(da_p, 1.0f) == DA_ERR_TYPE_MISMATCH);
+	assert(unshift_float_da(NULL, 1.0f) == GLX_ERR_NULL_ARGUMENT);
+	assert(unshift_float_da(da_i, 1.0f) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_float_da(da_c, 1.0f) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_float_da(da_d, 1.0f) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_float_da(da_p, 1.0f) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(unshift_double_da(NULL, 1.0) == DA_ERR_NULL_ARGUMENT);
-	assert(unshift_double_da(da_i, 1.0) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_double_da(da_c, 1.0) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_double_da(da_f, 1.0) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_double_da(da_p, 1.0) == DA_ERR_TYPE_MISMATCH);
+	assert(unshift_double_da(NULL, 1.0) == GLX_ERR_NULL_ARGUMENT);
+	assert(unshift_double_da(da_i, 1.0) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_double_da(da_c, 1.0) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_double_da(da_f, 1.0) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_double_da(da_p, 1.0) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(unshift_ptr_da(NULL, &tmp) == DA_ERR_NULL_ARGUMENT);
-	assert(unshift_ptr_da(da_i, &tmp) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_ptr_da(da_c, &tmp) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_ptr_da(da_f, &tmp) == DA_ERR_TYPE_MISMATCH);
-	assert(unshift_ptr_da(da_d, &tmp) == DA_ERR_TYPE_MISMATCH);
+	assert(unshift_ptr_da(NULL, &tmp) == GLX_ERR_NULL_ARGUMENT);
+	assert(unshift_ptr_da(da_i, &tmp) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_ptr_da(da_c, &tmp) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_ptr_da(da_f, &tmp) == GLX_ERR_TYPE_MISMATCH);
+	assert(unshift_ptr_da(da_d, &tmp) == GLX_ERR_TYPE_MISMATCH);
 
 	DynamicArray *da_int = NULL;
-	assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da_int) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(unshift_int_da(da_int, i) == DA_SUCCESS);
+		assert(unshift_int_da(da_int, i) == GLX_SUCCESS);
 	}
 
 	assert(da_int->count == 10);
@@ -304,11 +304,11 @@ static void _test_unshift()
 	}
 
 	DynamicArray *da_char = NULL;
-	assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_CHAR, &da_char) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(unshift_char_da(da_char, 'a' + i) == DA_SUCCESS);
+		assert(unshift_char_da(da_char, 'a' + i) == GLX_SUCCESS);
 	}
 
 	assert(da_char->count == 10);
@@ -319,11 +319,11 @@ static void _test_unshift()
 	}
 
 	DynamicArray *da_float = NULL;
-	assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_FLOAT, &da_float) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(unshift_float_da(da_float, (float)i) == DA_SUCCESS);
+		assert(unshift_float_da(da_float, (float)i) == GLX_SUCCESS);
 	}
 
 	assert(da_float->count == 10);
@@ -334,11 +334,11 @@ static void _test_unshift()
 	}
 
 	DynamicArray *da_double = NULL;
-	assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_DOUBLE, &da_double) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(unshift_double_da(da_double, (double)i) == DA_SUCCESS);
+		assert(unshift_double_da(da_double, (double)i) == GLX_SUCCESS);
 	}
 
 	assert(da_double->count == 10);
@@ -349,14 +349,14 @@ static void _test_unshift()
 	}
 
 	DynamicArray *da_ptr = NULL;
-	assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da_ptr) == GLX_SUCCESS);
 
 	void *ptrs[10];
 
 	for (int i = 0; i < 10; i++)
 	{
 		ptrs[i] = &tmp;
-		assert(unshift_ptr_da(da_ptr, ptrs[i]) == DA_SUCCESS);
+		assert(unshift_ptr_da(da_ptr, ptrs[i]) == GLX_SUCCESS);
 	}
 
 	assert(da_ptr->count == 10);
@@ -366,11 +366,11 @@ static void _test_unshift()
 		assert(da_ptr->void_arr[i] == ptrs[9 - i]);
 	}
 
-	assert(free_dynamic_array(&da_int) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_char) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_float) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_double) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+	assert(free_dynamic_array(&da_int) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_char) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_float) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_double) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_ptr) == GLX_SUCCESS);
 }
 
 static void _test_pop()
@@ -383,126 +383,126 @@ static void _test_pop()
 
 	int tmp = 123;
 
-	assert(pop_int_da(NULL, &int_out) == DA_ERR_NULL_ARGUMENT);
-	assert(pop_int_da(da_c, &int_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_int_da(da_f, &int_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_int_da(da_d, &int_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_int_da(da_p, &int_out) == DA_ERR_TYPE_MISMATCH);
+	assert(pop_int_da(NULL, &int_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(pop_int_da(da_c, &int_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_int_da(da_f, &int_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_int_da(da_d, &int_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_int_da(da_p, &int_out) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(pop_char_da(NULL, &char_out) == DA_ERR_NULL_ARGUMENT);
-	assert(pop_char_da(da_i, &char_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_char_da(da_f, &char_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_char_da(da_d, &char_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_char_da(da_p, &char_out) == DA_ERR_TYPE_MISMATCH);
+	assert(pop_char_da(NULL, &char_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(pop_char_da(da_i, &char_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_char_da(da_f, &char_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_char_da(da_d, &char_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_char_da(da_p, &char_out) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(pop_float_da(NULL, &float_out) == DA_ERR_NULL_ARGUMENT);
-	assert(pop_float_da(da_i, &float_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_float_da(da_c, &float_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_float_da(da_d, &float_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_float_da(da_p, &float_out) == DA_ERR_TYPE_MISMATCH);
+	assert(pop_float_da(NULL, &float_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(pop_float_da(da_i, &float_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_float_da(da_c, &float_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_float_da(da_d, &float_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_float_da(da_p, &float_out) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(pop_double_da(NULL, &double_out) == DA_ERR_NULL_ARGUMENT);
-	assert(pop_double_da(da_i, &double_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_double_da(da_c, &double_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_double_da(da_f, &double_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_double_da(da_p, &double_out) == DA_ERR_TYPE_MISMATCH);
+	assert(pop_double_da(NULL, &double_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(pop_double_da(da_i, &double_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_double_da(da_c, &double_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_double_da(da_f, &double_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_double_da(da_p, &double_out) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(pop_ptr_da(NULL, &ptr_out) == DA_ERR_NULL_ARGUMENT);
-	assert(pop_ptr_da(da_i, &ptr_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_ptr_da(da_c, &ptr_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_ptr_da(da_f, &ptr_out) == DA_ERR_TYPE_MISMATCH);
-	assert(pop_ptr_da(da_d, &ptr_out) == DA_ERR_TYPE_MISMATCH);
+	assert(pop_ptr_da(NULL, &ptr_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(pop_ptr_da(da_i, &ptr_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_ptr_da(da_c, &ptr_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_ptr_da(da_f, &ptr_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(pop_ptr_da(da_d, &ptr_out) == GLX_ERR_TYPE_MISMATCH);
 
 	DynamicArray *da_int = NULL;
-	assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da_int) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_int_da(da_int, i) == DA_SUCCESS);
+		assert(push_int_da(da_int, i) == GLX_SUCCESS);
 	}
 
 	for (int i = 9; i >= 0; i--)
 	{
-		assert(pop_int_da(da_int, &int_out) == DA_SUCCESS);
+		assert(pop_int_da(da_int, &int_out) == GLX_SUCCESS);
 		assert(int_out == i);
 	}
 
 	assert(da_int->count == 0);
-	assert(pop_int_da(da_int, &int_out) == DA_EMPTY);
+	assert(pop_int_da(da_int, &int_out) == GLX_ERR_ZERO_LENGTH);
 
 	DynamicArray *da_char = NULL;
-	assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_CHAR, &da_char) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_char_da(da_char, 'a' + i) == DA_SUCCESS);
+		assert(push_char_da(da_char, 'a' + i) == GLX_SUCCESS);
 	}
 
 	for (int i = 9; i >= 0; i--)
 	{
-		assert(pop_char_da(da_char, &char_out) == DA_SUCCESS);
+		assert(pop_char_da(da_char, &char_out) == GLX_SUCCESS);
 		assert(char_out == ('a' + i));
 	}
 
 	assert(da_char->count == 0);
-	assert(pop_char_da(da_char, &char_out) == DA_EMPTY);
+	assert(pop_char_da(da_char, &char_out) == GLX_ERR_ZERO_LENGTH);
 
 	DynamicArray *da_float = NULL;
-	assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_FLOAT, &da_float) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_float_da(da_float, (float)i) == DA_SUCCESS);
+		assert(push_float_da(da_float, (float)i) == GLX_SUCCESS);
 	}
 
 	for (int i = 9; i >= 0; i--)
 	{
-		assert(pop_float_da(da_float, &float_out) == DA_SUCCESS);
+		assert(pop_float_da(da_float, &float_out) == GLX_SUCCESS);
 		assert(float_out == (float)i);
 	}
 
 	assert(da_float->count == 0);
-	assert(pop_float_da(da_float, &float_out) == DA_EMPTY);
+	assert(pop_float_da(da_float, &float_out) == GLX_ERR_ZERO_LENGTH);
 
 	DynamicArray *da_double = NULL;
-	assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_DOUBLE, &da_double) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_double_da(da_double, (double)i) == DA_SUCCESS);
+		assert(push_double_da(da_double, (double)i) == GLX_SUCCESS);
 	}
 
 	for (int i = 9; i >= 0; i--)
 	{
-		assert(pop_double_da(da_double, &double_out) == DA_SUCCESS);
+		assert(pop_double_da(da_double, &double_out) == GLX_SUCCESS);
 		assert(double_out == (double)i);
 	}
 
 	assert(da_double->count == 0);
-	assert(pop_double_da(da_double, &double_out) == DA_EMPTY);
+	assert(pop_double_da(da_double, &double_out) == GLX_ERR_ZERO_LENGTH);
 
 	DynamicArray *da_ptr = NULL;
-	assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da_ptr) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_ptr_da(da_ptr, &tmp) == DA_SUCCESS);
+		assert(push_ptr_da(da_ptr, &tmp) == GLX_SUCCESS);
 	}
 
 	for (int i = 9; i >= 0; i--)
 	{
-		assert(pop_ptr_da(da_ptr, &ptr_out) == DA_SUCCESS);
+		assert(pop_ptr_da(da_ptr, &ptr_out) == GLX_SUCCESS);
 		assert(ptr_out == &tmp);
 	}
 
 	assert(da_ptr->count == 0);
-	assert(pop_ptr_da(da_ptr, &ptr_out) == DA_EMPTY);
+	assert(pop_ptr_da(da_ptr, &ptr_out) == GLX_ERR_ZERO_LENGTH);
 
-	assert(free_dynamic_array(&da_int) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_char) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_float) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_double) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+	assert(free_dynamic_array(&da_int) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_char) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_float) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_double) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_ptr) == GLX_SUCCESS);
 }
 
 static void _test_shift()
@@ -515,127 +515,127 @@ static void _test_shift()
 
 	int tmp_values[10];
 
-	assert(shift_int_da(NULL, &int_out) == DA_ERR_NULL_ARGUMENT);
-	assert(shift_int_da(da_c, &int_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_int_da(da_f, &int_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_int_da(da_d, &int_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_int_da(da_p, &int_out) == DA_ERR_TYPE_MISMATCH);
+	assert(shift_int_da(NULL, &int_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(shift_int_da(da_c, &int_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_int_da(da_f, &int_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_int_da(da_d, &int_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_int_da(da_p, &int_out) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(shift_char_da(NULL, &char_out) == DA_ERR_NULL_ARGUMENT);
-	assert(shift_char_da(da_i, &char_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_char_da(da_f, &char_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_char_da(da_d, &char_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_char_da(da_p, &char_out) == DA_ERR_TYPE_MISMATCH);
+	assert(shift_char_da(NULL, &char_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(shift_char_da(da_i, &char_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_char_da(da_f, &char_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_char_da(da_d, &char_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_char_da(da_p, &char_out) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(shift_float_da(NULL, &float_out) == DA_ERR_NULL_ARGUMENT);
-	assert(shift_float_da(da_i, &float_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_float_da(da_c, &float_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_float_da(da_d, &float_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_float_da(da_p, &float_out) == DA_ERR_TYPE_MISMATCH);
+	assert(shift_float_da(NULL, &float_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(shift_float_da(da_i, &float_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_float_da(da_c, &float_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_float_da(da_d, &float_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_float_da(da_p, &float_out) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(shift_double_da(NULL, &double_out) == DA_ERR_NULL_ARGUMENT);
-	assert(shift_double_da(da_i, &double_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_double_da(da_c, &double_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_double_da(da_f, &double_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_double_da(da_p, &double_out) == DA_ERR_TYPE_MISMATCH);
+	assert(shift_double_da(NULL, &double_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(shift_double_da(da_i, &double_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_double_da(da_c, &double_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_double_da(da_f, &double_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_double_da(da_p, &double_out) == GLX_ERR_TYPE_MISMATCH);
 
-	assert(shift_ptr_da(NULL, &ptr_out) == DA_ERR_NULL_ARGUMENT);
-	assert(shift_ptr_da(da_i, &ptr_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_ptr_da(da_c, &ptr_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_ptr_da(da_f, &ptr_out) == DA_ERR_TYPE_MISMATCH);
-	assert(shift_ptr_da(da_d, &ptr_out) == DA_ERR_TYPE_MISMATCH);
+	assert(shift_ptr_da(NULL, &ptr_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(shift_ptr_da(da_i, &ptr_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_ptr_da(da_c, &ptr_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_ptr_da(da_f, &ptr_out) == GLX_ERR_TYPE_MISMATCH);
+	assert(shift_ptr_da(da_d, &ptr_out) == GLX_ERR_TYPE_MISMATCH);
 
 	DynamicArray *da_int = NULL;
-	assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da_int) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_int_da(da_int, i) == DA_SUCCESS);
+		assert(push_int_da(da_int, i) == GLX_SUCCESS);
 	}
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(shift_int_da(da_int, &int_out) == DA_SUCCESS);
+		assert(shift_int_da(da_int, &int_out) == GLX_SUCCESS);
 		assert(int_out == i);
 	}
 
 	assert(da_int->count == 0);
-	assert(shift_int_da(da_int, &int_out) == DA_EMPTY);
+	assert(shift_int_da(da_int, &int_out) == GLX_ERR_ZERO_LENGTH);
 
 	DynamicArray *da_char = NULL;
-	assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_CHAR, &da_char) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_char_da(da_char, 'a' + i) == DA_SUCCESS);
+		assert(push_char_da(da_char, 'a' + i) == GLX_SUCCESS);
 	}
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(shift_char_da(da_char, &char_out) == DA_SUCCESS);
+		assert(shift_char_da(da_char, &char_out) == GLX_SUCCESS);
 		assert(char_out == ('a' + i));
 	}
 
 	assert(da_char->count == 0);
-	assert(shift_char_da(da_char, &char_out) == DA_EMPTY);
+	assert(shift_char_da(da_char, &char_out) == GLX_ERR_ZERO_LENGTH);
 
 	DynamicArray *da_float = NULL;
-	assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_FLOAT, &da_float) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_float_da(da_float, (float)i) == DA_SUCCESS);
+		assert(push_float_da(da_float, (float)i) == GLX_SUCCESS);
 	}
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(shift_float_da(da_float, &float_out) == DA_SUCCESS);
+		assert(shift_float_da(da_float, &float_out) == GLX_SUCCESS);
 		assert(float_out == (float)i);
 	}
 
 	assert(da_float->count == 0);
-	assert(shift_float_da(da_float, &float_out) == DA_EMPTY);
+	assert(shift_float_da(da_float, &float_out) == GLX_ERR_ZERO_LENGTH);
 
 	DynamicArray *da_double = NULL;
-	assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_DOUBLE, &da_double) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(push_double_da(da_double, (double)i) == DA_SUCCESS);
+		assert(push_double_da(da_double, (double)i) == GLX_SUCCESS);
 	}
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(shift_double_da(da_double, &double_out) == DA_SUCCESS);
+		assert(shift_double_da(da_double, &double_out) == GLX_SUCCESS);
 		assert(double_out == (double)i);
 	}
 
 	assert(da_double->count == 0);
-	assert(shift_double_da(da_double, &double_out) == DA_EMPTY);
+	assert(shift_double_da(da_double, &double_out) == GLX_ERR_ZERO_LENGTH);
 
 	DynamicArray *da_ptr = NULL;
-	assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da_ptr) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
 		tmp_values[i] = i;
-		assert(push_ptr_da(da_ptr, &tmp_values[i]) == DA_SUCCESS);
+		assert(push_ptr_da(da_ptr, &tmp_values[i]) == GLX_SUCCESS);
 	}
 
 	for (int i = 0; i < 10; i++)
 	{
-		assert(shift_ptr_da(da_ptr, &ptr_out) == DA_SUCCESS);
+		assert(shift_ptr_da(da_ptr, &ptr_out) == GLX_SUCCESS);
 		assert(ptr_out == &tmp_values[i]);
 	}
 
 	assert(da_ptr->count == 0);
-	assert(shift_ptr_da(da_ptr, &ptr_out) == DA_EMPTY);
+	assert(shift_ptr_da(da_ptr, &ptr_out) == GLX_ERR_ZERO_LENGTH);
 
-	assert(free_dynamic_array(&da_int) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_char) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_float) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_double) == DA_SUCCESS);
-	assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+	assert(free_dynamic_array(&da_int) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_char) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_float) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_double) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da_ptr) == GLX_SUCCESS);
 }
 
 static int destructor_counter = 0;
@@ -656,26 +656,26 @@ static void _test_apply_destructor_da()
 
 	/* ==================== NULL ARGUMENTS ==================== */
 
-	assert(apply_destructor_da(NULL, _test_destructor) == DA_ERR_NULL_ARGUMENT);
+	assert(apply_destructor_da(NULL, _test_destructor) == GLX_ERR_NULL_ARGUMENT);
 
 	DynamicArray *da = NULL;
-	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da) == GLX_SUCCESS);
 
-	assert(apply_destructor_da(da, NULL) == DA_ERR_NULL_ARGUMENT);
+	assert(apply_destructor_da(da, NULL) == GLX_ERR_NULL_ARGUMENT);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== TYPE MISMATCH ==================== */
 
-	assert(apply_destructor_da(da_i, _test_destructor) == DA_ERR_TYPE_MISMATCH);
-	assert(apply_destructor_da(da_c, _test_destructor) == DA_ERR_TYPE_MISMATCH);
-	assert(apply_destructor_da(da_f, _test_destructor) == DA_ERR_TYPE_MISMATCH);
-	assert(apply_destructor_da(da_d, _test_destructor) == DA_ERR_TYPE_MISMATCH);
-	assert(apply_destructor_da(da_invalid_type, _test_destructor) == DA_ERR_TYPE_UNKNOWN);
+	assert(apply_destructor_da(da_i, _test_destructor) == GLX_ERR_TYPE_MISMATCH);
+	assert(apply_destructor_da(da_c, _test_destructor) == GLX_ERR_TYPE_MISMATCH);
+	assert(apply_destructor_da(da_f, _test_destructor) == GLX_ERR_TYPE_MISMATCH);
+	assert(apply_destructor_da(da_d, _test_destructor) == GLX_ERR_TYPE_MISMATCH);
+	assert(apply_destructor_da(da_invalid_type, _test_destructor) == GLX_ERR_TYPE_UNKNOWN);
 
 	/* ==================== SUCCESS CASE ==================== */
 
-	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da) == GLX_SUCCESS);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -685,12 +685,12 @@ static void _test_apply_destructor_da()
 
 		*value = i;
 
-		assert(push_ptr_da(da, value) == DA_SUCCESS);
+		assert(push_ptr_da(da, value) == GLX_SUCCESS);
 	}
 
 	assert(da->count == 10);
 
-	assert(apply_destructor_da(da, _test_destructor) == DA_SUCCESS);
+	assert(apply_destructor_da(da, _test_destructor) == GLX_SUCCESS);
 
 	assert(destructor_counter == 10);
 
@@ -699,63 +699,63 @@ static void _test_apply_destructor_da()
 		assert(da->void_arr[i] == NULL);
 	}
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== EMPTY ARRAY ==================== */
 
 	destructor_counter = 0;
 
-	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da) == GLX_SUCCESS);
 
-	assert(apply_destructor_da(da, _test_destructor) == DA_SUCCESS);
+	assert(apply_destructor_da(da, _test_destructor) == GLX_SUCCESS);
 
 	assert(destructor_counter == 0);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 }
 
 static void _test_remove_at()
 {
 	/* ==================== NULL ARGUMENT ==================== */
 
-	assert(remove_at_da(NULL, 0) == DA_ERR_NULL_ARGUMENT);
+	assert(remove_at_da(NULL, 0) == GLX_ERR_NULL_ARGUMENT);
 
 	/* ==================== EMPTY ARRAY ==================== */
 
 	DynamicArray *da = NULL;
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(remove_at_da(da, 0) == DA_EMPTY);
+	assert(remove_at_da(da, 0) == GLX_ERR_ZERO_LENGTH);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== INDEX OUT OF BOUNDS ==================== */
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
 	for (int i = 0; i < 5; i++)
 	{
-		assert(push_int_da(da, i) == DA_SUCCESS);
+		assert(push_int_da(da, i) == GLX_SUCCESS);
 	}
 
 	assert(da->count == 5);
 
-	assert(remove_at_da(da, 5) == DA_ERR_INDEX_OUT_OF_BOUNDS);
-	assert(remove_at_da(da, 100) == DA_ERR_INDEX_OUT_OF_BOUNDS);
+	assert(remove_at_da(da, 5) == GLX_ERR_INDEX_OUT_OF_BOUNDS);
+	assert(remove_at_da(da, 100) == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - INT ==================== */
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
 	for (int i = 0; i < 5; i++)
 	{
-		assert(push_int_da(da, i) == DA_SUCCESS);
+		assert(push_int_da(da, i) == GLX_SUCCESS);
 	}
 
-	assert(remove_at_da(da, 2) == DA_SUCCESS);
+	assert(remove_at_da(da, 2) == GLX_SUCCESS);
 
 	assert(da->count == 4);
 
@@ -764,58 +764,58 @@ static void _test_remove_at()
 	assert(da->int_arr[2] == 3);
 	assert(da->int_arr[3] == 4);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - CHAR ==================== */
 
-	assert(new_dynamic_array(DA_CHAR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_CHAR, &da) == GLX_SUCCESS);
 
-	assert(push_char_da(da, 'a') == DA_SUCCESS);
-	assert(push_char_da(da, 'b') == DA_SUCCESS);
-	assert(push_char_da(da, 'c') == DA_SUCCESS);
+	assert(push_char_da(da, 'a') == GLX_SUCCESS);
+	assert(push_char_da(da, 'b') == GLX_SUCCESS);
+	assert(push_char_da(da, 'c') == GLX_SUCCESS);
 
-	assert(remove_at_da(da, 1) == DA_SUCCESS);
+	assert(remove_at_da(da, 1) == GLX_SUCCESS);
 
 	assert(da->count == 2);
 
 	assert(da->char_arr[0] == 'a');
 	assert(da->char_arr[1] == 'c');
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - FLOAT ==================== */
 
-	assert(new_dynamic_array(DA_FLOAT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_FLOAT, &da) == GLX_SUCCESS);
 
-	assert(push_float_da(da, 1.0f) == DA_SUCCESS);
-	assert(push_float_da(da, 2.0f) == DA_SUCCESS);
-	assert(push_float_da(da, 3.0f) == DA_SUCCESS);
+	assert(push_float_da(da, 1.0f) == GLX_SUCCESS);
+	assert(push_float_da(da, 2.0f) == GLX_SUCCESS);
+	assert(push_float_da(da, 3.0f) == GLX_SUCCESS);
 
-	assert(remove_at_da(da, 0) == DA_SUCCESS);
+	assert(remove_at_da(da, 0) == GLX_SUCCESS);
 
 	assert(da->count == 2);
 
 	assert(da->float_arr[0] == 2.0f);
 	assert(da->float_arr[1] == 3.0f);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - DOUBLE ==================== */
 
-	assert(new_dynamic_array(DA_DOUBLE, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_DOUBLE, &da) == GLX_SUCCESS);
 
-	assert(push_double_da(da, 1.0) == DA_SUCCESS);
-	assert(push_double_da(da, 2.0) == DA_SUCCESS);
-	assert(push_double_da(da, 3.0) == DA_SUCCESS);
+	assert(push_double_da(da, 1.0) == GLX_SUCCESS);
+	assert(push_double_da(da, 2.0) == GLX_SUCCESS);
+	assert(push_double_da(da, 3.0) == GLX_SUCCESS);
 
-	assert(remove_at_da(da, 2) == DA_SUCCESS);
+	assert(remove_at_da(da, 2) == GLX_SUCCESS);
 
 	assert(da->count == 2);
 
 	assert(da->double_arr[0] == 1.0);
 	assert(da->double_arr[1] == 2.0);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - PTR ==================== */
 
@@ -823,38 +823,38 @@ static void _test_remove_at()
 	int b = 2;
 	int c = 3;
 
-	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da) == GLX_SUCCESS);
 
-	assert(push_ptr_da(da, &a) == DA_SUCCESS);
-	assert(push_ptr_da(da, &b) == DA_SUCCESS);
-	assert(push_ptr_da(da, &c) == DA_SUCCESS);
+	assert(push_ptr_da(da, &a) == GLX_SUCCESS);
+	assert(push_ptr_da(da, &b) == GLX_SUCCESS);
+	assert(push_ptr_da(da, &c) == GLX_SUCCESS);
 
-	assert(remove_at_da(da, 1) == DA_SUCCESS);
+	assert(remove_at_da(da, 1) == GLX_SUCCESS);
 
 	assert(da->count == 2);
 
 	assert(da->void_arr[0] == &a);
 	assert(da->void_arr[1] == &c);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== REMOVE LAST ELEMENT ==================== */
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(push_int_da(da, 10) == DA_SUCCESS);
-	assert(push_int_da(da, 20) == DA_SUCCESS);
+	assert(push_int_da(da, 10) == GLX_SUCCESS);
+	assert(push_int_da(da, 20) == GLX_SUCCESS);
 
-	assert(remove_at_da(da, 1) == DA_SUCCESS);
+	assert(remove_at_da(da, 1) == GLX_SUCCESS);
 
 	assert(da->count == 1);
 	assert(da->int_arr[0] == 10);
 
-	assert(remove_at_da(da, 0) == DA_SUCCESS);
+	assert(remove_at_da(da, 0) == GLX_SUCCESS);
 
 	assert(da->count == 0);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 }
 
 static void _test_remove_first()
@@ -863,53 +863,53 @@ static void _test_remove_first()
 
 	int value = 5;
 
-	assert(remove_first_da(NULL, &value) == DA_ERR_NULL_ARGUMENT);
+	assert(remove_first_da(NULL, &value) == GLX_ERR_NULL_ARGUMENT);
 
 	DynamicArray *da = NULL;
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(remove_first_da(da, NULL) == DA_ERR_NULL_ARGUMENT);
+	assert(remove_first_da(da, NULL) == GLX_ERR_NULL_ARGUMENT);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== EMPTY ARRAY ==================== */
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(remove_first_da(da, &value) == DA_EMPTY);
+	assert(remove_first_da(da, &value) == GLX_ERR_ZERO_LENGTH);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== ITEM NOT FOUND ==================== */
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
 	for (int i = 0; i < 5; i++)
 	{
-		assert(push_int_da(da, i) == DA_SUCCESS);
+		assert(push_int_da(da, i) == GLX_SUCCESS);
 	}
 
 	value = 100;
 
-	assert(remove_first_da(da, &value) == DA_ITEM_NOT_FOUND);
+	assert(remove_first_da(da, &value) == GLX_ERR_NO_MATCH);
 
 	assert(da->count == 5);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - INT ==================== */
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
 	for (int i = 0; i < 5; i++)
 	{
-		assert(push_int_da(da, i) == DA_SUCCESS);
+		assert(push_int_da(da, i) == GLX_SUCCESS);
 	}
 
 	value = 2;
 
-	assert(remove_first_da(da, &value) == DA_SUCCESS);
+	assert(remove_first_da(da, &value) == GLX_SUCCESS);
 
 	/*
 		Array before:
@@ -926,20 +926,20 @@ static void _test_remove_first()
 	assert(da->int_arr[2] == 3);
 	assert(da->int_arr[3] == 4);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - REMOVE FIRST MATCH ONLY ==================== */
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(push_int_da(da, 1) == DA_SUCCESS);
-	assert(push_int_da(da, 2) == DA_SUCCESS);
-	assert(push_int_da(da, 2) == DA_SUCCESS);
-	assert(push_int_da(da, 3) == DA_SUCCESS);
+	assert(push_int_da(da, 1) == GLX_SUCCESS);
+	assert(push_int_da(da, 2) == GLX_SUCCESS);
+	assert(push_int_da(da, 2) == GLX_SUCCESS);
+	assert(push_int_da(da, 3) == GLX_SUCCESS);
 
 	value = 2;
 
-	assert(remove_first_da(da, &value) == DA_SUCCESS);
+	assert(remove_first_da(da, &value) == GLX_SUCCESS);
 
 	/*
 		Expected:
@@ -952,64 +952,64 @@ static void _test_remove_first()
 	assert(da->int_arr[1] == 2);
 	assert(da->int_arr[2] == 3);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - CHAR ==================== */
 
 	char c = 'b';
 
-	assert(new_dynamic_array(DA_CHAR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_CHAR, &da) == GLX_SUCCESS);
 
-	assert(push_char_da(da, 'a') == DA_SUCCESS);
-	assert(push_char_da(da, 'b') == DA_SUCCESS);
-	assert(push_char_da(da, 'c') == DA_SUCCESS);
+	assert(push_char_da(da, 'a') == GLX_SUCCESS);
+	assert(push_char_da(da, 'b') == GLX_SUCCESS);
+	assert(push_char_da(da, 'c') == GLX_SUCCESS);
 
-	assert(remove_first_da(da, &c) == DA_SUCCESS);
+	assert(remove_first_da(da, &c) == GLX_SUCCESS);
 
 	assert(da->count == 2);
 
 	assert(da->char_arr[0] == 'a');
 	assert(da->char_arr[1] == 'c');
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - FLOAT ==================== */
 
 	float f = 2.0f;
 
-	assert(new_dynamic_array(DA_FLOAT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_FLOAT, &da) == GLX_SUCCESS);
 
-	assert(push_float_da(da, 1.0f) == DA_SUCCESS);
-	assert(push_float_da(da, 2.0f) == DA_SUCCESS);
-	assert(push_float_da(da, 3.0f) == DA_SUCCESS);
+	assert(push_float_da(da, 1.0f) == GLX_SUCCESS);
+	assert(push_float_da(da, 2.0f) == GLX_SUCCESS);
+	assert(push_float_da(da, 3.0f) == GLX_SUCCESS);
 
-	assert(remove_first_da(da, &f) == DA_SUCCESS);
+	assert(remove_first_da(da, &f) == GLX_SUCCESS);
 
 	assert(da->count == 2);
 
 	assert(da->float_arr[0] == 1.0f);
 	assert(da->float_arr[1] == 3.0f);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - DOUBLE ==================== */
 
 	double d = 2.0;
 
-	assert(new_dynamic_array(DA_DOUBLE, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_DOUBLE, &da) == GLX_SUCCESS);
 
-	assert(push_double_da(da, 1.0) == DA_SUCCESS);
-	assert(push_double_da(da, 2.0) == DA_SUCCESS);
-	assert(push_double_da(da, 3.0) == DA_SUCCESS);
+	assert(push_double_da(da, 1.0) == GLX_SUCCESS);
+	assert(push_double_da(da, 2.0) == GLX_SUCCESS);
+	assert(push_double_da(da, 3.0) == GLX_SUCCESS);
 
-	assert(remove_first_da(da, &d) == DA_SUCCESS);
+	assert(remove_first_da(da, &d) == GLX_SUCCESS);
 
 	assert(da->count == 2);
 
 	assert(da->double_arr[0] == 1.0);
 	assert(da->double_arr[1] == 3.0);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - PTR ==================== */
 
@@ -1019,34 +1019,34 @@ static void _test_remove_first()
 
 	void *target = &b;
 
-	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da) == GLX_SUCCESS);
 
-	assert(push_ptr_da(da, &a) == DA_SUCCESS);
-	assert(push_ptr_da(da, &b) == DA_SUCCESS);
-	assert(push_ptr_da(da, &c2) == DA_SUCCESS);
+	assert(push_ptr_da(da, &a) == GLX_SUCCESS);
+	assert(push_ptr_da(da, &b) == GLX_SUCCESS);
+	assert(push_ptr_da(da, &c2) == GLX_SUCCESS);
 
-	assert(remove_first_da(da, target) == DA_SUCCESS);
+	assert(remove_first_da(da, target) == GLX_SUCCESS);
 
 	assert(da->count == 2);
 
 	assert(da->void_arr[0] == &a);
 	assert(da->void_arr[1] == &c2);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== REMOVE LAST ELEMENT ==================== */
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(push_int_da(da, 10) == DA_SUCCESS);
+	assert(push_int_da(da, 10) == GLX_SUCCESS);
 
 	value = 10;
 
-	assert(remove_first_da(da, &value) == DA_SUCCESS);
+	assert(remove_first_da(da, &value) == GLX_SUCCESS);
 
 	assert(da->count == 0);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 }
 
 static int worker_call_count = 0;
@@ -1115,101 +1115,101 @@ static void _test_apply_at()
 
 	/* ==================== NULL ARGUMENTS ==================== */
 
-	assert(apply_at_da(NULL, 0, _increment_int) == DA_ERR_NULL_ARGUMENT);
+	assert(apply_at_da(NULL, 0, _increment_int) == GLX_ERR_NULL_ARGUMENT);
 
 	DynamicArray *da = NULL;
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(apply_at_da(da, 0, NULL) == DA_ERR_NULL_ARGUMENT);
+	assert(apply_at_da(da, 0, NULL) == GLX_ERR_NULL_ARGUMENT);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== EMPTY ARRAY ==================== */
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(apply_at_da(da, 0, _increment_int) == DA_EMPTY);
+	assert(apply_at_da(da, 0, _increment_int) == GLX_ERR_ZERO_LENGTH);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== INDEX OUT OF BOUNDS ==================== */
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
 	for (int i = 0; i < 5; i++)
 	{
-		assert(push_int_da(da, i) == DA_SUCCESS);
+		assert(push_int_da(da, i) == GLX_SUCCESS);
 	}
 
-	assert(apply_at_da(da, 5, _increment_int) == DA_ERR_INDEX_OUT_OF_BOUNDS);
-	assert(apply_at_da(da, 100, _increment_int) == DA_ERR_INDEX_OUT_OF_BOUNDS);
+	assert(apply_at_da(da, 5, _increment_int) == GLX_ERR_INDEX_OUT_OF_BOUNDS);
+	assert(apply_at_da(da, 100, _increment_int) == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - INT ==================== */
 
 	worker_call_count = 0;
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(push_int_da(da, 10) == DA_SUCCESS);
+	assert(push_int_da(da, 10) == GLX_SUCCESS);
 
-	assert(apply_at_da(da, 0, _increment_int) == DA_SUCCESS);
+	assert(apply_at_da(da, 0, _increment_int) == GLX_SUCCESS);
 
 	assert(da->int_arr[0] == 11);
 
 	assert(worker_call_count == 1);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - CHAR ==================== */
 
 	worker_call_count = 0;
 
-	assert(new_dynamic_array(DA_CHAR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_CHAR, &da) == GLX_SUCCESS);
 
-	assert(push_char_da(da, 'a') == DA_SUCCESS);
+	assert(push_char_da(da, 'a') == GLX_SUCCESS);
 
-	assert(apply_at_da(da, 0, _uppercase_char) == DA_SUCCESS);
+	assert(apply_at_da(da, 0, _uppercase_char) == GLX_SUCCESS);
 
 	assert(da->char_arr[0] == 'A');
 
 	assert(worker_call_count == 1);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - FLOAT ==================== */
 
 	worker_call_count = 0;
 
-	assert(new_dynamic_array(DA_FLOAT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_FLOAT, &da) == GLX_SUCCESS);
 
-	assert(push_float_da(da, 5.0f) == DA_SUCCESS);
+	assert(push_float_da(da, 5.0f) == GLX_SUCCESS);
 
-	assert(apply_at_da(da, 0, _double_float) == DA_SUCCESS);
+	assert(apply_at_da(da, 0, _double_float) == GLX_SUCCESS);
 
 	assert(da->float_arr[0] == 10.0f);
 
 	assert(worker_call_count == 1);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - DOUBLE ==================== */
 
 	worker_call_count = 0;
 
-	assert(new_dynamic_array(DA_DOUBLE, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_DOUBLE, &da) == GLX_SUCCESS);
 
-	assert(push_double_da(da, 2.5) == DA_SUCCESS);
+	assert(push_double_da(da, 2.5) == GLX_SUCCESS);
 
-	assert(apply_at_da(da, 0, _double_double) == DA_SUCCESS);
+	assert(apply_at_da(da, 0, _double_double) == GLX_SUCCESS);
 
 	assert(da->double_arr[0] == 5.0);
 
 	assert(worker_call_count == 1);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - PTR ==================== */
 
@@ -1217,29 +1217,29 @@ static void _test_apply_at()
 
 	int value = 100;
 
-	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da) == GLX_SUCCESS);
 
-	assert(push_ptr_da(da, &value) == DA_SUCCESS);
+	assert(push_ptr_da(da, &value) == GLX_SUCCESS);
 
-	assert(apply_at_da(da, 0, _increment_ptr_value) == DA_SUCCESS);
+	assert(apply_at_da(da, 0, _increment_ptr_value) == GLX_SUCCESS);
 
 	assert(value == 101);
 
 	assert(worker_call_count == 1);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== APPLY ONLY TARGET INDEX ==================== */
 
 	worker_call_count = 0;
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(push_int_da(da, 1) == DA_SUCCESS);
-	assert(push_int_da(da, 2) == DA_SUCCESS);
-	assert(push_int_da(da, 3) == DA_SUCCESS);
+	assert(push_int_da(da, 1) == GLX_SUCCESS);
+	assert(push_int_da(da, 2) == GLX_SUCCESS);
+	assert(push_int_da(da, 3) == GLX_SUCCESS);
 
-	assert(apply_at_da(da, 1, _increment_int) == DA_SUCCESS);
+	assert(apply_at_da(da, 1, _increment_int) == GLX_SUCCESS);
 
 	assert(da->int_arr[0] == 1);
 	assert(da->int_arr[1] == 3);
@@ -1247,7 +1247,7 @@ static void _test_apply_at()
 
 	assert(worker_call_count == 1);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 }
 
 static int process_call_count = 0;
@@ -1316,40 +1316,40 @@ static void _test_process_da()
 
 	/* ==================== NULL ARGUMENTS ==================== */
 
-	assert(process_da(NULL, _process_int) == DA_ERR_NULL_ARGUMENT);
+	assert(process_da(NULL, _process_int) == GLX_ERR_NULL_ARGUMENT);
 
 	DynamicArray *da = NULL;
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(process_da(da, NULL) == DA_ERR_NULL_ARGUMENT);
+	assert(process_da(da, NULL) == GLX_ERR_NULL_ARGUMENT);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== EMPTY ARRAY ==================== */
 
 	process_call_count = 0;
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(process_da(da, _process_int) == DA_SUCCESS);
+	assert(process_da(da, _process_int) == GLX_SUCCESS);
 
 	assert(process_call_count == 0);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - INT ==================== */
 
 	process_call_count = 0;
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
 	for (int i = 0; i < 5; i++)
 	{
-		assert(push_int_da(da, i) == DA_SUCCESS);
+		assert(push_int_da(da, i) == GLX_SUCCESS);
 	}
 
-	assert(process_da(da, _process_int) == DA_SUCCESS);
+	assert(process_da(da, _process_int) == GLX_SUCCESS);
 
 	assert(process_call_count == 5);
 
@@ -1358,19 +1358,19 @@ static void _test_process_da()
 		assert(da->int_arr[i] == i + 1);
 	}
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - CHAR ==================== */
 
 	process_call_count = 0;
 
-	assert(new_dynamic_array(DA_CHAR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_CHAR, &da) == GLX_SUCCESS);
 
-	assert(push_char_da(da, 'a') == DA_SUCCESS);
-	assert(push_char_da(da, 'b') == DA_SUCCESS);
-	assert(push_char_da(da, 'c') == DA_SUCCESS);
+	assert(push_char_da(da, 'a') == GLX_SUCCESS);
+	assert(push_char_da(da, 'b') == GLX_SUCCESS);
+	assert(push_char_da(da, 'c') == GLX_SUCCESS);
 
-	assert(process_da(da, _process_char) == DA_SUCCESS);
+	assert(process_da(da, _process_char) == GLX_SUCCESS);
 
 	assert(process_call_count == 3);
 
@@ -1378,19 +1378,19 @@ static void _test_process_da()
 	assert(da->char_arr[1] == 'B');
 	assert(da->char_arr[2] == 'C');
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - FLOAT ==================== */
 
 	process_call_count = 0;
 
-	assert(new_dynamic_array(DA_FLOAT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_FLOAT, &da) == GLX_SUCCESS);
 
-	assert(push_float_da(da, 1.0f) == DA_SUCCESS);
-	assert(push_float_da(da, 2.0f) == DA_SUCCESS);
-	assert(push_float_da(da, 3.0f) == DA_SUCCESS);
+	assert(push_float_da(da, 1.0f) == GLX_SUCCESS);
+	assert(push_float_da(da, 2.0f) == GLX_SUCCESS);
+	assert(push_float_da(da, 3.0f) == GLX_SUCCESS);
 
-	assert(process_da(da, _process_float) == DA_SUCCESS);
+	assert(process_da(da, _process_float) == GLX_SUCCESS);
 
 	assert(process_call_count == 3);
 
@@ -1398,19 +1398,19 @@ static void _test_process_da()
 	assert(da->float_arr[1] == 4.0f);
 	assert(da->float_arr[2] == 6.0f);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - DOUBLE ==================== */
 
 	process_call_count = 0;
 
-	assert(new_dynamic_array(DA_DOUBLE, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_DOUBLE, &da) == GLX_SUCCESS);
 
-	assert(push_double_da(da, 1.0) == DA_SUCCESS);
-	assert(push_double_da(da, 2.0) == DA_SUCCESS);
-	assert(push_double_da(da, 3.0) == DA_SUCCESS);
+	assert(push_double_da(da, 1.0) == GLX_SUCCESS);
+	assert(push_double_da(da, 2.0) == GLX_SUCCESS);
+	assert(push_double_da(da, 3.0) == GLX_SUCCESS);
 
-	assert(process_da(da, _process_double) == DA_SUCCESS);
+	assert(process_da(da, _process_double) == GLX_SUCCESS);
 
 	assert(process_call_count == 3);
 
@@ -1418,7 +1418,7 @@ static void _test_process_da()
 	assert(da->double_arr[1] == 4.0);
 	assert(da->double_arr[2] == 6.0);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== SUCCESS CASE - PTR ==================== */
 
@@ -1426,16 +1426,16 @@ static void _test_process_da()
 
 	int values[5];
 
-	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da) == GLX_SUCCESS);
 
 	for (int i = 0; i < 5; i++)
 	{
 		values[i] = i;
 
-		assert(push_ptr_da(da, &values[i]) == DA_SUCCESS);
+		assert(push_ptr_da(da, &values[i]) == GLX_SUCCESS);
 	}
 
-	assert(process_da(da, _process_ptr) == DA_SUCCESS);
+	assert(process_da(da, _process_ptr) == GLX_SUCCESS);
 
 	assert(process_call_count == 5);
 
@@ -1444,19 +1444,19 @@ static void _test_process_da()
 		assert(values[i] == i + 1);
 	}
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	/* ==================== PROCESS ORDER CHECK ==================== */
 
 	process_call_count = 0;
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 
-	assert(push_int_da(da, 10) == DA_SUCCESS);
-	assert(push_int_da(da, 20) == DA_SUCCESS);
-	assert(push_int_da(da, 30) == DA_SUCCESS);
+	assert(push_int_da(da, 10) == GLX_SUCCESS);
+	assert(push_int_da(da, 20) == GLX_SUCCESS);
+	assert(push_int_da(da, 30) == GLX_SUCCESS);
 
-	assert(process_da(da, _process_int) == DA_SUCCESS);
+	assert(process_da(da, _process_int) == GLX_SUCCESS);
 
 	assert(da->int_arr[0] == 11);
 	assert(da->int_arr[1] == 21);
@@ -1464,7 +1464,7 @@ static void _test_process_da()
 
 	assert(process_call_count == 3);
 
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 }
 
 static int _is_even_filter(void *item_ptr)
@@ -1477,46 +1477,46 @@ static int _is_even_filter(void *item_ptr)
 
 static void _test_filter_da()
 {
-	enum DynamicArrayError err;
+	enum GalxlibError err;
 	DynamicArray *da = NULL;
 
 	// ---------------------------------------------------------
 	// TEST 1: NULL Array Argument
 	// ---------------------------------------------------------
 	err = filter_da(NULL, _is_even_filter);
-	assert(err == DA_ERR_NULL_ARGUMENT);
+	assert(err == GLX_ERR_NULL_ARGUMENT);
 
 	// ---------------------------------------------------------
 	// TEST 2: NULL Filter Argument
 	// ---------------------------------------------------------
 	err = new_dynamic_array(DA_INT, &da);
-	assert(err == DA_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(da != NULL);
 
 	err = filter_da(da, NULL);
-	assert(err == DA_ERR_NULL_ARGUMENT);
+	assert(err == GLX_ERR_NULL_ARGUMENT);
 
 	// ---------------------------------------------------------
 	// TEST 3: Empty Array Execution
 	// ---------------------------------------------------------
 	err = filter_da(da, _is_even_filter);
-	assert(err == DA_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(da->count == 0); // Sanity check that size remains 0
 
 	// ---------------------------------------------------------
 	// TEST 4: Valid Filtering (Success Case)
 	// ---------------------------------------------------------
 	// Populate the array: [1, 2, 3, 4, 5]
-	assert(push_int_da(da, 1) == DA_SUCCESS);
-	assert(push_int_da(da, 2) == DA_SUCCESS);
-	assert(push_int_da(da, 3) == DA_SUCCESS);
-	assert(push_int_da(da, 4) == DA_SUCCESS);
-	assert(push_int_da(da, 5) == DA_SUCCESS);
+	assert(push_int_da(da, 1) == GLX_SUCCESS);
+	assert(push_int_da(da, 2) == GLX_SUCCESS);
+	assert(push_int_da(da, 3) == GLX_SUCCESS);
+	assert(push_int_da(da, 4) == GLX_SUCCESS);
+	assert(push_int_da(da, 5) == GLX_SUCCESS);
 
 	err = filter_da(da, _is_even_filter);
 
 	// After filtering even numbers, array should be: [2, 4]
-	assert(err == DA_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(da->count == 2);
 	assert(da->int_arr[0] == 2);
 	assert(da->int_arr[1] == 4);
@@ -1527,17 +1527,17 @@ static void _test_filter_da()
 	// We intentionally corrupt the type to see if internal allocations catch it.
 	da->type = (enum DynamicArrayType)999;
 	err = filter_da(da, _is_even_filter);
-	assert(err == DA_ERR_TYPE_UNKNOWN);
+	assert(err == GLX_ERR_TYPE_UNKNOWN);
 
 	// Cleanup: We must manually restore the type so the free function works properly.
 	da->type = DA_INT;
 	err = free_dynamic_array(&da);
-	assert(err == DA_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(da == NULL);
 }
 
 // static void _test_at_da() {
-//     enum DynamicArrayError err;
+//     enum GalxlibError err;
 //     DynamicArray *da = NULL;
 
 //     // ---------------------------------------------------------
@@ -1546,39 +1546,39 @@ static void _test_filter_da()
 
 //     // Setup a valid array for error isolation testing
 //     err = new_dynamic_array(DA_INT, &da);
-//     assert(err == DA_SUCCESS);
+//     assert(err == GLX_SUCCESS);
 //     assert(da != NULL);
 
 //     int output_buffer_int = 0;
 
 //     // Test Case: NULL array pointer argument
 //     err = at_da(NULL, 0, &output_buffer_int);
-//     assert(err == DA_ERR_NULL_ARGUMENT);
+//     assert(err == GLX_ERR_NULL_ARGUMENT);
 
 //     // Test Case: NULL output pointer argument
 //     err = at_da(da, 0, NULL);
-//     assert(err == DA_ERR_NULL_ARGUMENT);
+//     assert(err == GLX_ERR_NULL_ARGUMENT);
 
 //     // Test Case: Index out of bounds (Empty Array)
 //     err = at_da(da, 0, &output_buffer_int);
-//     assert(err == DA_ERR_INDEX_OUT_OF_BOUNDS);
+//     assert(err == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 
 //     // Test Case: Index out of bounds (Populated Array)
 //     err = push_int_da(da, 42);
-//     assert(err == DA_SUCCESS);
+//     assert(err == GLX_SUCCESS);
 
 //     err = at_da(da, 1, &output_buffer_int); // Index 1 does not exist yet
-//     assert(err == DA_ERR_INDEX_OUT_OF_BOUNDS);
+//     assert(err == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 
 //     // Test Case: Corrupted / Unknown Array Type
 //     da->type = (enum DynamicArrayType)999;
 //     err = at_da(da, 0, &output_buffer_int);
-//     assert(err == DA_ERR_TYPE_UNKNOWN);
+//     assert(err == GLX_ERR_TYPE_UNKNOWN);
 
 //     // Cleanup error testing array
 //     da->type = DA_INT; // Restore correct type for clean deallocation
 //     err = free_dynamic_array(&da);
-//     assert(err == DA_SUCCESS);
+//     assert(err == GLX_SUCCESS);
 //     assert(da == NULL);
 
 //     // ---------------------------------------------------------
@@ -1590,11 +1590,11 @@ static void _test_filter_da()
 //         DynamicArray *da_int = NULL;
 //         int val = 100, out = 0;
 
-//         assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
-//         assert(push_int_da(da_int, val) == DA_SUCCESS);
-//         assert(at_da(da_int, 0, &out) == DA_SUCCESS);
+//         assert(new_dynamic_array(DA_INT, &da_int) == GLX_SUCCESS);
+//         assert(push_int_da(da_int, val) == GLX_SUCCESS);
+//         assert(at_da(da_int, 0, &out) == GLX_SUCCESS);
 //         assert(out == val);
-//         assert(free_dynamic_array(&da_int) == DA_SUCCESS);
+//         assert(free_dynamic_array(&da_int) == GLX_SUCCESS);
 //     }
 
 //     // --- Type 2: DA_CHAR ---
@@ -1602,11 +1602,11 @@ static void _test_filter_da()
 //         DynamicArray *da_char = NULL;
 //         char val = 'G', out = 0;
 
-//         assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
-//         assert(push_char_da(da_char, val) == DA_SUCCESS);
-//         assert(at_da(da_char, 0, &out) == DA_SUCCESS);
+//         assert(new_dynamic_array(DA_CHAR, &da_char) == GLX_SUCCESS);
+//         assert(push_char_da(da_char, val) == GLX_SUCCESS);
+//         assert(at_da(da_char, 0, &out) == GLX_SUCCESS);
 //         assert(out == val);
-//         assert(free_dynamic_array(&da_char) == DA_SUCCESS);
+//         assert(free_dynamic_array(&da_char) == GLX_SUCCESS);
 //     }
 
 //     // --- Type 3: DA_FLOAT ---
@@ -1614,11 +1614,11 @@ static void _test_filter_da()
 //         DynamicArray *da_float = NULL;
 //         float val = 3.14159f, out = 0.0f;
 
-//         assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
-//         assert(push_float_da(da_float, val) == DA_SUCCESS);
-//         assert(at_da(da_float, 0, &out) == DA_SUCCESS);
+//         assert(new_dynamic_array(DA_FLOAT, &da_float) == GLX_SUCCESS);
+//         assert(push_float_da(da_float, val) == GLX_SUCCESS);
+//         assert(at_da(da_float, 0, &out) == GLX_SUCCESS);
 //         assert(out == val);
-//         assert(free_dynamic_array(&da_float) == DA_SUCCESS);
+//         assert(free_dynamic_array(&da_float) == GLX_SUCCESS);
 //     }
 
 //     // --- Type 4: DA_DOUBLE ---
@@ -1626,11 +1626,11 @@ static void _test_filter_da()
 //         DynamicArray *da_double = NULL;
 //         double val = 2.718281828459, out = 0.0;
 
-//         assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
-//         assert(push_double_da(da_double, val) == DA_SUCCESS);
-//         assert(at_da(da_double, 0, &out) == DA_SUCCESS);
+//         assert(new_dynamic_array(DA_DOUBLE, &da_double) == GLX_SUCCESS);
+//         assert(push_double_da(da_double, val) == GLX_SUCCESS);
+//         assert(at_da(da_double, 0, &out) == GLX_SUCCESS);
 //         assert(out == val);
-//         assert(free_dynamic_array(&da_double) == DA_SUCCESS);
+//         assert(free_dynamic_array(&da_double) == GLX_SUCCESS);
 //     }
 
 //     // --- Type 5: DA_PTR ---
@@ -1640,17 +1640,17 @@ static void _test_filter_da()
 //         void *val = &dummy_target;
 //         void *out = NULL;
 
-//         assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
-//         assert(push_ptr_da(da_ptr, val) == DA_SUCCESS);
-//         assert(at_da(da_ptr, 0, &out) == DA_SUCCESS);
+//         assert(new_dynamic_array(DA_PTR, &da_ptr) == GLX_SUCCESS);
+//         assert(push_ptr_da(da_ptr, val) == GLX_SUCCESS);
+//         assert(at_da(da_ptr, 0, &out) == GLX_SUCCESS);
 //         assert(out == val);
-//         assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+//         assert(free_dynamic_array(&da_ptr) == GLX_SUCCESS);
 //     }
 // }
 
 static void _test_index_of_da()
 {
-	enum DynamicArrayError err;
+	enum GalxlibError err;
 	DynamicArray *da = NULL;
 	size_t index_out = 0; // If your library uses 'int' for the output index parameter, change this to 'int index_out = 0;'
 	int test_val = 42;
@@ -1661,36 +1661,36 @@ static void _test_index_of_da()
 
 	// Setup a valid array for boundary isolation testing
 	err = new_dynamic_array(DA_INT, &da);
-	assert(err == DA_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(da != NULL);
 
 	// Test Case: NULL array pointer argument
 	err = index_of_da(NULL, &test_val, &index_out);
-	assert(err == DA_ERR_NULL_ARGUMENT);
+	assert(err == GLX_ERR_NULL_ARGUMENT);
 
 	// Test Case: NULL item pointer argument
 	err = index_of_da(da, NULL, &index_out);
-	assert(err == DA_ERR_NULL_ARGUMENT);
+	assert(err == GLX_ERR_NULL_ARGUMENT);
 
 	// Test Case: NULL output index pointer argument
 	err = index_of_da(da, &test_val, NULL);
-	assert(err == DA_ERR_NULL_ARGUMENT);
+	assert(err == GLX_ERR_NULL_ARGUMENT);
 
 	// Test Case: Empty Array Check
 	err = index_of_da(da, &test_val, &index_out);
-	assert(err == DA_EMPTY);
+	assert(err == GLX_ERR_ZERO_LENGTH);
 
 	// Test Case: Corrupted / Unknown Array Type
 	// Populate the array so it passes empty/size checks, then inject an invalid type tag
-	assert(push_int_da(da, 10) == DA_SUCCESS);
+	assert(push_int_da(da, 10) == GLX_SUCCESS);
 	da->type = (enum DynamicArrayType)999;
 	err = index_of_da(da, &test_val, &index_out);
-	assert(err == DA_ERR_TYPE_UNKNOWN);
+	assert(err == GLX_ERR_TYPE_UNKNOWN);
 
 	// Cleanup error testing array
 	da->type = DA_INT; // Restore correct type for clean deallocation
 	err = free_dynamic_array(&da);
-	assert(err == DA_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(da == NULL);
 
 	// ---------------------------------------------------------
@@ -1702,29 +1702,29 @@ static void _test_index_of_da()
 		DynamicArray *da_int = NULL;
 		int v0 = 10, v1 = 20, v2 = 30, v_not_found = 99;
 
-		assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
-		assert(push_int_da(da_int, v0) == DA_SUCCESS);
-		assert(push_int_da(da_int, v1) == DA_SUCCESS);
-		assert(push_int_da(da_int, v2) == DA_SUCCESS);
-		assert(push_int_da(da_int, v1) == DA_SUCCESS); // Duplicate value at index 3
+		assert(new_dynamic_array(DA_INT, &da_int) == GLX_SUCCESS);
+		assert(push_int_da(da_int, v0) == GLX_SUCCESS);
+		assert(push_int_da(da_int, v1) == GLX_SUCCESS);
+		assert(push_int_da(da_int, v2) == GLX_SUCCESS);
+		assert(push_int_da(da_int, v1) == GLX_SUCCESS); // Duplicate value at index 3
 
 		// Test: Item at the beginning (index 0)
-		assert(index_of_da(da_int, &v0, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_int, &v0, &index_out) == GLX_SUCCESS);
 		assert(index_out == 0);
 
 		// Test: Item in the middle & First-Occurrence Behavior (should find index 1, not 3)
-		assert(index_of_da(da_int, &v1, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_int, &v1, &index_out) == GLX_SUCCESS);
 		assert(index_out == 1);
 
 		// Test: Item at the end (index 2)
-		assert(index_of_da(da_int, &v2, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_int, &v2, &index_out) == GLX_SUCCESS);
 		assert(index_out == 2);
 
 		// Test: Item not found
 		err = index_of_da(da_int, &v_not_found, &index_out);
-		assert(err == DA_ITEM_NOT_FOUND);
+		assert(err == GLX_ERR_NO_MATCH);
 
-		assert(free_dynamic_array(&da_int) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_int) == GLX_SUCCESS);
 	}
 
 	// --- Type 2: DA_CHAR ---
@@ -1732,24 +1732,24 @@ static void _test_index_of_da()
 		DynamicArray *da_char = NULL;
 		char v0 = 'a', v1 = 'b', v2 = 'c', v_not_found = 'z';
 
-		assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
-		assert(push_char_da(da_char, v0) == DA_SUCCESS);
-		assert(push_char_da(da_char, v1) == DA_SUCCESS);
-		assert(push_char_da(da_char, v2) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_CHAR, &da_char) == GLX_SUCCESS);
+		assert(push_char_da(da_char, v0) == GLX_SUCCESS);
+		assert(push_char_da(da_char, v1) == GLX_SUCCESS);
+		assert(push_char_da(da_char, v2) == GLX_SUCCESS);
 
-		assert(index_of_da(da_char, &v0, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_char, &v0, &index_out) == GLX_SUCCESS);
 		assert(index_out == 0);
 
-		assert(index_of_da(da_char, &v1, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_char, &v1, &index_out) == GLX_SUCCESS);
 		assert(index_out == 1);
 
-		assert(index_of_da(da_char, &v2, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_char, &v2, &index_out) == GLX_SUCCESS);
 		assert(index_out == 2);
 
 		err = index_of_da(da_char, &v_not_found, &index_out);
-		assert(err == DA_ITEM_NOT_FOUND);
+		assert(err == GLX_ERR_NO_MATCH);
 
-		assert(free_dynamic_array(&da_char) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_char) == GLX_SUCCESS);
 	}
 
 	// --- Type 3: DA_FLOAT ---
@@ -1757,24 +1757,24 @@ static void _test_index_of_da()
 		DynamicArray *da_float = NULL;
 		float v0 = 1.1f, v1 = 2.2f, v2 = 3.3f, v_not_found = 9.9f;
 
-		assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
-		assert(push_float_da(da_float, v0) == DA_SUCCESS);
-		assert(push_float_da(da_float, v1) == DA_SUCCESS);
-		assert(push_float_da(da_float, v2) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_FLOAT, &da_float) == GLX_SUCCESS);
+		assert(push_float_da(da_float, v0) == GLX_SUCCESS);
+		assert(push_float_da(da_float, v1) == GLX_SUCCESS);
+		assert(push_float_da(da_float, v2) == GLX_SUCCESS);
 
-		assert(index_of_da(da_float, &v0, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_float, &v0, &index_out) == GLX_SUCCESS);
 		assert(index_out == 0);
 
-		assert(index_of_da(da_float, &v1, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_float, &v1, &index_out) == GLX_SUCCESS);
 		assert(index_out == 1);
 
-		assert(index_of_da(da_float, &v2, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_float, &v2, &index_out) == GLX_SUCCESS);
 		assert(index_out == 2);
 
 		err = index_of_da(da_float, &v_not_found, &index_out);
-		assert(err == DA_ITEM_NOT_FOUND);
+		assert(err == GLX_ERR_NO_MATCH);
 
-		assert(free_dynamic_array(&da_float) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_float) == GLX_SUCCESS);
 	}
 
 	// --- Type 4: DA_DOUBLE ---
@@ -1782,24 +1782,24 @@ static void _test_index_of_da()
 		DynamicArray *da_double = NULL;
 		double v0 = 1.11, v1 = 2.22, v2 = 3.33, v_not_found = 9.99;
 
-		assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
-		assert(push_double_da(da_double, v0) == DA_SUCCESS);
-		assert(push_double_da(da_double, v1) == DA_SUCCESS);
-		assert(push_double_da(da_double, v2) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_DOUBLE, &da_double) == GLX_SUCCESS);
+		assert(push_double_da(da_double, v0) == GLX_SUCCESS);
+		assert(push_double_da(da_double, v1) == GLX_SUCCESS);
+		assert(push_double_da(da_double, v2) == GLX_SUCCESS);
 
-		assert(index_of_da(da_double, &v0, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_double, &v0, &index_out) == GLX_SUCCESS);
 		assert(index_out == 0);
 
-		assert(index_of_da(da_double, &v1, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_double, &v1, &index_out) == GLX_SUCCESS);
 		assert(index_out == 1);
 
-		assert(index_of_da(da_double, &v2, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_double, &v2, &index_out) == GLX_SUCCESS);
 		assert(index_out == 2);
 
 		err = index_of_da(da_double, &v_not_found, &index_out);
-		assert(err == DA_ITEM_NOT_FOUND);
+		assert(err == GLX_ERR_NO_MATCH);
 
-		assert(free_dynamic_array(&da_double) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_double) == GLX_SUCCESS);
 	}
 
 	// --- Type 5: DA_PTR ---
@@ -1808,10 +1808,10 @@ static void _test_index_of_da()
 		int d0 = 10, d1 = 20, d2 = 30, d_not_found = 40;
 		void *v0 = &d0, *v1 = &d1, *v2 = &d2, *v_not_found = &d_not_found;
 
-		assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
-		assert(push_ptr_da(da_ptr, v0) == DA_SUCCESS);
-		assert(push_ptr_da(da_ptr, v1) == DA_SUCCESS);
-		assert(push_ptr_da(da_ptr, v2) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_PTR, &da_ptr) == GLX_SUCCESS);
+		assert(push_ptr_da(da_ptr, v0) == GLX_SUCCESS);
+		assert(push_ptr_da(da_ptr, v1) == GLX_SUCCESS);
+		assert(push_ptr_da(da_ptr, v2) == GLX_SUCCESS);
 
 		/*
 		 * Note on DA_PTR: This assumes the typical pattern where the address
@@ -1819,26 +1819,26 @@ static void _test_index_of_da()
 		 * pointers directly by value (e.g., if (da->void_arr[i] == item)), simply
 		 * omit the '&' symbol and pass the pointer value directly (e.g., index_of_da(da_ptr, v0, &index_out)).
 		 */
-		assert(index_of_da(da_ptr, v0, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_ptr, v0, &index_out) == GLX_SUCCESS);
 		assert(index_out == 0);
 
-		assert(index_of_da(da_ptr, v1, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_ptr, v1, &index_out) == GLX_SUCCESS);
 		assert(index_out == 1);
 
-		assert(index_of_da(da_ptr, v2, &index_out) == DA_SUCCESS);
+		assert(index_of_da(da_ptr, v2, &index_out) == GLX_SUCCESS);
 		assert(index_out == 2);
 
 		err = index_of_da(da_ptr, v_not_found, &index_out);
-		assert(err == DA_ITEM_NOT_FOUND);
+		assert(err == GLX_ERR_NO_MATCH);
 
-		assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_ptr) == GLX_SUCCESS);
 	}
 }
 
 static void _test_new_iterator_da()
 {
 
-	enum DynamicArrayError err;
+	enum GalxlibError err;
 	DynamicArray *da = NULL;
 	DynamicArrayIterator *itr = NULL;
 
@@ -1848,26 +1848,26 @@ static void _test_new_iterator_da()
 
 	// Setup a valid dynamic array for testing isolated arguments
 	err = new_dynamic_array(DA_INT, &da);
-	assert(err == DA_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(da != NULL);
 
 	// Test Case: NULL array pointer argument
 	err = new_iterator_da(NULL, &itr);
-	assert(err == DA_ERR_NULL_ARGUMENT);
+	assert(err == GLX_ERR_NULL_ARGUMENT);
 
 	// Test Case: NULL iterator double-pointer argument
 	err = new_iterator_da(da, NULL);
-	assert(err == DA_ERR_NULL_ARGUMENT);
+	assert(err == GLX_ERR_NULL_ARGUMENT);
 
 	// Test Case: Corrupted / Unknown Array Type handling
 	da->type = (enum DynamicArrayType)999;
 	err = new_iterator_da(da, &itr);
-	assert(err == DA_ERR_TYPE_UNKNOWN);
+	assert(err == GLX_ERR_TYPE_UNKNOWN);
 
 	// Cleanup error testing array
 	da->type = DA_INT; // Restore correct type for clean deallocation
 	err = free_dynamic_array(&da);
-	assert(err == DA_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(da == NULL);
 
 	// ---------------------------------------------------------
@@ -1885,14 +1885,14 @@ static void _test_new_iterator_da()
 		DynamicArray *da_int = NULL;
 		DynamicArrayIterator *itr_int = NULL;
 
-		assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
-		assert(new_iterator_da(da_int, &itr_int) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_INT, &da_int) == GLX_SUCCESS);
+		assert(new_iterator_da(da_int, &itr_int) == GLX_SUCCESS);
 		assert(itr_int != NULL);
 		assert(itr_int->da == da_int);
 		assert(itr_int->current_index == 0);
 
 		free_iterator_da(&itr_int);
-		assert(free_dynamic_array(&da_int) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_int) == GLX_SUCCESS);
 	}
 
 	// --- Type 2: DA_CHAR ---
@@ -1900,14 +1900,14 @@ static void _test_new_iterator_da()
 		DynamicArray *da_char = NULL;
 		DynamicArrayIterator *itr_char = NULL;
 
-		assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
-		assert(new_iterator_da(da_char, &itr_char) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_CHAR, &da_char) == GLX_SUCCESS);
+		assert(new_iterator_da(da_char, &itr_char) == GLX_SUCCESS);
 		assert(itr_char != NULL);
 		assert(itr_char->da == da_char);
 		assert(itr_char->current_index == 0);
 
 		free_iterator_da(&itr_char);
-		assert(free_dynamic_array(&da_char) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_char) == GLX_SUCCESS);
 	}
 
 	// --- Type 3: DA_FLOAT ---
@@ -1915,14 +1915,14 @@ static void _test_new_iterator_da()
 		DynamicArray *da_float = NULL;
 		DynamicArrayIterator *itr_float = NULL;
 
-		assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
-		assert(new_iterator_da(da_float, &itr_float) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_FLOAT, &da_float) == GLX_SUCCESS);
+		assert(new_iterator_da(da_float, &itr_float) == GLX_SUCCESS);
 		assert(itr_float != NULL);
 		assert(itr_float->da == da_float);
 		assert(itr_float->current_index == 0);
 
 		free_iterator_da(&itr_float);
-		assert(free_dynamic_array(&da_float) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_float) == GLX_SUCCESS);
 	}
 
 	// --- Type 4: DA_DOUBLE ---
@@ -1930,14 +1930,14 @@ static void _test_new_iterator_da()
 		DynamicArray *da_double = NULL;
 		DynamicArrayIterator *itr_double = NULL;
 
-		assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
-		assert(new_iterator_da(da_double, &itr_double) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_DOUBLE, &da_double) == GLX_SUCCESS);
+		assert(new_iterator_da(da_double, &itr_double) == GLX_SUCCESS);
 		assert(itr_double != NULL);
 		assert(itr_double->da == da_double);
 		assert(itr_double->current_index == 0);
 
 		free_iterator_da(&itr_double);
-		assert(free_dynamic_array(&da_double) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_double) == GLX_SUCCESS);
 	}
 
 	// --- Type 5: DA_PTR ---
@@ -1945,21 +1945,21 @@ static void _test_new_iterator_da()
 		DynamicArray *da_ptr = NULL;
 		DynamicArrayIterator *itr_ptr = NULL;
 
-		assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
-		assert(new_iterator_da(da_ptr, &itr_ptr) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_PTR, &da_ptr) == GLX_SUCCESS);
+		assert(new_iterator_da(da_ptr, &itr_ptr) == GLX_SUCCESS);
 		assert(itr_ptr != NULL);
 		assert(itr_ptr->da == da_ptr);
 		assert(itr_ptr->current_index == 0);
 
 		free_iterator_da(&itr_ptr);
-		assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_ptr) == GLX_SUCCESS);
 	}
 }
 
 static void _test_free_iterator_da()
 {
 
-	enum DynamicArrayError err;
+	enum GalxlibError err;
 	DynamicArrayIterator *itr = NULL;
 
 	// ---------------------------------------------------------
@@ -1968,12 +1968,12 @@ static void _test_free_iterator_da()
 
 	// Test Case: NULL double-pointer argument passed to the function
 	err = free_iterator_da(NULL);
-	assert(err == DA_ERR_NULL_ARGUMENT);
+	assert(err == GLX_ERR_NULL_ARGUMENT);
 
 	// Test Case: Valid double-pointer, but the underlying iterator pointer is already NULL
 	DynamicArrayIterator *null_itr = NULL;
 	err = free_iterator_da(&null_itr);
-	assert(err == DA_SUCCESS);
+	assert(err == GLX_SUCCESS);
 
 	// ---------------------------------------------------------
 	// 2. TYPE-SPECIFIC FUNCTIONALITY VERIFICATION
@@ -1982,78 +1982,78 @@ static void _test_free_iterator_da()
 	// --- Type 1: DA_INT ---
 	{
 		DynamicArray *da_int = NULL;
-		assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
-		assert(new_iterator_da(da_int, &itr) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_INT, &da_int) == GLX_SUCCESS);
+		assert(new_iterator_da(da_int, &itr) == GLX_SUCCESS);
 		assert(itr != NULL);
 
 		// Test deallocation and verify the pointer is reset to NULL
 		err = free_iterator_da(&itr);
-		assert(err == DA_SUCCESS);
+		assert(err == GLX_SUCCESS);
 		assert(itr == NULL);
 
-		assert(free_dynamic_array(&da_int) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_int) == GLX_SUCCESS);
 	}
 
 	// --- Type 2: DA_CHAR ---
 	{
 		DynamicArray *da_char = NULL;
-		assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
-		assert(new_iterator_da(da_char, &itr) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_CHAR, &da_char) == GLX_SUCCESS);
+		assert(new_iterator_da(da_char, &itr) == GLX_SUCCESS);
 		assert(itr != NULL);
 
 		err = free_iterator_da(&itr);
-		assert(err == DA_SUCCESS);
+		assert(err == GLX_SUCCESS);
 		assert(itr == NULL);
 
-		assert(free_dynamic_array(&da_char) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_char) == GLX_SUCCESS);
 	}
 
 	// --- Type 3: DA_FLOAT ---
 	{
 		DynamicArray *da_float = NULL;
-		assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
-		assert(new_iterator_da(da_float, &itr) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_FLOAT, &da_float) == GLX_SUCCESS);
+		assert(new_iterator_da(da_float, &itr) == GLX_SUCCESS);
 		assert(itr != NULL);
 
 		err = free_iterator_da(&itr);
-		assert(err == DA_SUCCESS);
+		assert(err == GLX_SUCCESS);
 		assert(itr == NULL);
 
-		assert(free_dynamic_array(&da_float) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_float) == GLX_SUCCESS);
 	}
 
 	// --- Type 4: DA_DOUBLE ---
 	{
 		DynamicArray *da_double = NULL;
-		assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
-		assert(new_iterator_da(da_double, &itr) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_DOUBLE, &da_double) == GLX_SUCCESS);
+		assert(new_iterator_da(da_double, &itr) == GLX_SUCCESS);
 		assert(itr != NULL);
 
 		err = free_iterator_da(&itr);
-		assert(err == DA_SUCCESS);
+		assert(err == GLX_SUCCESS);
 		assert(itr == NULL);
 
-		assert(free_dynamic_array(&da_double) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_double) == GLX_SUCCESS);
 	}
 
 	// --- Type 5: DA_PTR ---
 	{
 		DynamicArray *da_ptr = NULL;
-		assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
-		assert(new_iterator_da(da_ptr, &itr) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_PTR, &da_ptr) == GLX_SUCCESS);
+		assert(new_iterator_da(da_ptr, &itr) == GLX_SUCCESS);
 		assert(itr != NULL);
 
 		err = free_iterator_da(&itr);
-		assert(err == DA_SUCCESS);
+		assert(err == GLX_SUCCESS);
 		assert(itr == NULL);
 
-		assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+		assert(free_dynamic_array(&da_ptr) == GLX_SUCCESS);
 	}
 }
 
 static void _test_has_next_dai()
 {
-	enum DynamicArrayError err;
+	enum GalxlibError err;
 	DynamicArray *da = NULL;
 	DynamicArrayIterator *itr = NULL;
 	int has_next_out = -1;
@@ -2064,19 +2064,19 @@ static void _test_has_next_dai()
 
 	// Test Case: NULL iterator pointer argument
 	err = has_next_dai(NULL, &has_next_out);
-	assert(err == DA_ERR_NULL_ARGUMENT);
+	assert(err == GLX_ERR_NULL_ARGUMENT);
 
 	// Setup a valid iterator to isolate the next argument check
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
-	assert(new_iterator_da(da, &itr) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
+	assert(new_iterator_da(da, &itr) == GLX_SUCCESS);
 
 	// Test Case: NULL output integer pointer argument
 	err = has_next_dai(itr, NULL);
-	assert(err == DA_ERR_NULL_ARGUMENT);
+	assert(err == GLX_ERR_NULL_ARGUMENT);
 
 	// Clean up initial error test setup
-	assert(free_iterator_da(&itr) == DA_SUCCESS);
-	assert(free_dynamic_array(&da) == DA_SUCCESS);
+	assert(free_iterator_da(&itr) == GLX_SUCCESS);
+	assert(free_dynamic_array(&da) == GLX_SUCCESS);
 
 	// ---------------------------------------------------------
 	// 2. TYPE-SPECIFIC FUNCTIONALITY VERIFICATION
@@ -2088,27 +2088,27 @@ static void _test_has_next_dai()
 		DynamicArrayIterator *itr_int = NULL;
 		int next_out = 0;
 
-		assert(new_dynamic_array(DA_INT, &da_int) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_INT, &da_int) == GLX_SUCCESS);
 
 		// Scenario A: Empty Array (has_next should be 0)
-		assert(new_iterator_da(da_int, &itr_int) == DA_SUCCESS);
-		assert(has_next_dai(itr_int, &has_next_out) == DA_SUCCESS);
+		assert(new_iterator_da(da_int, &itr_int) == GLX_SUCCESS);
+		assert(has_next_dai(itr_int, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 0);
-		assert(free_iterator_da(&itr_int) == DA_SUCCESS);
+		assert(free_iterator_da(&itr_int) == GLX_SUCCESS);
 
 		// Scenario B: Populated Array (has_next should be 1)
-		assert(push_int_da(da_int, 100) == DA_SUCCESS);
-		assert(new_iterator_da(da_int, &itr_int) == DA_SUCCESS);
-		assert(has_next_dai(itr_int, &has_next_out) == DA_SUCCESS);
+		assert(push_int_da(da_int, 100) == GLX_SUCCESS);
+		assert(new_iterator_da(da_int, &itr_int) == GLX_SUCCESS);
+		assert(has_next_dai(itr_int, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 1);
 
 		// Scenario C: After Consumption (has_next should become 0)
-		assert(next_int_dai(itr_int, &next_out) == DA_SUCCESS);
-		assert(has_next_dai(itr_int, &has_next_out) == DA_SUCCESS);
+		assert(next_int_dai(itr_int, &next_out) == GLX_SUCCESS);
+		assert(has_next_dai(itr_int, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 0);
 
-		assert(free_iterator_da(&itr_int) == DA_SUCCESS);
-		assert(free_dynamic_array(&da_int) == DA_SUCCESS);
+		assert(free_iterator_da(&itr_int) == GLX_SUCCESS);
+		assert(free_dynamic_array(&da_int) == GLX_SUCCESS);
 	}
 
 	// --- Type 2: DA_CHAR ---
@@ -2117,24 +2117,24 @@ static void _test_has_next_dai()
 		DynamicArrayIterator *itr_char = NULL;
 		char next_out = 0;
 
-		assert(new_dynamic_array(DA_CHAR, &da_char) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_CHAR, &da_char) == GLX_SUCCESS);
 
-		assert(new_iterator_da(da_char, &itr_char) == DA_SUCCESS);
-		assert(has_next_dai(itr_char, &has_next_out) == DA_SUCCESS);
+		assert(new_iterator_da(da_char, &itr_char) == GLX_SUCCESS);
+		assert(has_next_dai(itr_char, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 0);
-		assert(free_iterator_da(&itr_char) == DA_SUCCESS);
+		assert(free_iterator_da(&itr_char) == GLX_SUCCESS);
 
-		assert(push_char_da(da_char, 'A') == DA_SUCCESS);
-		assert(new_iterator_da(da_char, &itr_char) == DA_SUCCESS);
-		assert(has_next_dai(itr_char, &has_next_out) == DA_SUCCESS);
+		assert(push_char_da(da_char, 'A') == GLX_SUCCESS);
+		assert(new_iterator_da(da_char, &itr_char) == GLX_SUCCESS);
+		assert(has_next_dai(itr_char, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 1);
 
-		assert(next_char_dai(itr_char, &next_out) == DA_SUCCESS);
-		assert(has_next_dai(itr_char, &has_next_out) == DA_SUCCESS);
+		assert(next_char_dai(itr_char, &next_out) == GLX_SUCCESS);
+		assert(has_next_dai(itr_char, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 0);
 
-		assert(free_iterator_da(&itr_char) == DA_SUCCESS);
-		assert(free_dynamic_array(&da_char) == DA_SUCCESS);
+		assert(free_iterator_da(&itr_char) == GLX_SUCCESS);
+		assert(free_dynamic_array(&da_char) == GLX_SUCCESS);
 	}
 
 	// --- Type 3: DA_FLOAT ---
@@ -2143,24 +2143,24 @@ static void _test_has_next_dai()
 		DynamicArrayIterator *itr_float = NULL;
 		float next_out = 0.0f;
 
-		assert(new_dynamic_array(DA_FLOAT, &da_float) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_FLOAT, &da_float) == GLX_SUCCESS);
 
-		assert(new_iterator_da(da_float, &itr_float) == DA_SUCCESS);
-		assert(has_next_dai(itr_float, &has_next_out) == DA_SUCCESS);
+		assert(new_iterator_da(da_float, &itr_float) == GLX_SUCCESS);
+		assert(has_next_dai(itr_float, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 0);
-		assert(free_iterator_da(&itr_float) == DA_SUCCESS);
+		assert(free_iterator_da(&itr_float) == GLX_SUCCESS);
 
-		assert(push_float_da(da_float, 1.23f) == DA_SUCCESS);
-		assert(new_iterator_da(da_float, &itr_float) == DA_SUCCESS);
-		assert(has_next_dai(itr_float, &has_next_out) == DA_SUCCESS);
+		assert(push_float_da(da_float, 1.23f) == GLX_SUCCESS);
+		assert(new_iterator_da(da_float, &itr_float) == GLX_SUCCESS);
+		assert(has_next_dai(itr_float, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 1);
 
-		assert(next_float_dai(itr_float, &next_out) == DA_SUCCESS);
-		assert(has_next_dai(itr_float, &has_next_out) == DA_SUCCESS);
+		assert(next_float_dai(itr_float, &next_out) == GLX_SUCCESS);
+		assert(has_next_dai(itr_float, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 0);
 
-		assert(free_iterator_da(&itr_float) == DA_SUCCESS);
-		assert(free_dynamic_array(&da_float) == DA_SUCCESS);
+		assert(free_iterator_da(&itr_float) == GLX_SUCCESS);
+		assert(free_dynamic_array(&da_float) == GLX_SUCCESS);
 	}
 
 	// --- Type 4: DA_DOUBLE ---
@@ -2169,24 +2169,24 @@ static void _test_has_next_dai()
 		DynamicArrayIterator *itr_double = NULL;
 		double next_out = 0.0;
 
-		assert(new_dynamic_array(DA_DOUBLE, &da_double) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_DOUBLE, &da_double) == GLX_SUCCESS);
 
-		assert(new_iterator_da(da_double, &itr_double) == DA_SUCCESS);
-		assert(has_next_dai(itr_double, &has_next_out) == DA_SUCCESS);
+		assert(new_iterator_da(da_double, &itr_double) == GLX_SUCCESS);
+		assert(has_next_dai(itr_double, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 0);
-		assert(free_iterator_da(&itr_double) == DA_SUCCESS);
+		assert(free_iterator_da(&itr_double) == GLX_SUCCESS);
 
-		assert(push_double_da(da_double, 9.87) == DA_SUCCESS);
-		assert(new_iterator_da(da_double, &itr_double) == DA_SUCCESS);
-		assert(has_next_dai(itr_double, &has_next_out) == DA_SUCCESS);
+		assert(push_double_da(da_double, 9.87) == GLX_SUCCESS);
+		assert(new_iterator_da(da_double, &itr_double) == GLX_SUCCESS);
+		assert(has_next_dai(itr_double, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 1);
 
-		assert(next_double_dai(itr_double, &next_out) == DA_SUCCESS);
-		assert(has_next_dai(itr_double, &has_next_out) == DA_SUCCESS);
+		assert(next_double_dai(itr_double, &next_out) == GLX_SUCCESS);
+		assert(has_next_dai(itr_double, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 0);
 
-		assert(free_iterator_da(&itr_double) == DA_SUCCESS);
-		assert(free_dynamic_array(&da_double) == DA_SUCCESS);
+		assert(free_iterator_da(&itr_double) == GLX_SUCCESS);
+		assert(free_dynamic_array(&da_double) == GLX_SUCCESS);
 	}
 
 	// --- Type 5: DA_PTR ---
@@ -2196,36 +2196,36 @@ static void _test_has_next_dai()
 		int dummy = 42;
 		void *next_out = NULL;
 
-		assert(new_dynamic_array(DA_PTR, &da_ptr) == DA_SUCCESS);
+		assert(new_dynamic_array(DA_PTR, &da_ptr) == GLX_SUCCESS);
 
-		assert(new_iterator_da(da_ptr, &itr_ptr) == DA_SUCCESS);
-		assert(has_next_dai(itr_ptr, &has_next_out) == DA_SUCCESS);
+		assert(new_iterator_da(da_ptr, &itr_ptr) == GLX_SUCCESS);
+		assert(has_next_dai(itr_ptr, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 0);
-		assert(free_iterator_da(&itr_ptr) == DA_SUCCESS);
+		assert(free_iterator_da(&itr_ptr) == GLX_SUCCESS);
 
-		assert(push_ptr_da(da_ptr, &dummy) == DA_SUCCESS);
-		assert(new_iterator_da(da_ptr, &itr_ptr) == DA_SUCCESS);
-		assert(has_next_dai(itr_ptr, &has_next_out) == DA_SUCCESS);
+		assert(push_ptr_da(da_ptr, &dummy) == GLX_SUCCESS);
+		assert(new_iterator_da(da_ptr, &itr_ptr) == GLX_SUCCESS);
+		assert(has_next_dai(itr_ptr, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 1);
 
-		assert(next_ptr_dai(itr_ptr, &next_out) == DA_SUCCESS);
-		assert(has_next_dai(itr_ptr, &has_next_out) == DA_SUCCESS);
+		assert(next_ptr_dai(itr_ptr, &next_out) == GLX_SUCCESS);
+		assert(has_next_dai(itr_ptr, &has_next_out) == GLX_SUCCESS);
 		assert(has_next_out == 0);
 
-		assert(free_iterator_da(&itr_ptr) == DA_SUCCESS);
-		assert(free_dynamic_array(&da_ptr) == DA_SUCCESS);
+		assert(free_iterator_da(&itr_ptr) == GLX_SUCCESS);
+		assert(free_dynamic_array(&da_ptr) == GLX_SUCCESS);
 	}
 }
 
 static void _test_next_dai_null_arguments(void)
 {
 	DynamicArray *da = NULL;
-	enum DynamicArrayError err = new_dynamic_array(DA_INT, &da);
-	assert(err == DA_SUCCESS);
+	enum GalxlibError err = new_dynamic_array(DA_INT, &da);
+	assert(err == GLX_SUCCESS);
 
 	DynamicArrayIterator *itr = NULL;
 	err = new_iterator_da(da, &itr);
-	assert(err == DA_SUCCESS);
+	assert(err == GLX_SUCCESS);
 
 	int int_out;
 	char char_out;
@@ -2233,22 +2233,22 @@ static void _test_next_dai_null_arguments(void)
 	double double_out;
 	void *ptr_out;
 
-	// Verify DA_ERR_NULL_ARGUMENT when iterator is NULL
-	assert(next_int_dai(NULL, &int_out) == DA_ERR_NULL_ARGUMENT);
-	assert(next_char_dai(NULL, &char_out) == DA_ERR_NULL_ARGUMENT);
-	assert(next_float_dai(NULL, &float_out) == DA_ERR_NULL_ARGUMENT);
-	assert(next_double_dai(NULL, &double_out) == DA_ERR_NULL_ARGUMENT);
-	assert(next_ptr_dai(NULL, &ptr_out) == DA_ERR_NULL_ARGUMENT);
+	// Verify GLX_ERR_NULL_ARGUMENT when iterator is NULL
+	assert(next_int_dai(NULL, &int_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(next_char_dai(NULL, &char_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(next_float_dai(NULL, &float_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(next_double_dai(NULL, &double_out) == GLX_ERR_NULL_ARGUMENT);
+	assert(next_ptr_dai(NULL, &ptr_out) == GLX_ERR_NULL_ARGUMENT);
 
-	// Verify DA_ERR_NULL_ARGUMENT when output pointer is NULL
-	assert(next_int_dai(itr, NULL) == DA_ERR_NULL_ARGUMENT);
-	assert(next_char_dai(itr, NULL) == DA_ERR_NULL_ARGUMENT);
-	assert(next_float_dai(itr, NULL) == DA_ERR_NULL_ARGUMENT);
-	assert(next_double_dai(itr, NULL) == DA_ERR_NULL_ARGUMENT);
-	assert(next_ptr_dai(itr, NULL) == DA_ERR_NULL_ARGUMENT);
+	// Verify GLX_ERR_NULL_ARGUMENT when output pointer is NULL
+	assert(next_int_dai(itr, NULL) == GLX_ERR_NULL_ARGUMENT);
+	assert(next_char_dai(itr, NULL) == GLX_ERR_NULL_ARGUMENT);
+	assert(next_float_dai(itr, NULL) == GLX_ERR_NULL_ARGUMENT);
+	assert(next_double_dai(itr, NULL) == GLX_ERR_NULL_ARGUMENT);
+	assert(next_ptr_dai(itr, NULL) == GLX_ERR_NULL_ARGUMENT);
 
-	// Verify DA_ERR_NULL_ARGUMENT when both are NULL
-	assert(next_int_dai(NULL, NULL) == DA_ERR_NULL_ARGUMENT);
+	// Verify GLX_ERR_NULL_ARGUMENT when both are NULL
+	assert(next_int_dai(NULL, NULL) == GLX_ERR_NULL_ARGUMENT);
 
 	// Clean up
 	free_iterator_da(&itr);
@@ -2262,12 +2262,12 @@ static void _test_next_dai_type_mismatch(void)
 	for (int i = 0; i < 5; i++)
 	{
 		DynamicArray *da = NULL;
-		enum DynamicArrayError err = new_dynamic_array(types[i], &da);
-		assert(err == DA_SUCCESS);
+		enum GalxlibError err = new_dynamic_array(types[i], &da);
+		assert(err == GLX_SUCCESS);
 
 		DynamicArrayIterator *itr = NULL;
 		err = new_iterator_da(da, &itr);
-		assert(err == DA_SUCCESS);
+		assert(err == GLX_SUCCESS);
 
 		int int_out;
 		char char_out;
@@ -2275,26 +2275,26 @@ static void _test_next_dai_type_mismatch(void)
 		double double_out;
 		void *ptr_out;
 
-		// Ensure that calling the wrong function on a type results in DA_ERR_TYPE_MISMATCH
+		// Ensure that calling the wrong function on a type results in GLX_ERR_TYPE_MISMATCH
 		if (types[i] != DA_INT)
 		{
-			assert(next_int_dai(itr, &int_out) == DA_ERR_TYPE_MISMATCH);
+			assert(next_int_dai(itr, &int_out) == GLX_ERR_TYPE_MISMATCH);
 		}
 		if (types[i] != DA_CHAR)
 		{
-			assert(next_char_dai(itr, &char_out) == DA_ERR_TYPE_MISMATCH);
+			assert(next_char_dai(itr, &char_out) == GLX_ERR_TYPE_MISMATCH);
 		}
 		if (types[i] != DA_FLOAT)
 		{
-			assert(next_float_dai(itr, &float_out) == DA_ERR_TYPE_MISMATCH);
+			assert(next_float_dai(itr, &float_out) == GLX_ERR_TYPE_MISMATCH);
 		}
 		if (types[i] != DA_DOUBLE)
 		{
-			assert(next_double_dai(itr, &double_out) == DA_ERR_TYPE_MISMATCH);
+			assert(next_double_dai(itr, &double_out) == GLX_ERR_TYPE_MISMATCH);
 		}
 		if (types[i] != DA_PTR)
 		{
-			assert(next_ptr_dai(itr, &ptr_out) == DA_ERR_TYPE_MISMATCH);
+			assert(next_ptr_dai(itr, &ptr_out) == GLX_ERR_TYPE_MISMATCH);
 		}
 
 		free_iterator_da(&itr);
@@ -2310,12 +2310,12 @@ static void _test_next_dai_out_of_bounds(void)
 	double double_out;
 	void *ptr_out;
 
-	// 1. Verify DA_ERR_INDEX_OUT_OF_BOUNDS on empty arrays across all types
+	// 1. Verify GLX_ERR_INDEX_OUT_OF_BOUNDS on empty arrays across all types
 	DynamicArray *da_int = NULL;
 	DynamicArrayIterator *itr_int = NULL;
 	new_dynamic_array(DA_INT, &da_int);
 	new_iterator_da(da_int, &itr_int);
-	assert(next_int_dai(itr_int, &int_out) == DA_ERR_INDEX_OUT_OF_BOUNDS);
+	assert(next_int_dai(itr_int, &int_out) == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 	free_iterator_da(&itr_int);
 	free_dynamic_array(&da_int);
 
@@ -2323,7 +2323,7 @@ static void _test_next_dai_out_of_bounds(void)
 	DynamicArrayIterator *itr_char = NULL;
 	new_dynamic_array(DA_CHAR, &da_char);
 	new_iterator_da(da_char, &itr_char);
-	assert(next_char_dai(itr_char, &char_out) == DA_ERR_INDEX_OUT_OF_BOUNDS);
+	assert(next_char_dai(itr_char, &char_out) == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 	free_iterator_da(&itr_char);
 	free_dynamic_array(&da_char);
 
@@ -2331,7 +2331,7 @@ static void _test_next_dai_out_of_bounds(void)
 	DynamicArrayIterator *itr_float = NULL;
 	new_dynamic_array(DA_FLOAT, &da_float);
 	new_iterator_da(da_float, &itr_float);
-	assert(next_float_dai(itr_float, &float_out) == DA_ERR_INDEX_OUT_OF_BOUNDS);
+	assert(next_float_dai(itr_float, &float_out) == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 	free_iterator_da(&itr_float);
 	free_dynamic_array(&da_float);
 
@@ -2339,7 +2339,7 @@ static void _test_next_dai_out_of_bounds(void)
 	DynamicArrayIterator *itr_double = NULL;
 	new_dynamic_array(DA_DOUBLE, &da_double);
 	new_iterator_da(da_double, &itr_double);
-	assert(next_double_dai(itr_double, &double_out) == DA_ERR_INDEX_OUT_OF_BOUNDS);
+	assert(next_double_dai(itr_double, &double_out) == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 	free_iterator_da(&itr_double);
 	free_dynamic_array(&da_double);
 
@@ -2347,19 +2347,19 @@ static void _test_next_dai_out_of_bounds(void)
 	DynamicArrayIterator *itr_ptr = NULL;
 	new_dynamic_array(DA_PTR, &da_ptr);
 	new_iterator_da(da_ptr, &itr_ptr);
-	assert(next_ptr_dai(itr_ptr, &ptr_out) == DA_ERR_INDEX_OUT_OF_BOUNDS);
+	assert(next_ptr_dai(itr_ptr, &ptr_out) == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 	free_iterator_da(&itr_ptr);
 	free_dynamic_array(&da_ptr);
 
-	// 2. Verify DA_ERR_INDEX_OUT_OF_BOUNDS when an iterator gets completely exhausted
+	// 2. Verify GLX_ERR_INDEX_OUT_OF_BOUNDS when an iterator gets completely exhausted
 	new_dynamic_array(DA_INT, &da_int);
 	push_int_da(da_int, 99);
 	new_iterator_da(da_int, &itr_int);
 
-	assert(next_int_dai(itr_int, &int_out) == DA_SUCCESS);
+	assert(next_int_dai(itr_int, &int_out) == GLX_SUCCESS);
 	assert(int_out == 99);
 	// Iterator has no elements left now
-	assert(next_int_dai(itr_int, &int_out) == DA_ERR_INDEX_OUT_OF_BOUNDS);
+	assert(next_int_dai(itr_int, &int_out) == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 
 	free_iterator_da(&itr_int);
 	free_dynamic_array(&da_int);
@@ -2377,9 +2377,9 @@ static void _test_next_dai_success_flows(void)
 		new_iterator_da(da, &itr);
 
 		int val;
-		assert(next_int_dai(itr, &val) == DA_SUCCESS);
+		assert(next_int_dai(itr, &val) == GLX_SUCCESS);
 		assert(val == 10);
-		assert(next_int_dai(itr, &val) == DA_SUCCESS);
+		assert(next_int_dai(itr, &val) == GLX_SUCCESS);
 		assert(val == 20);
 
 		free_iterator_da(&itr);
@@ -2396,9 +2396,9 @@ static void _test_next_dai_success_flows(void)
 		new_iterator_da(da, &itr);
 
 		char val;
-		assert(next_char_dai(itr, &val) == DA_SUCCESS);
+		assert(next_char_dai(itr, &val) == GLX_SUCCESS);
 		assert(val == 'X');
-		assert(next_char_dai(itr, &val) == DA_SUCCESS);
+		assert(next_char_dai(itr, &val) == GLX_SUCCESS);
 		assert(val == 'Y');
 
 		free_iterator_da(&itr);
@@ -2415,9 +2415,9 @@ static void _test_next_dai_success_flows(void)
 		new_iterator_da(da, &itr);
 
 		float val;
-		assert(next_float_dai(itr, &val) == DA_SUCCESS);
+		assert(next_float_dai(itr, &val) == GLX_SUCCESS);
 		assert(val == 3.14f);
-		assert(next_float_dai(itr, &val) == DA_SUCCESS);
+		assert(next_float_dai(itr, &val) == GLX_SUCCESS);
 		assert(val == 1.23f);
 
 		free_iterator_da(&itr);
@@ -2434,9 +2434,9 @@ static void _test_next_dai_success_flows(void)
 		new_iterator_da(da, &itr);
 
 		double val;
-		assert(next_double_dai(itr, &val) == DA_SUCCESS);
+		assert(next_double_dai(itr, &val) == GLX_SUCCESS);
 		assert(val == 9.999);
-		assert(next_double_dai(itr, &val) == DA_SUCCESS);
+		assert(next_double_dai(itr, &val) == GLX_SUCCESS);
 		assert(val == -0.001);
 
 		free_iterator_da(&itr);
@@ -2455,11 +2455,11 @@ static void _test_next_dai_success_flows(void)
 		new_iterator_da(da, &itr);
 
 		void *val;
-		assert(next_ptr_dai(itr, &val) == DA_SUCCESS);
+		assert(next_ptr_dai(itr, &val) == GLX_SUCCESS);
 		assert(val == &element1);
 		assert(*(int *)val == 500);
 
-		assert(next_ptr_dai(itr, &val) == DA_SUCCESS);
+		assert(next_ptr_dai(itr, &val) == GLX_SUCCESS);
 		assert(val == &element2);
 		assert(*(int *)val == 600);
 
@@ -2473,20 +2473,20 @@ static void _test_next_dai_success_flows(void)
 // 	DynamicArray *da = NULL;
 // 	DynamicArray *da_num = NULL;
 // 	Da_Person p = {.name = "Eli", .age = 1};
-// 	assert(new_dynamic_array(DA_PTR, &da) == DA_SUCCESS);
+// 	assert(new_dynamic_array(DA_PTR, &da) == GLX_SUCCESS);
 	
-// 	assert(push_ptr_da(da, &p) == DA_SUCCESS);
+// 	assert(push_ptr_da(da, &p) == GLX_SUCCESS);
 	
 // 	Da_Person *p_output = NULL;
-// 	assert(at_da(da, 0, (void **)&p_output) == DA_SUCCESS);
+// 	assert(at_da(da, 0, (void **)&p_output) == GLX_SUCCESS);
 // 	assert(p_output != NULL);
 // 	assert(p_output->age == 1);
 // 	free_dynamic_array(&da);
 	
-// 	assert(new_dynamic_array(DA_INT, &da_num) == DA_SUCCESS);
-// 	assert(push_int_da(da_num, 1) == DA_SUCCESS);
+// 	assert(new_dynamic_array(DA_INT, &da_num) == GLX_SUCCESS);
+// 	assert(push_int_da(da_num, 1) == GLX_SUCCESS);
 // 	int *num = NULL;
-// 	assert(at_da(da_num, 0, (void **)&num) == DA_SUCCESS);
+// 	assert(at_da(da_num, 0, (void **)&num) == GLX_SUCCESS);
 // 	assert(num != NULL);
 // 	assert(*num == 1);
 
@@ -2501,46 +2501,46 @@ static void _test_at_da(void) {
     DynamicArray *da_ptr = NULL;
     
     void *output = NULL;
-    enum DynamicArrayError err;
+    enum GalxlibError err;
 
     // =========================================================================
     // 1. ERROR CASES CHECK
     // =========================================================================
 
-    // Case A: DA_ERR_NULL_ARGUMENT (da is NULL)
+    // Case A: GLX_ERR_NULL_ARGUMENT (da is NULL)
     err = at_da(NULL, 0, &output);
-    assert(err == DA_ERR_NULL_ARGUMENT);
+    assert(err == GLX_ERR_NULL_ARGUMENT);
 
     // Create a valid instance to test other error combinations
     err = new_dynamic_array(DA_INT, &da_int);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
 
-    // Case B: DA_ERR_NULL_ARGUMENT (output pointer is NULL)
+    // Case B: GLX_ERR_NULL_ARGUMENT (output pointer is NULL)
     err = at_da(da_int, 0, NULL);
-    assert(err == DA_ERR_NULL_ARGUMENT);
+    assert(err == GLX_ERR_NULL_ARGUMENT);
 
-    // Case C: DA_EMPTY (The array does not include any items yet)
+    // Case C: GLX_ERR_ZERO_LENGTH (The array does not include any items yet)
     err = at_da(da_int, 0, &output);
-    assert(err == DA_EMPTY);
+    assert(err == GLX_ERR_ZERO_LENGTH);
 
     // Add a valid item to transition out of the empty state
     err = push_int_da(da_int, 100);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
 
-    // Case D: DA_ERR_INDEX_OUT_OF_BOUNDS (Index equals count)
+    // Case D: GLX_ERR_INDEX_OUT_OF_BOUNDS (Index equals count)
     err = at_da(da_int, 1, &output);
-    assert(err == DA_ERR_INDEX_OUT_OF_BOUNDS);
+    assert(err == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 
-    // Case E: DA_ERR_INDEX_OUT_OF_BOUNDS (Index far greater than count)
+    // Case E: GLX_ERR_INDEX_OUT_OF_BOUNDS (Index far greater than count)
     err = at_da(da_int, 999, &output);
-    assert(err == DA_ERR_INDEX_OUT_OF_BOUNDS);
+    assert(err == GLX_ERR_INDEX_OUT_OF_BOUNDS);
 
-    // Case F: DA_ERR_TYPE_UNKNOWN
+    // Case F: GLX_ERR_TYPE_UNKNOWN
     // Manually inject an invalid/unsupported type enum to test safety checks
     enum DynamicArrayType valid_type_backup = da_int->type;
     da_int->type = (enum DynamicArrayType)999; 
     err = at_da(da_int, 0, &output);
-    assert(err == DA_ERR_TYPE_UNKNOWN);
+    assert(err == GLX_ERR_TYPE_UNKNOWN);
     da_int->type = valid_type_backup; // Restore type safety
 
     // =========================================================================
@@ -2551,59 +2551,59 @@ static void _test_at_da(void) {
     // For non-DA_PTR types, output receives the memory address of the element
     output = NULL;
     err = at_da(da_int, 0, &output);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
     assert(output != NULL);
     assert(*(int *)output == 100);
 
     // --- Type 2: DA_CHAR ---
     err = new_dynamic_array(DA_CHAR, &da_char);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
     err = push_char_da(da_char, 'X');
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
 
     output = NULL;
     err = at_da(da_char, 0, &output);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
     assert(output != NULL);
     assert(*(char *)output == 'X');
 
     // --- Type 3: DA_FLOAT ---
     err = new_dynamic_array(DA_FLOAT, &da_float);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
     err = push_float_da(da_float, 3.1415f);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
 
     output = NULL;
     err = at_da(da_float, 0, &output);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
     assert(output != NULL);
     assert(*(float *)output == 3.1415f);
 
     // --- Type 4: DA_DOUBLE ---
     err = new_dynamic_array(DA_DOUBLE, &da_double);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
     err = push_double_da(da_double, 2.7182818284);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
 
     output = NULL;
     err = at_da(da_double, 0, &output);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
     assert(output != NULL);
     assert(*(double *)output == 2.7182818284);
 
     // --- Type 5: DA_PTR ---
     // For DA_PTR, output receives the underlying pointer itself, not its address
     err = new_dynamic_array(DA_PTR, &da_ptr);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
     
     int dummy_value = 42;
     void *target_ptr = &dummy_value;
     err = push_ptr_da(da_ptr, target_ptr);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
 
     output = NULL;
     err = at_da(da_ptr, 0, &output);
-    assert(err == DA_SUCCESS);
+    assert(err == GLX_SUCCESS);
     // Directly matching pointers as described by documentation
     assert(output == target_ptr); 
     assert(*(int *)output == 42);
@@ -2618,17 +2618,17 @@ static void _test_at_da(void) {
     free_dynamic_array(&da_ptr);
 }
 
-void dynamicArrayTest()
+void dynamic_array_test()
 {
 	puts("################## Test: DynamicArray ##################");
 	printf("Running DynamicArray tests...\n");
 
 	// new_dynamic_array
 	DynamicArray *da = NULL;
-	assert(new_dynamic_array((enum DynamicArrayType)999, &da) == DA_ERR_TYPE_UNKNOWN);
-	assert(new_dynamic_array(DA_INT, NULL) == DA_ERR_NULL_ARGUMENT);
+	assert(new_dynamic_array((enum DynamicArrayType)999, &da) == GLX_ERR_TYPE_UNKNOWN);
+	assert(new_dynamic_array(DA_INT, NULL) == GLX_ERR_NULL_ARGUMENT);
 
-	assert(new_dynamic_array(DA_INT, &da) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da) == GLX_SUCCESS);
 	assert(da != NULL);
 	assert(da->count == 0);
 	assert(da->type == DA_INT);
@@ -2636,23 +2636,23 @@ void dynamicArrayTest()
 	assert(da->destructor == NULL);
 	assert(da->single_item_size == sizeof(int));
 
-	assert(new_dynamic_array(DA_INT, &da_i) == DA_SUCCESS);
-	assert(new_dynamic_array(DA_CHAR, &da_c) == DA_SUCCESS);
-	assert(new_dynamic_array(DA_FLOAT, &da_f) == DA_SUCCESS);
-	assert(new_dynamic_array(DA_DOUBLE, &da_d) == DA_SUCCESS);
-	assert(new_dynamic_array(DA_PTR, &da_p) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da_i) == GLX_SUCCESS);
+	assert(new_dynamic_array(DA_CHAR, &da_c) == GLX_SUCCESS);
+	assert(new_dynamic_array(DA_FLOAT, &da_f) == GLX_SUCCESS);
+	assert(new_dynamic_array(DA_DOUBLE, &da_d) == GLX_SUCCESS);
+	assert(new_dynamic_array(DA_PTR, &da_p) == GLX_SUCCESS);
 
-	assert(new_dynamic_array(DA_INT, &da_invalid_type) == DA_SUCCESS);
+	assert(new_dynamic_array(DA_INT, &da_invalid_type) == GLX_SUCCESS);
 	da_invalid_type->type = (enum DynamicArrayType)10000;
 	assert(da_invalid_type->type == 10000);
 
 	// new_dynamic_array_d
 	DynamicArray *dad = NULL;
-	assert(new_dynamic_array_d((enum DynamicArrayType)999, _person_destructor, &dad) == DA_ERR_TYPE_UNKNOWN);
-	assert(new_dynamic_array_d(DA_PTR, NULL, &dad) == DA_ERR_NULL_ARGUMENT);
-	assert(new_dynamic_array_d(DA_PTR, _person_destructor, NULL) == DA_ERR_NULL_ARGUMENT);
+	assert(new_dynamic_array_d((enum DynamicArrayType)999, _person_destructor, &dad) == GLX_ERR_TYPE_UNKNOWN);
+	assert(new_dynamic_array_d(DA_PTR, NULL, &dad) == GLX_ERR_NULL_ARGUMENT);
+	assert(new_dynamic_array_d(DA_PTR, _person_destructor, NULL) == GLX_ERR_NULL_ARGUMENT);
 
-	assert(new_dynamic_array_d(DA_PTR, _person_destructor, &dad) == DA_SUCCESS);
+	assert(new_dynamic_array_d(DA_PTR, _person_destructor, &dad) == GLX_SUCCESS);
 	assert(dad != NULL);
 	assert(dad->count == 0);
 	assert(dad->type == DA_PTR);

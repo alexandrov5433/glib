@@ -7,8 +7,6 @@ typedef struct PersonDA
     int age;
 } PersonDA;
 
-void intProcessorDA(void *ptr);
-int intFilterDA(void *ptr);
-void dynamicArrayTest();
+void dynamic_array_test();
 
 #endif

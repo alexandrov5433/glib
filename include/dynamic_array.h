@@ -7,6 +7,7 @@
 #define GALXLIB_DYNAMIC_ARRAY_H
 
 #include <stddef.h>
+#include "./error.h"
 
 #ifdef _WIN32
 
@@ -30,25 +31,6 @@
 #ifndef DYNAMIC_ARRAY_INIT_CAPACITY
 #define DYNAMIC_ARRAY_INIT_CAPACITY 200
 #endif
-
-/**
- * @enum DynamicArrayError
- * @brief The error codes returned by the DynamicArray functions.
- */
-enum DynamicArrayError
-{
-	DA_EMPTY = -2,			    /**< (-2) The array does not include any items. */
-	DA_ITEM_NOT_FOUND = -1,		    /**< (-1) The searched item was not found among the items in the array. */
-	DA_SUCCESS = 0,			    /**< (0) Successful execution of the called function. */
-	DA_ERR_NULL_ARGUMENT = 1,	    /**< (1) One or more arguments are NULL. */
-	DA_ERR_MEMORY_ALLOCATION = 2,	    /**< (2) Failed to allocate or reallocate memory. */
-	DA_ERR_TYPE_MISMATCH = 3,	    /**< (3) The type (DynamicArrayType) of the DynamicArray does not match the type, which the called function processes. */
-	DA_ERR_TYPE_UNKNOWN = 4,	    /**< (4) The type (DynamicArrayType) is unknown and not supported. */
-	DA_ERR_INDEX_OUT_OF_BOUNDS = 5,	    /**< (5) The targeted index is outside of the boundaries of the DynamicArray. */
-	DA_ERR_ITEM_SIZE_DETERMINATION = 6, /**< (6) The size in bytes of a single item could not be determined, based on the given type argument. */
-	DA_ERR_NULL_DESTRUCTOR = 7,	    /**< (7) The destructor is NULL - either as a function argument or structure member. */
-	DA_ERR_NULL_ARRAY = 8		    /**< (8) The underlying array is NULL. This is the structure member containig the elements - e.g. int *DynamicArray::int_arr for DA_INT type (DynamicArrayType). */
-};
 
 /**
  * @enum DynamicArrayType
@@ -100,17 +82,17 @@ typedef struct DynamicArrayIterator
  * @param output A pointer, which will be updated with the adress of the new @ref DynamicArray.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_ITEM_SIZE_DETERMINATION
+ * - GLX_ERR_ITEM_SIZE_DETERMINATION
  */
-GALXLIB_API enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const type, DynamicArray **const output);
+GALXLIB_API enum GalxlibError new_dynamic_array(enum DynamicArrayType const type, DynamicArray **const output);
 
 /**
  * Creates a new @ref DynamicArray.
@@ -119,17 +101,17 @@ GALXLIB_API enum DynamicArrayError new_dynamic_array(enum DynamicArrayType const
  * @param output A pointer, which will be updated with the adress of the new @ref DynamicArray.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_ITEM_SIZE_DETERMINATION
+ * - GLX_ERR_ITEM_SIZE_DETERMINATION
  */
-GALXLIB_API enum DynamicArrayError new_dynamic_array_d(
+GALXLIB_API enum GalxlibError new_dynamic_array_d(
     enum DynamicArrayType const type,
     void (*destructor)(void **ptr),
     DynamicArray **const output);
@@ -138,16 +120,16 @@ GALXLIB_API enum DynamicArrayError new_dynamic_array_d(
  * Frees the memory used by the @ref DynamicArray. The items contained in the array are not freed.
  * @param da A pointer to the address of the @ref DynamicArray, which must be freed.
  * The address of the @ref DynamicArray is set to NULL on successful execution.
- * If the address is NULL, nothing is done and DA_SUCCESS is returned.
+ * If the address is NULL, nothing is done and GLX_SUCCESS is returned.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError free_dynamic_array(DynamicArray **const da);
+GALXLIB_API enum GalxlibError free_dynamic_array(DynamicArray **const da);
 
 /**
  * Frees the memory used by the @ref DynamicArray.
@@ -157,20 +139,20 @@ GALXLIB_API enum DynamicArrayError free_dynamic_array(DynamicArray **const da);
  * For each other @ref DynamicArrayType the function executes like the free_dynamic_array function.
  * @param da A pointer to the address of the @ref DynamicArray, which must be freed.
  * The address of the @ref DynamicArray is set to NULL on successful execution.
- * If the address is NULL, nothing is done and DA_SUCCESS is returned.
+ * If the address is NULL, nothing is done and GLX_SUCCESS is returned.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_NULL_DESTRUCTOR
+ * - GLX_ERR_NULL_DESTRUCTOR
  */
-GALXLIB_API enum DynamicArrayError free_dynamic_array_d(DynamicArray **const da);
+GALXLIB_API enum GalxlibError free_dynamic_array_d(DynamicArray **const da);
 
 /**
  * Adds the integer to the end of the DynamicArray.
@@ -178,17 +160,17 @@ GALXLIB_API enum DynamicArrayError free_dynamic_array_d(DynamicArray **const da)
  * @param item The integer to add.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError push_int_da(DynamicArray *const da, int const item);
+GALXLIB_API enum GalxlibError push_int_da(DynamicArray *const da, int const item);
 
 /**
  * Adds the character to the end of the DynamicArray.
@@ -196,17 +178,17 @@ GALXLIB_API enum DynamicArrayError push_int_da(DynamicArray *const da, int const
  * @param item The character to add.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError push_char_da(DynamicArray *const da, char const item);
+GALXLIB_API enum GalxlibError push_char_da(DynamicArray *const da, char const item);
 
 /**
  * Adds the float to the end of the DynamicArray.
@@ -214,17 +196,17 @@ GALXLIB_API enum DynamicArrayError push_char_da(DynamicArray *const da, char con
  * @param item The float to add.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError push_float_da(DynamicArray *const da, float const item);
+GALXLIB_API enum GalxlibError push_float_da(DynamicArray *const da, float const item);
 
 /**
  * Adds the double to the end of the DynamicArray.
@@ -232,17 +214,17 @@ GALXLIB_API enum DynamicArrayError push_float_da(DynamicArray *const da, float c
  * @param item The double to add.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError push_double_da(DynamicArray *const da, double const item);
+GALXLIB_API enum GalxlibError push_double_da(DynamicArray *const da, double const item);
 
 /**
  * Adds the pointer to the end of the DynamicArray.
@@ -250,17 +232,17 @@ GALXLIB_API enum DynamicArrayError push_double_da(DynamicArray *const da, double
  * @param item The pointer to add.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError push_ptr_da(DynamicArray *const da, void *const item);
+GALXLIB_API enum GalxlibError push_ptr_da(DynamicArray *const da, void *const item);
 
 /**
  * Adds the given integer at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
@@ -268,17 +250,17 @@ GALXLIB_API enum DynamicArrayError push_ptr_da(DynamicArray *const da, void *con
  * @param item The integer to add.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError unshift_int_da(DynamicArray *const da, int const item);
+GALXLIB_API enum GalxlibError unshift_int_da(DynamicArray *const da, int const item);
 
 /**
  * Adds the given character at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
@@ -286,17 +268,17 @@ GALXLIB_API enum DynamicArrayError unshift_int_da(DynamicArray *const da, int co
  * @param item The character to add.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError unshift_char_da(DynamicArray *const da, char const item);
+GALXLIB_API enum GalxlibError unshift_char_da(DynamicArray *const da, char const item);
 
 /**
  * Adds the given float at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
@@ -304,17 +286,17 @@ GALXLIB_API enum DynamicArrayError unshift_char_da(DynamicArray *const da, char 
  * @param item The float to add.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError unshift_float_da(DynamicArray *const da, float const item);
+GALXLIB_API enum GalxlibError unshift_float_da(DynamicArray *const da, float const item);
 
 /**
  * Adds the given double at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
@@ -322,17 +304,17 @@ GALXLIB_API enum DynamicArrayError unshift_float_da(DynamicArray *const da, floa
  * @param item The double to add.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError unshift_double_da(DynamicArray *const da, double const item);
+GALXLIB_API enum GalxlibError unshift_double_da(DynamicArray *const da, double const item);
 
 /**
  * Adds the given pointer at the start (index 0) of the DynamicArray, after shifting the items to the right by one.
@@ -340,17 +322,17 @@ GALXLIB_API enum DynamicArrayError unshift_double_da(DynamicArray *const da, dou
  * @param item The pointer to add.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError unshift_ptr_da(DynamicArray *const da, void *const item);
+GALXLIB_API enum GalxlibError unshift_ptr_da(DynamicArray *const da, void *const item);
 
 /**
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
@@ -358,19 +340,19 @@ GALXLIB_API enum DynamicArrayError unshift_ptr_da(DynamicArray *const da, void *
  * @param output A pointer where the item will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const output);
+GALXLIB_API enum GalxlibError pop_int_da(DynamicArray *const da, int *const output);
 
 /**
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
@@ -378,19 +360,19 @@ GALXLIB_API enum DynamicArrayError pop_int_da(DynamicArray *const da, int *const
  * @param output A pointer where the item will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError pop_char_da(DynamicArray *const da, char *const output);
+GALXLIB_API enum GalxlibError pop_char_da(DynamicArray *const da, char *const output);
 
 /**
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
@@ -398,19 +380,19 @@ GALXLIB_API enum DynamicArrayError pop_char_da(DynamicArray *const da, char *con
  * @param output A pointer where the item will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError pop_float_da(DynamicArray *const da, float *const output);
+GALXLIB_API enum GalxlibError pop_float_da(DynamicArray *const da, float *const output);
 
 /**
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
@@ -418,19 +400,19 @@ GALXLIB_API enum DynamicArrayError pop_float_da(DynamicArray *const da, float *c
  * @param output A pointer where the item will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError pop_double_da(DynamicArray *const da, double *const output);
+GALXLIB_API enum GalxlibError pop_double_da(DynamicArray *const da, double *const output);
 
 /**
  * Removes the last item from the DynamicArray and places it at the address of the output pointer. The item is removed from the DynamicArray.
@@ -438,19 +420,19 @@ GALXLIB_API enum DynamicArrayError pop_double_da(DynamicArray *const da, double 
  * @param output A pointer where the item will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **const output);
+GALXLIB_API enum GalxlibError pop_ptr_da(DynamicArray *const da, void **const output);
 
 /**
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
@@ -458,19 +440,19 @@ GALXLIB_API enum DynamicArrayError pop_ptr_da(DynamicArray *const da, void **con
  * @param output A pointer the item will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError shift_int_da(DynamicArray *const da, int *const output);
+GALXLIB_API enum GalxlibError shift_int_da(DynamicArray *const da, int *const output);
 
 /**
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
@@ -478,19 +460,19 @@ GALXLIB_API enum DynamicArrayError shift_int_da(DynamicArray *const da, int *con
  * @param output A pointer the item will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError shift_char_da(DynamicArray *const da, char *const output);
+GALXLIB_API enum GalxlibError shift_char_da(DynamicArray *const da, char *const output);
 
 /**
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
@@ -498,19 +480,19 @@ GALXLIB_API enum DynamicArrayError shift_char_da(DynamicArray *const da, char *c
  * @param output A pointer the item will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError shift_float_da(DynamicArray *const da, float *const output);
+GALXLIB_API enum GalxlibError shift_float_da(DynamicArray *const da, float *const output);
 
 /**
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
@@ -518,19 +500,19 @@ GALXLIB_API enum DynamicArrayError shift_float_da(DynamicArray *const da, float 
  * @param output A pointer the item will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError shift_double_da(DynamicArray *const da, double *const output);
+GALXLIB_API enum GalxlibError shift_double_da(DynamicArray *const da, double *const output);
 
 /**
  * Gets the first item from the DynamicArray and places it at the address of the output pointer. The item is removed from the array.
@@ -538,19 +520,19 @@ GALXLIB_API enum DynamicArrayError shift_double_da(DynamicArray *const da, doubl
  * @param output A pointer the item will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError shift_ptr_da(DynamicArray *const da, void **const output);
+GALXLIB_API enum GalxlibError shift_ptr_da(DynamicArray *const da, void **const output);
 
 /**
  * Removes the item at the given index from the DynamicArray.
@@ -558,23 +540,23 @@ GALXLIB_API enum DynamicArrayError shift_ptr_da(DynamicArray *const da, void **c
  * @param index The index of the target which is to be removed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_ITEM_SIZE_DETERMINATION
+ * - GLX_ERR_ITEM_SIZE_DETERMINATION
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError remove_at_da(DynamicArray *const da, const size_t index);
+GALXLIB_API enum GalxlibError remove_at_da(DynamicArray *const da, const size_t index);
 
 /**
  * Removes the first matched item from the DynamicArray. The search is done from left to right.
@@ -583,25 +565,25 @@ GALXLIB_API enum DynamicArrayError remove_at_da(DynamicArray *const da, const si
  * If the DynamicArray is of type DA_PTR the target is used as it is, otherwise it is dereferenced.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ITEM_NOT_FOUND
+ * - GLX_ERR_NO_MATCH
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_ITEM_SIZE_DETERMINATION
+ * - GLX_ERR_ITEM_SIZE_DETERMINATION
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError remove_first_da(DynamicArray *const da, void *const target);
+GALXLIB_API enum GalxlibError remove_first_da(DynamicArray *const da, void *const target);
 
 /**
  * Applies a function to the item at the given index in the DynamicArray.
@@ -610,81 +592,81 @@ GALXLIB_API enum DynamicArrayError remove_first_da(DynamicArray *const da, void 
  * @param worker The function which will be applied to the item.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr));
+GALXLIB_API enum GalxlibError apply_at_da(const DynamicArray *const da, const size_t index, const void (*worker)(void *item_ptr));
 
 /**
  * Applies a processor function to every item in the DynamicArray, from left to right.
- * If the DynamicArray is empty, nothing is done and DA_SUCCESS is returned.
+ * If the DynamicArray is empty, nothing is done and GLX_SUCCESS is returned.
  * @param da A pointer to the DynamicArray.
  * @param processor A function pointer to the function, which will process the items.
  * If the type of the array is DA_PTR, the processor receives the item directly.
  * For any other type, the processor receives a pointer to the item, regardless of the type of the array.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError process_da(DynamicArray *const da, void (*processor)(void *item_ptr));
+GALXLIB_API enum GalxlibError process_da(DynamicArray *const da, void (*processor)(void *item_ptr));
 
 /**
  * Applies the destructor function, member of the @ref DynamicArray structure, to each element of the array.
  * This function must be used only on a @ref DynamicArray of @ref DynamicArrayType DA_PTR,
- * otherwise the @ref DynamicArrayError DA_ERR_TYPE_MISMATCH is returned.
+ * otherwise the @ref DynamicArrayError GLX_ERR_TYPE_MISMATCH is returned.
  * @param da A @ref DynamicArray, the destructor of which must be appied on its own elements.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_NULL_DESTRUCTOR
+ * - GLX_ERR_NULL_DESTRUCTOR
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError activate_destructor_da(DynamicArray *const da);
+GALXLIB_API enum GalxlibError activate_destructor_da(DynamicArray *const da);
 
 /**
  * Applies the given destructor function to each element of the @ref DynamicArray.
  * This function must be used only on a @ref DynamicArray of @ref DynamicArrayType DA_PTR,
- * otherwise the @ref DynamicArrayError DA_ERR_TYPE_MISMATCH is returned.
+ * otherwise the @ref DynamicArrayError GLX_ERR_TYPE_MISMATCH is returned.
  * @param da A @ref DynamicArray containing the elements, on which the destructor must be applied.
  * @param destructor The destructor function, which must be applied on each element of the @ref DynamicArray.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError apply_destructor_da(DynamicArray *const da, void (*destructor)(void **value));
+GALXLIB_API enum GalxlibError apply_destructor_da(DynamicArray *const da, void (*destructor)(void **value));
 
 /**
  * Filters the given DynamicArray, leaving only the items selected by the filter function.
- * If the DynamicArray is empty, nothing is done and DA_SUCCESS is returned.
+ * If the DynamicArray is empty, nothing is done and GLX_SUCCESS is returned.
  * @param da A pointer to the DynamicArray.
  * @param filter A function pointer to the function, which will select the wanted items.
  * If the type of the array is DA_PTR, the filter receives the item directly.
@@ -692,21 +674,21 @@ GALXLIB_API enum DynamicArrayError apply_destructor_da(DynamicArray *const da, v
  * The filter must return 1 if the item is to stay in the array. Any other value will lead to the removal of the item.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_ITEM_SIZE_DETERMINATION
+ * - GLX_ERR_ITEM_SIZE_DETERMINATION
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  */
-GALXLIB_API enum DynamicArrayError filter_da(DynamicArray *const da, int (*filter)(void *item_ptr));
+GALXLIB_API enum GalxlibError filter_da(DynamicArray *const da, int (*filter)(void *item_ptr));
 
 /**
  * Retrieves the item at the given index, without modifing the @ref DynamicArray.
@@ -716,17 +698,17 @@ GALXLIB_API enum DynamicArrayError filter_da(DynamicArray *const da, int (*filte
  * For any other @ref DynamicArrayType, the address of the item - contained in the @ref DynamicArray - is placed in the output.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
  * - DA_ARRAY_EMPTY
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, const size_t index, void **const output);
+GALXLIB_API enum GalxlibError at_da(DynamicArray *const da, const size_t index, void **const output);
 
 /**
  * Finds a specific item in the DynamicArray, without modifing the array. The search is done from left to right.
@@ -740,17 +722,17 @@ GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, const size_t in
  * The selector must return 1 to indicate the desired item. Any other value is treated as false.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ITEM_NOT_FOUND
+ * - GLX_ERR_NO_MATCH
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-// GALXLIB_API enum DynamicArrayError find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
+// GALXLIB_API enum GalxlibError find_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds a specific item in the DynamicArray, without modifing the array. The search is done from right to left.
@@ -764,17 +746,17 @@ GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, const size_t in
  * The selector must return 1 to indicate the desired item. Any other value is treated as false.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ITEM_NOT_FOUND
+ * - GLX_ERR_NO_MATCH
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-// GALXLIB_API enum DynamicArrayError find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
+// GALXLIB_API enum GalxlibError find_last_da(DynamicArray *const da, void **const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds the index of a specific item in the DynamicArray, without modifing the array.
@@ -788,17 +770,17 @@ GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, const size_t in
  * The selector must return 1 to indicate the desired item. Any other value is treated as false.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ITEM_NOT_FOUND
+ * - GLX_ERR_NO_MATCH
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-// GALXLIB_API enum DynamicArrayError find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
+// GALXLIB_API enum GalxlibError find_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds the index of a specific item in the DynamicArray, without modifing the array.
@@ -811,17 +793,17 @@ GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, const size_t in
  * For any other type, the selector receives a pointer to the item, which is cast to void pointer, regardless of the type of the array. The selector must return 1 to indicate the desired item. Any other value is treated as false.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ITEM_NOT_FOUND
+ * - GLX_ERR_NO_MATCH
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-// GALXLIB_API enum DynamicArrayError find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
+// GALXLIB_API enum GalxlibError find_last_index_da(DynamicArray *const da, size_t *const output, int (*selector)(void *itemPtr));
 
 /**
  * Finds the index of a specific item in the DynamicArray, without modifing the array, by directly comparing items to the given value.
@@ -831,17 +813,17 @@ GALXLIB_API enum DynamicArrayError at_da(DynamicArray *const da, const size_t in
  * @param value A void pointer to the value, against which the items will be compared.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ITEM_NOT_FOUND
+ * - GLX_ERR_NO_MATCH
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError index_of_da(DynamicArray *const da, void *const value, size_t *const output);
+GALXLIB_API enum GalxlibError index_of_da(DynamicArray *const da, void *const value, size_t *const output);
 
 /**
  * Creates a new @ref DynamicArrayIterator.
@@ -849,15 +831,15 @@ GALXLIB_API enum DynamicArrayError index_of_da(DynamicArray *const da, void *con
  * @param output The address, where the new @ref DynamicArrayIterator will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - DA_ERR_TYPE_UNKNOWN
+ * - GLX_ERR_TYPE_UNKNOWN
  */
-GALXLIB_API enum DynamicArrayError new_iterator_da(DynamicArray *const da, DynamicArrayIterator **const output);
+GALXLIB_API enum GalxlibError new_iterator_da(DynamicArray *const da, DynamicArrayIterator **const output);
 
 /**
  * Frees the memory of a @ref DynamicArrayIterator.
@@ -865,11 +847,11 @@ GALXLIB_API enum DynamicArrayError new_iterator_da(DynamicArray *const da, Dynam
  * @param itr The @ref DynamicArrayIterator.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum DynamicArrayError free_iterator_da(DynamicArrayIterator **itr);
+GALXLIB_API enum GalxlibError free_iterator_da(DynamicArrayIterator **itr);
 
 /**
  * Outputs 1 if there are more elements to iterate through, 0 otherwise.
@@ -877,11 +859,11 @@ GALXLIB_API enum DynamicArrayError free_iterator_da(DynamicArrayIterator **itr);
  * @param output The address, where the 1 or 0 output will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum DynamicArrayError has_next_dai(const DynamicArrayIterator *const itr, int *const output);
+GALXLIB_API enum GalxlibError has_next_dai(const DynamicArrayIterator *const itr, int *const output);
 
 /**
  * Outputs the next element from the iteration process.
@@ -889,15 +871,15 @@ GALXLIB_API enum DynamicArrayError has_next_dai(const DynamicArrayIterator *cons
  * @param output The address, where the element will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError next_int_dai(DynamicArrayIterator *const itr, int *const output);
+GALXLIB_API enum GalxlibError next_int_dai(DynamicArrayIterator *const itr, int *const output);
 
 /**
  * Outputs the next element from the iteration process.
@@ -905,15 +887,15 @@ GALXLIB_API enum DynamicArrayError next_int_dai(DynamicArrayIterator *const itr,
  * @param output The address, where the element will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError next_char_dai(DynamicArrayIterator *const itr, char *const output);
+GALXLIB_API enum GalxlibError next_char_dai(DynamicArrayIterator *const itr, char *const output);
 
 /**
  * Outputs the next element from the iteration process.
@@ -921,15 +903,15 @@ GALXLIB_API enum DynamicArrayError next_char_dai(DynamicArrayIterator *const itr
  * @param output The address, where the element will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError next_float_dai(DynamicArrayIterator *const itr, float *const output);
+GALXLIB_API enum GalxlibError next_float_dai(DynamicArrayIterator *const itr, float *const output);
 
 /**
  * Outputs the next element from the iteration process.
@@ -937,15 +919,15 @@ GALXLIB_API enum DynamicArrayError next_float_dai(DynamicArrayIterator *const it
  * @param output The address, where the element will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError next_double_dai(DynamicArrayIterator *const itr, double *const output);
+GALXLIB_API enum GalxlibError next_double_dai(DynamicArrayIterator *const itr, double *const output);
 
 /**
  * Outputs the next element from the iteration process.
@@ -953,14 +935,14 @@ GALXLIB_API enum DynamicArrayError next_double_dai(DynamicArrayIterator *const i
  * @param output The address, where the element will be placed.
  * @return A value of the @ref DynamicArrayError:
  *
- * - DA_SUCCESS
+ * - GLX_SUCCESS
  *
- * - DA_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - DA_ERR_TYPE_MISMATCH
+ * - GLX_ERR_TYPE_MISMATCH
  *
- * - DA_ERR_INDEX_OUT_OF_BOUNDS
+ * - GLX_ERR_INDEX_OUT_OF_BOUNDS
  */
-GALXLIB_API enum DynamicArrayError next_ptr_dai(DynamicArrayIterator *const itr, void **const output);
+GALXLIB_API enum GalxlibError next_ptr_dai(DynamicArrayIterator *const itr, void **const output);
 
 #endif

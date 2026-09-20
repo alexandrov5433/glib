@@ -14,17 +14,17 @@ static void test_new_hash_map(void)
 	// 1. Test Case: NULL Argument Error
 	// =========================================================================
 	// Passing NULL to the function must trigger an immediate guard rail check.
-	enum HashMapError err_null = new_hash_map(NULL);
-	assert(err_null == HM_ERR_NULL_ARGUMENT);
+	enum GalxlibError err_null = new_hash_map(NULL);
+	assert(err_null == GLX_ERR_NULL_ARGUMENT);
 
 	// =========================================================================
 	// 2. Test Case: Successful Initialization
 	// =========================================================================
 	HashMap *map = NULL;
-	enum HashMapError err_success = new_hash_map(&map);
+	enum GalxlibError err_success = new_hash_map(&map);
 
 	// Assert structural integrity on successful allocation
-	assert(err_success == HM_SUCCESS);
+	assert(err_success == GLX_SUCCESS);
 	assert(map != NULL);
 	assert(map->entries != NULL);
 	assert(map->n_ent == 0);
@@ -35,8 +35,8 @@ static void test_new_hash_map(void)
 	// 3. Cleanup Validation
 	// =========================================================================
 	// Safely dispose of the created map to ensure no memory leaks occur in the test suite
-	enum HashMapError err_free = free_hash_map(&map);
-	assert(err_free == HM_SUCCESS);
+	enum GalxlibError err_free = free_hash_map(&map);
+	assert(err_free == GLX_SUCCESS);
 	assert(map == NULL);
 }
 
@@ -56,28 +56,28 @@ static void test_new_hash_map_d(void)
 	// =========================================================================
 	// 1. Test Case: NULL Value Destructor Guard Rail
 	// =========================================================================
-	enum HashMapError err_null_dest = new_hash_map_d(NULL, &map);
-	assert(err_null_dest == HM_ERR_NULL_ARGUMENT);
+	enum GalxlibError err_null_dest = new_hash_map_d(NULL, &map);
+	assert(err_null_dest == GLX_ERR_NULL_ARGUMENT);
 	assert(map == NULL);
 
 	// =========================================================================
 	// 2. Test Case: NULL Output Array Guard Rail
 	// =========================================================================
-	enum HashMapError err_null_out = new_hash_map_d(test_value_destructor, NULL);
-	assert(err_null_out == HM_ERR_NULL_ARGUMENT);
+	enum GalxlibError err_null_out = new_hash_map_d(test_value_destructor, NULL);
+	assert(err_null_out == GLX_ERR_NULL_ARGUMENT);
 
 	// =========================================================================
 	// 3. Test Case: Complete NULL Arguments Bound Check
 	// =========================================================================
-	enum HashMapError err_both_null = new_hash_map_d(NULL, NULL);
-	assert(err_both_null == HM_ERR_NULL_ARGUMENT);
+	enum GalxlibError err_both_null = new_hash_map_d(NULL, NULL);
+	assert(err_both_null == GLX_ERR_NULL_ARGUMENT);
 
 	// =========================================================================
 	// 4. Test Case: Successful Initialization with Custom Destructor
 	// =========================================================================
-	enum HashMapError err_success = new_hash_map_d(test_value_destructor, &map);
+	enum GalxlibError err_success = new_hash_map_d(test_value_destructor, &map);
 
-	assert(err_success == HM_SUCCESS);
+	assert(err_success == GLX_SUCCESS);
 	assert(map != NULL);
 	assert(map->entries != NULL);
 	assert(map->n_ent == 0);
@@ -87,8 +87,8 @@ static void test_new_hash_map_d(void)
 	// =========================================================================
 	// 5. Cleanup Validation
 	// =========================================================================
-	enum HashMapError err_free = free_hash_map(&map);
-	assert(err_free == HM_SUCCESS);
+	enum GalxlibError err_free = free_hash_map(&map);
+	assert(err_free == GLX_SUCCESS);
 	assert(map == NULL);
 }
 
@@ -102,23 +102,23 @@ static void test_add_destructor_hm(void)
 	// =========================================================================
 
 	// Case A: Map parameter is NULL, valid destructor provided
-	enum HashMapError err_null_map = add_destructor_hm(NULL, test_destructor_alpha);
-	assert(err_null_map == HM_ERR_NULL_ARGUMENT);
+	enum GalxlibError err_null_map = add_destructor_hm(NULL, test_destructor_alpha);
+	assert(err_null_map == GLX_ERR_NULL_ARGUMENT);
 
 	// Instantiate a valid map to test the remaining parameter combinations
 	HashMap *map = NULL;
-	enum HashMapError err_init = new_hash_map(&map);
-	assert(err_init == HM_SUCCESS);
+	enum GalxlibError err_init = new_hash_map(&map);
+	assert(err_init == GLX_SUCCESS);
 	assert(map != NULL);
 	assert(map->value_destructor == NULL); // Starts as NULL by default
 
 	// Case B: Valid map provided, destructor parameter is NULL
-	enum HashMapError err_null_dest = add_destructor_hm(map, NULL);
-	assert(err_null_dest == HM_ERR_NULL_ARGUMENT);
+	enum GalxlibError err_null_dest = add_destructor_hm(map, NULL);
+	assert(err_null_dest == GLX_ERR_NULL_ARGUMENT);
 
 	// Case C: Both parameters are completely NULL
-	enum HashMapError err_both_null = add_destructor_hm(NULL, NULL);
-	assert(err_both_null == HM_ERR_NULL_ARGUMENT);
+	enum GalxlibError err_both_null = add_destructor_hm(NULL, NULL);
+	assert(err_both_null == GLX_ERR_NULL_ARGUMENT);
 
 	// Confirm that the failed operations did not corrupt or modify the map's destructor
 	assert(map->value_destructor == NULL);
@@ -126,23 +126,23 @@ static void test_add_destructor_hm(void)
 	// =========================================================================
 	// 2. Success Case: Attaching a Destructor
 	// =========================================================================
-	enum HashMapError err_add_success = add_destructor_hm(map, test_destructor_alpha);
-	assert(err_add_success == HM_SUCCESS);
+	enum GalxlibError err_add_success = add_destructor_hm(map, test_destructor_alpha);
+	assert(err_add_success == GLX_SUCCESS);
 	assert(map->value_destructor == test_destructor_alpha);
 
 	// =========================================================================
 	// 3. Success Case: Overwriting / Replacing an Existing Destructor
 	// =========================================================================
 	// According to the specification, if one is already present, it must be replaced
-	enum HashMapError err_replace_success = add_destructor_hm(map, test_destructor_beta);
-	assert(err_replace_success == HM_SUCCESS);
+	enum GalxlibError err_replace_success = add_destructor_hm(map, test_destructor_beta);
+	assert(err_replace_success == GLX_SUCCESS);
 	assert(map->value_destructor == test_destructor_beta);
 
 	// =========================================================================
 	// 4. Cleanup Validation
 	// =========================================================================
-	enum HashMapError err_free = free_hash_map(&map);
-	assert(err_free == HM_SUCCESS);
+	enum GalxlibError err_free = free_hash_map(&map);
+	assert(err_free == GLX_SUCCESS);
 	assert(map == NULL);
 }
 
@@ -151,37 +151,37 @@ static void test_free_hash_map(void)
 	// =========================================================================
 	// 1. Error Case: NULL double pointer parameter boundary check
 	// =========================================================================
-	// Passing a complete NULL to the argument must return HM_ERR_NULL_ARGUMENT.
-	enum HashMapError err_null_param = free_hash_map(NULL);
-	assert(err_null_param == HM_ERR_NULL_ARGUMENT);
+	// Passing a complete NULL to the argument must return GLX_ERR_NULL_ARGUMENT.
+	enum GalxlibError err_null_param = free_hash_map(NULL);
+	assert(err_null_param == GLX_ERR_NULL_ARGUMENT);
 
 	// =========================================================================
 	// 2. Success Case: Safe No-Op when the target map pointer is already NULL
 	// =========================================================================
-	// Per documentation, if it points to NULL, nothing is done and HM_SUCCESS is returned.
+	// Per documentation, if it points to NULL, nothing is done and GLX_SUCCESS is returned.
 	HashMap *null_map = NULL;
-	enum HashMapError err_null_ptr = free_hash_map(&null_map);
-	assert(err_null_ptr == HM_SUCCESS);
+	enum GalxlibError err_null_ptr = free_hash_map(&null_map);
+	assert(err_null_ptr == GLX_SUCCESS);
 	assert(null_map == NULL); // Target pointer should remain safely unchanged
 
 	// =========================================================================
 	// 3. Success Case: Freeing an initialized empty hash map
 	// =========================================================================
 	HashMap *empty_map = NULL;
-	enum HashMapError err_init_empty = new_hash_map(&empty_map);
-	assert(err_init_empty == HM_SUCCESS);
+	enum GalxlibError err_init_empty = new_hash_map(&empty_map);
+	assert(err_init_empty == GLX_SUCCESS);
 	assert(empty_map != NULL);
 
-	enum HashMapError err_free_empty = free_hash_map(&empty_map);
-	assert(err_free_empty == HM_SUCCESS);
+	enum GalxlibError err_free_empty = free_hash_map(&empty_map);
+	assert(err_free_empty == GLX_SUCCESS);
 	assert(empty_map == NULL); // Pointer must be set to NULL after execution
 
 	// =========================================================================
 	// 4. Success Case: Freeing a populated hash map (verifying internal loop)
 	// =========================================================================
 	HashMap *populated_map = NULL;
-	enum HashMapError err_init_pop = new_hash_map(&populated_map);
-	assert(err_init_pop == HM_SUCCESS);
+	enum GalxlibError err_init_pop = new_hash_map(&populated_map);
+	assert(err_init_pop == GLX_SUCCESS);
 
 	// Insert mock entries to ensure the inner entry cleanup logic runs safely
 	char *key1 = "sample_key_1";
@@ -189,15 +189,15 @@ static void test_free_hash_map(void)
 	char *key2 = "sample_key_2";
 	char *val2 = "sample_value_2";
 
-	enum HashMapError err_put1 = put_hm(populated_map, key1, val1);
-	assert(err_put1 == HM_SUCCESS);
-	enum HashMapError err_put2 = put_hm(populated_map, key2, val2);
-	assert(err_put2 == HM_SUCCESS);
+	enum GalxlibError err_put1 = put_hm(populated_map, key1, val1);
+	assert(err_put1 == GLX_SUCCESS);
+	enum GalxlibError err_put2 = put_hm(populated_map, key2, val2);
+	assert(err_put2 == GLX_SUCCESS);
 	assert(populated_map->n_ent == 2); // Confirm tracking elements are active
 
 	// This call will clean up inner entry allocations and set our pointer to NULL
-	enum HashMapError err_free_pop = free_hash_map(&populated_map);
-	assert(err_free_pop == HM_SUCCESS);
+	enum GalxlibError err_free_pop = free_hash_map(&populated_map);
+	assert(err_free_pop == GLX_SUCCESS);
 	assert(populated_map == NULL);
 }
 
@@ -218,55 +218,55 @@ static void test_free_hash_map_d(void)
 	// =========================================================================
 	// 1. Error Case: NULL double pointer parameter boundary check
 	// =========================================================================
-	// Passing a true NULL down to the parameter must yield HM_ERR_NULL_ARGUMENT.
-	enum HashMapError err_null_param = free_hash_map_d(NULL);
-	assert(err_null_param == HM_ERR_NULL_ARGUMENT);
+	// Passing a true NULL down to the parameter must yield GLX_ERR_NULL_ARGUMENT.
+	enum GalxlibError err_null_param = free_hash_map_d(NULL);
+	assert(err_null_param == GLX_ERR_NULL_ARGUMENT);
 
 	// =========================================================================
 	// 2. Success Case: Safe No-Op behavior when target pointer is already NULL
 	// =========================================================================
-	// If the referenced pointer points to NULL, it should break early with HM_SUCCESS.
+	// If the referenced pointer points to NULL, it should break early with GLX_SUCCESS.
 	HashMap *null_map = NULL;
-	enum HashMapError err_null_ptr = free_hash_map_d(&null_map);
-	assert(err_null_ptr == HM_SUCCESS);
+	enum GalxlibError err_null_ptr = free_hash_map_d(&null_map);
+	assert(err_null_ptr == GLX_SUCCESS);
 	assert(null_map == NULL);
 
 	// =========================================================================
 	// 3. Error Case: Invocation on a map missing its destructor initialization
 	// =========================================================================
 	// Creating a standard map sets value_destructor to NULL.
-	// Calling free_hash_map_d on it must reject the execution with HM_ERR_NULL_DESTRUCTOR.
+	// Calling free_hash_map_d on it must reject the execution with GLX_ERR_NULL_DESTRUCTOR.
 	HashMap *map_without_destructor = NULL;
-	enum HashMapError err_init_standard = new_hash_map(&map_without_destructor);
-	assert(err_init_standard == HM_SUCCESS);
+	enum GalxlibError err_init_standard = new_hash_map(&map_without_destructor);
+	assert(err_init_standard == GLX_SUCCESS);
 	assert(map_without_destructor->value_destructor == NULL);
 
-	enum HashMapError err_missing_dest = free_hash_map_d(&map_without_destructor);
-	assert(err_missing_dest == HM_ERR_NULL_DESTRUCTOR);
+	enum GalxlibError err_missing_dest = free_hash_map_d(&map_without_destructor);
+	assert(err_missing_dest == GLX_ERR_NULL_DESTRUCTOR);
 	assert(map_without_destructor != NULL); // Map layout must remain intact
 
 	// Manual fallback clean up of this instance to avoid memory leaks
-	enum HashMapError err_cleanup_fallback = free_hash_map(&map_without_destructor);
-	assert(err_cleanup_fallback == HM_SUCCESS);
+	enum GalxlibError err_cleanup_fallback = free_hash_map(&map_without_destructor);
+	assert(err_cleanup_fallback == GLX_SUCCESS);
 
 	// =========================================================================
 	// 4. Success Case: Freeing an initialized empty map with destructor attached
 	// =========================================================================
 	HashMap *empty_map_d = NULL;
-	enum HashMapError err_init_d = new_hash_map_d(test_free_d_destructor, &empty_map_d);
-	assert(err_init_d == HM_SUCCESS);
+	enum GalxlibError err_init_d = new_hash_map_d(test_free_d_destructor, &empty_map_d);
+	assert(err_init_d == GLX_SUCCESS);
 	assert(empty_map_d->value_destructor == test_free_d_destructor);
 
-	enum HashMapError err_free_empty = free_hash_map_d(&empty_map_d);
-	assert(err_free_empty == HM_SUCCESS);
+	enum GalxlibError err_free_empty = free_hash_map_d(&empty_map_d);
+	assert(err_free_empty == GLX_SUCCESS);
 	assert(empty_map_d == NULL); // The outer target pointer must clear down to NULL
 
 	// =========================================================================
 	// 5. Success Case: Freeing a populated map & evaluating cascade destructors
 	// =========================================================================
 	HashMap *populated_map = NULL;
-	enum HashMapError err_init_pop = new_hash_map_d(test_free_d_destructor, &populated_map);
-	assert(err_init_pop == HM_SUCCESS);
+	enum GalxlibError err_init_pop = new_hash_map_d(test_free_d_destructor, &populated_map);
+	assert(err_init_pop == GLX_SUCCESS);
 
 	// Prepare heap tracking entries to put inside the table
 	int *payload_val1 = (int *)malloc(sizeof(int));
@@ -275,18 +275,18 @@ static void test_free_hash_map_d(void)
 	*payload_val1 = 42;
 	*payload_val2 = 84;
 
-	enum HashMapError err_put1 = put_hm(populated_map, "first_key", payload_val1);
-	assert(err_put1 == HM_SUCCESS);
-	enum HashMapError err_put2 = put_hm(populated_map, "second_key", payload_val2);
-	assert(err_put2 == HM_SUCCESS);
+	enum GalxlibError err_put1 = put_hm(populated_map, "first_key", payload_val1);
+	assert(err_put1 == GLX_SUCCESS);
+	enum GalxlibError err_put2 = put_hm(populated_map, "second_key", payload_val2);
+	assert(err_put2 == GLX_SUCCESS);
 	assert(populated_map->n_ent == 2);
 
 	// Reset tracker count right before kicking off the clean up cascade
 	test_destructor_execution_count = 0;
 
 	// This must purge internal entries, free data payloads, and nullify the handle
-	enum HashMapError err_free_populated = free_hash_map_d(&populated_map);
-	assert(err_free_populated == HM_SUCCESS);
+	enum GalxlibError err_free_populated = free_hash_map_d(&populated_map);
+	assert(err_free_populated == GLX_SUCCESS);
 	assert(populated_map == NULL);
 
 	// Verify that the inner table loop targeted and ran the hook exactly 2 times
@@ -311,13 +311,13 @@ static void test_put_hm(void)
 	// 1. Error Cases: NULL Argument Boundary Testing
 	// =========================================================================
 	HashMap *map = NULL;
-	enum HashMapError err = new_hash_map(&map);
-	assert(err == HM_SUCCESS);
+	enum GalxlibError err = new_hash_map(&map);
+	assert(err == GLX_SUCCESS);
 
 	// Ensure all permutations of missing NULL arguments are rejected
-	assert(put_hm(NULL, "valid_key", "valid_val") == HM_ERR_NULL_ARGUMENT);
-	assert(put_hm(map, NULL, "valid_val") == HM_ERR_NULL_ARGUMENT);
-	assert(put_hm(map, "valid_key", NULL) == HM_ERR_NULL_ARGUMENT);
+	assert(put_hm(NULL, "valid_key", "valid_val") == GLX_ERR_NULL_ARGUMENT);
+	assert(put_hm(map, NULL, "valid_val") == GLX_ERR_NULL_ARGUMENT);
+	assert(put_hm(map, "valid_key", NULL) == GLX_ERR_NULL_ARGUMENT);
 
 	// =========================================================================
 	// 2. Success Case: Standard Insertion & Value Verification
@@ -326,11 +326,11 @@ static void test_put_hm(void)
 	char *val1 = "initial_value";
 
 	err = put_hm(map, key, val1);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 
 	void *retrieved = NULL;
 	err = get_hm(map, key, &retrieved);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(retrieved == val1); // Ensure exact pointer matching
 
 	// =========================================================================
@@ -339,22 +339,22 @@ static void test_put_hm(void)
 	char *val2 = "replaced_value";
 
 	err = put_hm(map, key, val2);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 
 	err = get_hm(map, key, &retrieved);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(retrieved == val2); // Verify the old pointer value was overwritten
 
 	// Safely dispose of the first map instance
 	err = free_hash_map(&map);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 
 	// =========================================================================
 	// 4. Edge Case: Overwriting an existing key (With a Destructor attached)
 	// =========================================================================
 	HashMap *map_d = NULL;
 	err = new_hash_map_d(test_put_value_destructor, &map_d);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 
 	// Allocate tracking memory on the heap so our mock free() can safely execute
 	int *heap_payload1 = (int *)malloc(sizeof(int));
@@ -367,7 +367,7 @@ static void test_put_hm(void)
 
 	// Initial insertion of payload 1
 	err = put_hm(map_d, dup_key, heap_payload1);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(map_d->n_ent == 1);
 
 	// Reset tracking metric before executing the collision test
@@ -375,7 +375,7 @@ static void test_put_hm(void)
 
 	// Insertion of payload 2 under the identical key string (Triggers Replacement)
 	err = put_hm(map_d, dup_key, heap_payload2);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 
 	// CRITICAL ASSERTION: Verify the old entry's value was caught and cleared by the destructor
 	assert(test_put_destructor_count == 1);
@@ -384,7 +384,7 @@ static void test_put_hm(void)
 	// Confirm that fetching the key now safely yields the secondary payload pointer
 	void *retrieved_d = NULL;
 	err = get_hm(map_d, dup_key, &retrieved_d);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(*(int *)retrieved_d == 200);
 
 	// =========================================================================
@@ -392,7 +392,7 @@ static void test_put_hm(void)
 	// =========================================================================
 	// Freeing the map must cascade and clear out payload 2, incrementing the execution count to 2
 	err = free_hash_map_d(&map_d);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(map_d == NULL);
 	assert(test_put_destructor_count == 2);
 }
@@ -403,24 +403,24 @@ static void test_get_hm(void)
 	// 1. Error Cases: NULL Argument Boundary Testing
 	// =========================================================================
 	HashMap *map = NULL;
-	enum HashMapError err_init = new_hash_map(&map);
-	assert(err_init == HM_SUCCESS);
+	enum GalxlibError err_init = new_hash_map(&map);
+	assert(err_init == GLX_SUCCESS);
 	assert(map != NULL);
 
 	void *output_val = NULL;
 
-	// Validate that all permutations of missing arguments return HM_ERR_NULL_ARGUMENT
-	assert(get_hm(NULL, "test_key", &output_val) == HM_ERR_NULL_ARGUMENT);
-	assert(get_hm(map, NULL, &output_val) == HM_ERR_NULL_ARGUMENT);
-	assert(get_hm(map, "test_key", NULL) == HM_ERR_NULL_ARGUMENT);
+	// Validate that all permutations of missing arguments return GLX_ERR_NULL_ARGUMENT
+	assert(get_hm(NULL, "test_key", &output_val) == GLX_ERR_NULL_ARGUMENT);
+	assert(get_hm(map, NULL, &output_val) == GLX_ERR_NULL_ARGUMENT);
+	assert(get_hm(map, "test_key", NULL) == GLX_ERR_NULL_ARGUMENT);
 
 	// =========================================================================
 	// 2. Error Case: Querying an Empty Map
 	// =========================================================================
-	// Prior to looking up elements, the function returns HM_EMPTY if n_ent is 0
+	// Prior to looking up elements, the function returns GLX_ERR_ZERO_LENGTH if n_ent is 0
 	assert(map->n_ent == 0);
-	enum HashMapError err_empty = get_hm(map, "any_key", &output_val);
-	assert(err_empty == HM_EMPTY);
+	enum GalxlibError err_empty = get_hm(map, "any_key", &output_val);
+	assert(err_empty == GLX_ERR_ZERO_LENGTH);
 
 	// =========================================================================
 	// 3. Success Case: Populating the Map and Fetching Valid Keys
@@ -431,36 +431,36 @@ static void test_get_hm(void)
 	char *val_beta = "beta_payload";
 
 	// Insert elements to make lookup paths viable
-	assert(put_hm(map, key_alpha, val_alpha) == HM_SUCCESS);
-	assert(put_hm(map, key_beta, val_beta) == HM_SUCCESS);
+	assert(put_hm(map, key_alpha, val_alpha) == GLX_SUCCESS);
+	assert(put_hm(map, key_beta, val_beta) == GLX_SUCCESS);
 	assert(map->n_ent == 2);
 
 	// Fetch the first element and verify the payload pointer matches perfectly
 	output_val = NULL;
-	enum HashMapError err_get_alpha = get_hm(map, key_alpha, &output_val);
-	assert(err_get_alpha == HM_SUCCESS);
+	enum GalxlibError err_get_alpha = get_hm(map, key_alpha, &output_val);
+	assert(err_get_alpha == GLX_SUCCESS);
 	assert(output_val == val_alpha);
 
 	// Fetch the second element to ensure the internal indexing and loops are accurate
 	output_val = NULL;
-	enum HashMapError err_get_beta = get_hm(map, key_beta, &output_val);
-	assert(err_get_beta == HM_SUCCESS);
+	enum GalxlibError err_get_beta = get_hm(map, key_beta, &output_val);
+	assert(err_get_beta == GLX_SUCCESS);
 	assert(output_val == val_beta);
 
 	// =========================================================================
 	// 4. Error Case: Querying a Missing Key (Map Not Empty)
 	// =========================================================================
-	// When a map contains values but a non-existent key is supplied, it must return HM_NOT_FOUND
+	// When a map contains values but a non-existent key is supplied, it must return GLX_ERR_NO_MATCH
 	output_val = NULL;
-	enum HashMapError err_not_found = get_hm(map, "non_existent_key", &output_val);
-	assert(err_not_found == HM_NOT_FOUND);
+	enum GalxlibError err_not_found = get_hm(map, "non_existent_key", &output_val);
+	assert(err_not_found == GLX_ERR_NO_MATCH);
 	assert(output_val == NULL); // The output placeholder should remain unchanged
 
 	// =========================================================================
 	// 5. Cleanup Verification
 	// =========================================================================
-	enum HashMapError err_free = free_hash_map(&map);
-	assert(err_free == HM_SUCCESS);
+	enum GalxlibError err_free = free_hash_map(&map);
+	assert(err_free == GLX_SUCCESS);
 	assert(map == NULL);
 }
 
@@ -482,66 +482,66 @@ static void test_remove_hm(void)
 	// 1. Error Cases: NULL Argument Boundary Testing
 	// =========================================================================
 	HashMap *map = NULL;
-	enum HashMapError err = new_hash_map(&map);
-	assert(err == HM_SUCCESS);
+	enum GalxlibError err = new_hash_map(&map);
+	assert(err == GLX_SUCCESS);
 
 	// Verify all missing input combinations are blocked safely
-	assert(remove_hm(NULL, "valid_key") == HM_ERR_NULL_ARGUMENT);
-	assert(remove_hm(map, NULL) == HM_ERR_NULL_ARGUMENT);
+	assert(remove_hm(NULL, "valid_key") == GLX_ERR_NULL_ARGUMENT);
+	assert(remove_hm(map, NULL) == GLX_ERR_NULL_ARGUMENT);
 
 	// =========================================================================
 	// 2. Error Case: Requesting Removal on an Empty Table Layout
 	// =========================================================================
-	// Should break early returning HM_EMPTY if no nodes are active
-	assert(remove_hm(map, "any_key") == HM_EMPTY);
+	// Should break early returning GLX_ERR_ZERO_LENGTH if no nodes are active
+	assert(remove_hm(map, "any_key") == GLX_ERR_ZERO_LENGTH);
 
 	// =========================================================================
 	// 3. Error Case: Requesting Removal for a Non-Existent Key
 	// =========================================================================
-	assert(put_hm(map, "active_key", "sample_payload") == HM_SUCCESS);
+	assert(put_hm(map, "active_key", "sample_payload") == GLX_SUCCESS);
 
-	// Querying an inactive item string must return HM_NOT_FOUND
-	assert(remove_hm(map, "missing_key") == HM_NOT_FOUND);
+	// Querying an inactive item string must return GLX_ERR_NO_MATCH
+	assert(remove_hm(map, "missing_key") == GLX_ERR_NO_MATCH);
 
 	// =========================================================================
 	// 4. Success Case: Removal Without Destructor Attached
 	// =========================================================================
-	assert(remove_hm(map, "active_key") == HM_SUCCESS);
+	assert(remove_hm(map, "active_key") == GLX_SUCCESS);
 
 	// Confirm that the key is completely gone from lookup paths
 	void *lookup_verify = NULL;
-	assert(get_hm(map, "active_key", &lookup_verify) == HM_EMPTY);
+	assert(get_hm(map, "active_key", &lookup_verify) == GLX_ERR_ZERO_LENGTH);
 
 	// Dispose of initial test mapping instance safely
-	assert(free_hash_map(&map) == HM_SUCCESS);
+	assert(free_hash_map(&map) == GLX_SUCCESS);
 
 	// =========================================================================
 	// 5. Success Case: Removal WITH Destructor Active (Verifying Cleanup Loop)
 	// =========================================================================
 	HashMap *map_d = NULL;
 	err = new_hash_map_d(test_remove_value_destructor, &map_d);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 
 	// Allocate an item onto the heap so our tracker free() can safely execute
 	int *heap_payload = (int *)malloc(sizeof(int));
 	assert(heap_payload != NULL);
 	*heap_payload = 999;
 
-	assert(put_hm(map_d, "target_key", heap_payload) == HM_SUCCESS);
+	assert(put_hm(map_d, "target_key", heap_payload) == GLX_SUCCESS);
 
 	// Reset tracking metrics right before cutting the value node loose
 	test_remove_destructor_count = 0;
 
 	// Execute the target element removal
-	assert(remove_hm(map_d, "target_key") == HM_SUCCESS);
+	assert(remove_hm(map_d, "target_key") == GLX_SUCCESS);
 
 	assert(test_remove_destructor_count == 1);
 
 	// Double check that map registry fields are empty
-	assert(get_hm(map_d, "target_key", &lookup_verify) == HM_EMPTY);
+	assert(get_hm(map_d, "target_key", &lookup_verify) == GLX_ERR_ZERO_LENGTH);
 
 	// Final clean up deallocation of the map container framework
-	assert(free_hash_map_d(&map_d) == HM_SUCCESS);
+	assert(free_hash_map_d(&map_d) == GLX_SUCCESS);
 	assert(map_d == NULL);
 }
 
@@ -573,16 +573,16 @@ static void test_process_e_hm(void)
 {
 	// Initialize a temporary HashMap for verification
 	HashMap *map = NULL;
-	enum HashMapError err = new_hash_map(&map);
-	assert(err == HM_SUCCESS);
+	enum GalxlibError err = new_hash_map(&map);
+	assert(err == GLX_SUCCESS);
 	assert(map != NULL);
 
 	// =========================================================================
 	// 1. Error Cases: NULL Argument Protections
 	// =========================================================================
 	// Both arguments must be non-NULL to pass safety boundaries
-	assert(process_e_hm(NULL, test_mock_entry_processor) == HM_ERR_NULL_ARGUMENT);
-	assert(process_e_hm(map, NULL) == HM_ERR_NULL_ARGUMENT);
+	assert(process_e_hm(NULL, test_mock_entry_processor) == GLX_ERR_NULL_ARGUMENT);
+	assert(process_e_hm(map, NULL) == GLX_ERR_NULL_ARGUMENT);
 
 	// =========================================================================
 	// 2. Success Case: Running over an Empty Map
@@ -590,16 +590,16 @@ static void test_process_e_hm(void)
 	// On an empty map, the loop executes up to capacity but shouldn't find non-NULL entries
 	test_processor_invocation_count = 0;
 
-	enum HashMapError err_empty = process_e_hm(map, test_mock_entry_processor);
-	assert(err_empty == HM_SUCCESS);
+	enum GalxlibError err_empty = process_e_hm(map, test_mock_entry_processor);
+	assert(err_empty == GLX_SUCCESS);
 	assert(test_processor_invocation_count == 0); // Processor callback should never execute
 
 	// =========================================================================
 	// 3. Success Case: Processing a Populated Map
 	// =========================================================================
 	// Populate the table with test items
-	assert(put_hm(map, "alpha_key", "alpha_value") == HM_SUCCESS);
-	assert(put_hm(map, "beta_key", "beta_value") == HM_SUCCESS);
+	assert(put_hm(map, "alpha_key", "alpha_value") == GLX_SUCCESS);
+	assert(put_hm(map, "beta_key", "beta_value") == GLX_SUCCESS);
 	assert(map->n_ent == 2); // Confirm internal item counts
 
 	// Reset tracking indicators prior to triggering the iteration pipeline
@@ -608,8 +608,8 @@ static void test_process_e_hm(void)
 	test_seen_beta = 0;
 
 	// Execute the entry processing function over the table
-	enum HashMapError err_populated = process_e_hm(map, test_mock_entry_processor);
-	assert(err_populated == HM_SUCCESS);
+	enum GalxlibError err_populated = process_e_hm(map, test_mock_entry_processor);
+	assert(err_populated == GLX_SUCCESS);
 
 	// CRITICAL ASSERTIONS:
 	// Ensure every single entry was processed exactly once
@@ -621,7 +621,7 @@ static void test_process_e_hm(void)
 	// 4. Clean Up
 	// =========================================================================
 	err = free_hash_map(&map);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(map == NULL);
 }
 
@@ -651,16 +651,16 @@ static void test_process_v_hm(void)
 {
 	// Initialize a temporary HashMap for verification
 	HashMap *map = NULL;
-	enum HashMapError err = new_hash_map(&map);
-	assert(err == HM_SUCCESS);
+	enum GalxlibError err = new_hash_map(&map);
+	assert(err == GLX_SUCCESS);
 	assert(map != NULL);
 
 	// =========================================================================
 	// 1. Error Cases: NULL Argument Protections
 	// =========================================================================
 	// Both arguments must be non-NULL to pass safety boundaries
-	assert(process_v_hm(NULL, test_mock_value_processor) == HM_ERR_NULL_ARGUMENT);
-	assert(process_v_hm(map, NULL) == HM_ERR_NULL_ARGUMENT);
+	assert(process_v_hm(NULL, test_mock_value_processor) == GLX_ERR_NULL_ARGUMENT);
+	assert(process_v_hm(map, NULL) == GLX_ERR_NULL_ARGUMENT);
 
 	// =========================================================================
 	// 2. Success Case: Running over an Empty Map
@@ -668,16 +668,16 @@ static void test_process_v_hm(void)
 	// On an empty map, the loop executes up to capacity but shouldn't find non-NULL entries
 	test_v_processor_invocation_count = 0;
 
-	enum HashMapError err_empty = process_v_hm(map, test_mock_value_processor);
-	assert(err_empty == HM_SUCCESS);
+	enum GalxlibError err_empty = process_v_hm(map, test_mock_value_processor);
+	assert(err_empty == GLX_SUCCESS);
 	assert(test_v_processor_invocation_count == 0); // Value callback should never execute
 
 	// =========================================================================
 	// 3. Success Case: Processing a Populated Map
 	// =========================================================================
 	// Populate the table with test items
-	assert(put_hm(map, "alpha_key", "alpha_value") == HM_SUCCESS);
-	assert(put_hm(map, "beta_key", "beta_value") == HM_SUCCESS);
+	assert(put_hm(map, "alpha_key", "alpha_value") == GLX_SUCCESS);
+	assert(put_hm(map, "beta_key", "beta_value") == GLX_SUCCESS);
 	assert(map->n_ent == 2); // Confirm internal item counts
 
 	// Reset tracking indicators prior to triggering the iteration pipeline
@@ -686,8 +686,8 @@ static void test_process_v_hm(void)
 	test_v_seen_beta = 0;
 
 	// Execute the value processing function over the table
-	enum HashMapError err_populated = process_v_hm(map, test_mock_value_processor);
-	assert(err_populated == HM_SUCCESS);
+	enum GalxlibError err_populated = process_v_hm(map, test_mock_value_processor);
+	assert(err_populated == GLX_SUCCESS);
 
 	// CRITICAL ASSERTIONS:
 	// Ensure every single value was processed exactly once
@@ -699,7 +699,7 @@ static void test_process_v_hm(void)
 	// 4. Clean Up
 	// =========================================================================
 	err = free_hash_map(&map);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(map == NULL);
 }
 
@@ -734,54 +734,54 @@ static void test_filter_hm(void)
 	// 1. Error Cases: NULL Argument Boundary Testing
 	// =========================================================================
 	HashMap *map = NULL;
-	enum HashMapError err = new_hash_map(&map);
-	assert(err == HM_SUCCESS);
+	enum GalxlibError err = new_hash_map(&map);
+	assert(err == GLX_SUCCESS);
 	assert(map != NULL);
 
 	// Ensure missing pointer mutations are caught gracefully
-	assert(filter_hm(NULL, test_filter_selector) == HM_ERR_NULL_ARGUMENT);
-	assert(filter_hm(map, NULL) == HM_ERR_NULL_ARGUMENT);
+	assert(filter_hm(NULL, test_filter_selector) == GLX_ERR_NULL_ARGUMENT);
+	assert(filter_hm(map, NULL) == GLX_ERR_NULL_ARGUMENT);
 
 	// =========================================================================
 	// 2. Success Case: Filtering an Empty Map
 	// =========================================================================
-	// If n_ent is 0, filter_hm returns HM_SUCCESS early without modifying structures
+	// If n_ent is 0, filter_hm returns GLX_SUCCESS early without modifying structures
 	assert(map->n_ent == 0);
-	assert(filter_hm(map, test_filter_selector) == HM_SUCCESS);
+	assert(filter_hm(map, test_filter_selector) == GLX_SUCCESS);
 	assert(map->n_ent == 0);
 
 	// =========================================================================
 	// 3. Success Case: Filtering Populated Map WITHOUT a Value Destructor
 	// =========================================================================
-	assert(put_hm(map, "keep_alpha", "payload_1") == HM_SUCCESS);
-	assert(put_hm(map, "remove_alpha", "payload_2") == HM_SUCCESS);
-	assert(put_hm(map, "keep_beta", "payload_3") == HM_SUCCESS);
-	assert(put_hm(map, "remove_beta", "payload_4") == HM_SUCCESS);
+	assert(put_hm(map, "keep_alpha", "payload_1") == GLX_SUCCESS);
+	assert(put_hm(map, "remove_alpha", "payload_2") == GLX_SUCCESS);
+	assert(put_hm(map, "keep_beta", "payload_3") == GLX_SUCCESS);
+	assert(put_hm(map, "remove_beta", "payload_4") == GLX_SUCCESS);
 	assert(map->n_ent == 4);
 
 	// Execute filter algorithm
-	assert(filter_hm(map, test_filter_selector) == HM_SUCCESS);
+	assert(filter_hm(map, test_filter_selector) == GLX_SUCCESS);
 
 	// Post-filter structural verification
 	assert(map->n_ent == 2);
 
 	void *out_val = NULL;
 	// Retained elements should still be found
-	assert(get_hm(map, "keep_alpha", &out_val) == HM_SUCCESS && out_val == "payload_1");
-	assert(get_hm(map, "keep_beta", &out_val) == HM_SUCCESS && out_val == "payload_3");
+	assert(get_hm(map, "keep_alpha", &out_val) == GLX_SUCCESS && out_val == "payload_1");
+	assert(get_hm(map, "keep_beta", &out_val) == GLX_SUCCESS && out_val == "payload_3");
 	// Removed elements should now be gone
-	assert(get_hm(map, "remove_alpha", &out_val) == HM_NOT_FOUND);
-	assert(get_hm(map, "remove_beta", &out_val) == HM_NOT_FOUND);
+	assert(get_hm(map, "remove_alpha", &out_val) == GLX_ERR_NO_MATCH);
+	assert(get_hm(map, "remove_beta", &out_val) == GLX_ERR_NO_MATCH);
 
 	// Clean up first map instance safely
-	assert(free_hash_map(&map) == HM_SUCCESS);
+	assert(free_hash_map(&map) == GLX_SUCCESS);
 
 	// =========================================================================
 	// 4. Success Case: Filtering Populated Map WITH a Value Destructor
 	// =========================================================================
 	HashMap *map_d = NULL;
 	err = new_hash_map_d(test_filter_value_destructor, &map_d);
-	assert(err == HM_SUCCESS);
+	assert(err == GLX_SUCCESS);
 	assert(map_d != NULL);
 
 	// Allocate dynamic objects on the heap so they can be securely freed
@@ -795,17 +795,17 @@ static void test_filter_hm(void)
 	*val3 = 30;
 	*val4 = 40;
 
-	assert(put_hm(map_d, "keep_one", val1) == HM_SUCCESS);
-	assert(put_hm(map_d, "remove_one", val2) == HM_SUCCESS);
-	assert(put_hm(map_d, "keep_two", val3) == HM_SUCCESS);
-	assert(put_hm(map_d, "remove_two", val4) == HM_SUCCESS);
+	assert(put_hm(map_d, "keep_one", val1) == GLX_SUCCESS);
+	assert(put_hm(map_d, "remove_one", val2) == GLX_SUCCESS);
+	assert(put_hm(map_d, "keep_two", val3) == GLX_SUCCESS);
+	assert(put_hm(map_d, "remove_two", val4) == GLX_SUCCESS);
 	assert(map_d->n_ent == 4);
 
 	// Reset global metrics tracking custom destructor passes
 	test_filter_destructor_count = 0;
 
 	// Trigger filter processing cycle
-	assert(filter_hm(map_d, test_filter_selector) == HM_SUCCESS);
+	assert(filter_hm(map_d, test_filter_selector) == GLX_SUCCESS);
 
 	// VERIFY CRITICAL LIFE CYCLE COUNTS:
 	// Exactly 2 items ("remove_one" and "remove_two") should have been processed and freed
@@ -813,15 +813,15 @@ static void test_filter_hm(void)
 	assert(test_filter_destructor_count == 2);
 
 	// Verify retained entries still provide valid address pointer references
-	assert(get_hm(map_d, "keep_one", &out_val) == HM_SUCCESS && *(int *)out_val == 10);
-	assert(get_hm(map_d, "keep_two", &out_val) == HM_SUCCESS && *(int *)out_val == 30);
-	assert(get_hm(map_d, "remove_one", &out_val) == HM_NOT_FOUND);
+	assert(get_hm(map_d, "keep_one", &out_val) == GLX_SUCCESS && *(int *)out_val == 10);
+	assert(get_hm(map_d, "keep_two", &out_val) == GLX_SUCCESS && *(int *)out_val == 30);
+	assert(get_hm(map_d, "remove_one", &out_val) == GLX_ERR_NO_MATCH);
 
 	// =========================================================================
 	// 5. Cleanup Verification Cascade
 	// =========================================================================
 	// Disposing the map container completely must flush out the remaining 2 items
-	assert(free_hash_map_d(&map_d) == HM_SUCCESS);
+	assert(free_hash_map_d(&map_d) == GLX_SUCCESS);
 	assert(map_d == NULL);
 
 	// 2 (from filtering phase) + 2 (from map disposal cascade) = 4 total passes

@@ -7,6 +7,7 @@
 #define GALXLIB_HASH_MAP_H
 
 #include <stddef.h>
+#include "./error.h"
 
 // _WIN32 is a predefined compiler macro when compiling for Windows.
 // Must NOT be defined manually! More notes in CMakeLists.txt
@@ -42,27 +43,6 @@
 #endif
 
 /**
- * @enum HashMapError
- * @brief The error codes returned by the HashMap functions.
- */
-enum HashMapError
-{
-	HM_EMPTY = -2,				/**< (-2) The HashMap does not include any Entries. */
-	HM_NOT_FOUND = -1,			/**< (-1) An entry with the given key was not found among those in the HashMap. */
-	HM_SUCCESS = 0,				/**< (0) Successful execution of the called function. */
-	HM_ERR_NULL_ARGUMENT = 1,		/**< (1) One or more arguments are NULL. */
-	HM_ERR_MEMORY_ALLOCATION = 2,		/**< (2) Failed to allocate or reallocate memory. */
-	HM_ERR_KEY_MAX_LENGTH = 3,		/**< (3) The legnth of the given key exceeds the HASH_MAP_KEY_MAX_LENGTH limit. */
-	HM_ERR_KEY_EMPTY = 4,			/**< (4) The legnth of the given key is 0. */
-	HM_ERR_KEY_COPY = 5,			/**< (5) An error occured while coping the key using strcpy_s. */
-	HM_ERR_FULL = 6,			/**< (6) The HashMap is full. */
-	HM_ERR_INVALID_ARGUMENT_DIMENTIONS = 7, /**< (7) The dimentions of one or more arguments, either alone or in their combination, do not match the expectations of the function. */
-	HM_ERR_DYNAMIC_ARRAY = 8,		/**< (8) A DynamicArray function returned a @ref DynamicArrayError error code. */
-	HM_ERR_NULL_DESTRUCTOR = 9,		/**< (9) The HashMap does not have a set value_destructor member. *HashMap::value_destructor is NULL. */
-	HM_ERR_MAX_CAPACITY = 10		/**< (10) The number of Entries in the HashMap - HashMap::n_ent - has reached the limit of HASH_MAP_MAX_CAPACITY. */
-};
-
-/**
  * @struct Entry
  * @brief A structure representing a key-value pair in the HashMap.
  */
@@ -89,13 +69,13 @@ typedef struct HashMap
  * @param output A pointer where the the new HashMap will be outputed.
  * @return A value of the @ref HashMapError:
  *
- * - HM_SUCCESS
+ * - GLX_SUCCESS
  *
- * - HM_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - HM_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum HashMapError new_hash_map(HashMap **const output);
+GALXLIB_API enum GalxlibError new_hash_map(HashMap **const output);
 
 /**
  * Creates a new @ref HashMap.
@@ -103,13 +83,13 @@ GALXLIB_API enum HashMapError new_hash_map(HashMap **const output);
  * @param output A pointer where the the new HashMap will be outputed.
  * @return A value of the @ref HashMapError:
  *
- * - HM_SUCCESS
+ * - GLX_SUCCESS
  *
- * - HM_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - HM_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum HashMapError new_hash_map_d(void (*value_destructor)(void **value), HashMap **const output);
+GALXLIB_API enum GalxlibError new_hash_map_d(void (*value_destructor)(void **value), HashMap **const output);
 
 /**
  * Adds a destructor function to the HashMap. If one is already present, it is replaced with the new one.
@@ -118,38 +98,38 @@ GALXLIB_API enum HashMapError new_hash_map_d(void (*value_destructor)(void **val
  * @param value_destructor A function pointer. Receives as a single argument - a void pointer.
  * @return A value of the @ref HashMapError:
  *
- * - HM_SUCCESS
+ * - GLX_SUCCESS
  *
- * - HM_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum HashMapError add_destructor_hm(HashMap *const map, void (*value_destructor)(void **value));
+GALXLIB_API enum GalxlibError add_destructor_hm(HashMap *const map, void (*value_destructor)(void **value));
 
 /**
  * Frees the memory of the HashMap. The values of the Entries are not freed.
  * @param map A pointer to the HashMap, which must be freed.
- * If it points to NULL, nothing is done and HM_SUCCESS is returned.
+ * If it points to NULL, nothing is done and GLX_SUCCESS is returned.
  * @return A value of the @ref HashMapError:
  *
- * - HM_SUCCESS
+ * - GLX_SUCCESS
  *
- * - HM_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum HashMapError free_hash_map(HashMap **map);
+GALXLIB_API enum GalxlibError free_hash_map(HashMap **map);
 
 /**
  * Frees the memory of the HashMap. 
  * The HashMap::value_destructor is invoked with each Entry::value.
  * @param map A pointer to the HashMap, which must be freed.
- * If it points to NULL, nothing is done and HM_SUCCESS is returned.
+ * If it points to NULL, nothing is done and GLX_SUCCESS is returned.
  * @return A value of the @ref HashMapError:
  *
- * - HM_SUCCESS
+ * - GLX_SUCCESS
  *
- * - HM_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  * 
- * - HM_ERR_NULL_DESTRUCTOR
+ * - GLX_ERR_NULL_DESTRUCTOR
  */
-GALXLIB_API enum HashMapError free_hash_map_d(HashMap **map);
+GALXLIB_API enum GalxlibError free_hash_map_d(HashMap **map);
 
 /**
  * Adds a new Entry (key-value pair) to the HashMap.
@@ -160,21 +140,21 @@ GALXLIB_API enum HashMapError free_hash_map_d(HashMap **map);
  * @param value A pointer, which will be added as the value in the HashMap for the given key.
  * @return A value of the @ref HashMapError:
  *
- * - HM_SUCCESS
+ * - GLX_SUCCESS
  *
- * - HM_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - HM_ERR_FULL
+ * - GLX_ERR_FULL
  *
- * - HM_ERR_KEY_EMPTY
+ * - GLX_ERR_KEY_EMPTY
  *
- * - HM_ERR_KEY_MAX_LENGTH
+ * - GLX_ERR_KEY_MAX_LENGTH
  *
- * - HM_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  * 
- * - HM_ERR_MAX_CAPACITY
+ * - GLX_ERR_MAX_CAPACITY
  */
-GALXLIB_API enum HashMapError put_hm(HashMap *const map, char *const key, void *const value);
+GALXLIB_API enum GalxlibError put_hm(HashMap *const map, char *const key, void *const value);
 
 /**
  * Gets the value for the given key from the HashMap.
@@ -183,19 +163,19 @@ GALXLIB_API enum HashMapError put_hm(HashMap *const map, char *const key, void *
  * @param output A pointer, where the value will be placed.
  * @return A value of the @ref HashMapError:
  *
- * - HM_SUCCESS
+ * - GLX_SUCCESS
  *
- * - HM_EMPTY
+ * - GLX_ERR_ZERO_LENGTH
  *
- * - HM_NOT_FOUND
+ * - GLX_ERR_NO_MATCH
  *
- * - HM_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - HM_ERR_KEY_EMPTY
+ * - GLX_ERR_KEY_EMPTY
  *
- * - HM_ERR_KEY_MAX_LENGTH
+ * - GLX_ERR_KEY_MAX_LENGTH
  */
-GALXLIB_API enum HashMapError get_hm(const HashMap *const map, const char *const key, void **const output);
+GALXLIB_API enum GalxlibError get_hm(const HashMap *const map, const char *const key, void **const output);
 
 /**
  * Removes an Entry from the HashMap.
@@ -204,21 +184,21 @@ GALXLIB_API enum HashMapError get_hm(const HashMap *const map, const char *const
  * @param key A null-terminated string, which is the key of the Entry.
  * @return A value of the @ref HashMapError:
  *
- * - HM_SUCCESS
+ * - GLX_SUCCESS
  *
- * - HM_EMPTY
+ * - GLX_ERR_ZERO_LENGTH
  *
- * - HM_NOT_FOUND
+ * - GLX_ERR_NO_MATCH
  *
- * - HM_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - HM_ERR_KEY_EMPTY
+ * - GLX_ERR_KEY_EMPTY
  *
- * - HM_ERR_KEY_MAX_LENGTH
+ * - GLX_ERR_KEY_MAX_LENGTH
  *
- * - HM_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  */
-GALXLIB_API enum HashMapError remove_hm(HashMap *const map, const char *const key);
+GALXLIB_API enum GalxlibError remove_hm(HashMap *const map, const char *const key);
 
 /**
  * Applies a processor function to every Entry in the HashMap.
@@ -226,11 +206,11 @@ GALXLIB_API enum HashMapError remove_hm(HashMap *const map, const char *const ke
  * @param processor A function, which will receive a pointer to every available Entry in the HashMap.
  * @return A value of the @ref HashMapError:
  *
- * - HM_SUCCESS
+ * - GLX_SUCCESS
  *
- * - HM_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum HashMapError process_e_hm(const HashMap *const map, void (*processor)(const Entry *const ptr));
+GALXLIB_API enum GalxlibError process_e_hm(const HashMap *const map, void (*processor)(const Entry *const ptr));
 
 /**
  * Applies a processor function to value in the HashMap.
@@ -238,11 +218,11 @@ GALXLIB_API enum HashMapError process_e_hm(const HashMap *const map, void (*proc
  * @param processor A function, which will receive every value (a pointer) in the HashMap.
  * @return A value of the @ref HashMapError:
  *
- * - HM_SUCCESS
+ * - GLX_SUCCESS
  *
- * - HM_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  */
-GALXLIB_API enum HashMapError process_v_hm(const HashMap *const map, void (*processor)(const void *const ptr));
+GALXLIB_API enum GalxlibError process_v_hm(const HashMap *const map, void (*processor)(const void *const ptr));
 
 /**
  * Filters the Entries of the HashMap, leaving only the selected ones.
@@ -252,20 +232,20 @@ GALXLIB_API enum HashMapError process_v_hm(const HashMap *const map, void (*proc
  * The selector returns 1 if the Entry must STAY, 0 if it must be REMOVED.
  * @return A value of the @ref HashMapError:
  *
- * - HM_SUCCESS
+ * - GLX_SUCCESS
  *
- * - HM_ERR_DYNAMIC_ARRAY
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - HM_ERR_NULL_ARGUMENT
+ * - GLX_ERR_NULL_ARGUMENT
  *
- * - HM_ERR_MEMORY_ALLOCATION
+ * - GLX_ERR_MEMORY_ALLOCATION
  *
- * - HM_ERR_FULL
+ * - GLX_ERR_FULL
  *
- * - HM_ERR_KEY_EMPTY
+ * - GLX_ERR_KEY_EMPTY
  *
- * - HM_ERR_KEY_MAX_LENGTH
+ * - GLX_ERR_KEY_MAX_LENGTH
  */
-GALXLIB_API enum HashMapError filter_hm(HashMap *const map, int (*selector)(const Entry *const ptr));
+GALXLIB_API enum GalxlibError filter_hm(HashMap *const map, int (*selector)(const Entry *const ptr));
 
 #endif
