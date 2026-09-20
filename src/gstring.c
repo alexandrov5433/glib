@@ -456,6 +456,7 @@ enum StringError free_string(String **str)
 	if (NULL == *str)
 		return STR_SUCCESS;
 
+	free((*str)->str);
 	free(*str);
 	*str = NULL;
 
