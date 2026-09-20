@@ -4,6 +4,10 @@ project(galxlib VERSION 1.0.0 LANGUAGES C)
 
 add_library(galxlib STATIC)
 
+# Use cmake to generate and build your project: 
+# run `cmake -S <path-to-source> -B <path-to-build>` to generate the build files, 
+# then run `cmake --build <path-to-build>` to compile. 
+# You can also install with `cmake --install <path-to-build>`.
 
 # Linux
 # Static library (libgalxlib.a) -> /usr/lib
