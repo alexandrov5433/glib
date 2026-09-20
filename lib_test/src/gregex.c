@@ -21,10 +21,10 @@ void test_gregex()
 	assert(rc != NULL);
 
 	// match
-	assert(match(NULL, "test") == RC_ERR_NULL_ARGUMENT);
-	assert(match(rc, NULL) == RC_ERR_NULL_ARGUMENT);
+	assert(match(NULL, "test", 0) == RC_ERR_NULL_ARGUMENT);
+	assert(match(rc, NULL, 0) == RC_ERR_NULL_ARGUMENT);
 
-	assert(match(rc, "hello") == RC_SUCCESS);
+	assert(match(rc, "hello", 0) == RC_SUCCESS);
 	assert(rc->is_match == 1);
 
 	// get_group_value
@@ -67,16 +67,17 @@ void test_gregex()
 	String *test_str = NULL;
 	assert(new_string("world", 5, &test_str) == STR_SUCCESS);
 
-	assert(match_str(NULL, test_str) == RC_ERR_NULL_ARGUMENT);
-	assert(match_str(rc, NULL) == RC_ERR_NULL_ARGUMENT);
+	assert(match_str(NULL, test_str, 0) == RC_ERR_NULL_ARGUMENT);
+	assert(match_str(rc, NULL, 0) == RC_ERR_NULL_ARGUMENT);
 
-	assert(match_str(rc, test_str) == RC_SUCCESS);
+	assert(match_str(rc, test_str, 0) == RC_SUCCESS);
 
 	free_string(&test_str);
 
 	// free_regex_container
 	assert(free_regex_container(NULL) == RC_ERR_NULL_ARGUMENT);
-	assert(free_regex_container(rc) == RC_SUCCESS);
+	assert(free_regex_container(&rc) == RC_SUCCESS);
+	assert(rc == NULL);
 
 	printf("All gregex tests passed!\n");
 	puts(ANSI_COLOR_GREEN "Result: Success" ANSI_COLOR_RESET);
