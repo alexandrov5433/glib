@@ -24,7 +24,7 @@ enum GalxlibError
     GLX_ERR_NULL_ARRAY = 9,                       /**< (9) The underlying array is NULL. This is the structure member containig the elements - e.g. int *DynamicArray::int_arr for DA_INT type (DynamicArrayType). */
     GLX_ERR_NULL_STR = 10,                        /**< (10) The underlying character array of the String is NULL. This is the structure member containig the characters - e.g. char *String::str. */
     GLX_ERR_LOOP_MAX_LIMIT = 11,                  /**< (11) The maximum number of iterations in a loop has been reached. This is a safety measure to prevent infinite loops. */
-    GLX_ERR_ZERO_LENGTH = 12,                     /**< (12) The length of the underlying array is zero. This is a safety measure to prevent operations on empty strings, for example. */
+    GLX_ERR_ZERO_LENGTH = 12,                     /**< (12) The length of the underlying array, or the total elements count, is zero. This is a safety measure to prevent operations on empty strings, for example. */
     GLX_ERR_KEY_MAX_LENGTH = 13,                  /**< (13) The length of the key in a hash map is greater than the maximum allowed length. */
     GLX_ERR_KEY_EMPTY = 14,                       /**< (14) The length of the given key is 0. */
     GLX_ERR_KEY_COPY = 15,                        /**< (15) An error occured while coping the key using strcpy_s. */
