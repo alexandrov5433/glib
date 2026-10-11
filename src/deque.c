@@ -119,7 +119,7 @@ enum GalxlibError free_deque(deque_t **const deque)
 
 enum GalxlibError add_start_deque(deque_t *const restrict deque, void *element)
 {
-    if (NULL == deque)
+    if (NULL == deque || NULL == element)
         return GLX_ERR_NULL_ARGUMENT;
 
     deque_node_t *node = NULL;
@@ -130,6 +130,7 @@ enum GalxlibError add_start_deque(deque_t *const restrict deque, void *element)
     node->payload = element;
     if (deque->length > 0)
     {
+        deque->start_node->previous = node;
         node->next = deque->start_node;
         deque->start_node = node;
     }
@@ -147,7 +148,7 @@ enum GalxlibError add_start_deque(deque_t *const restrict deque, void *element)
 
 enum GalxlibError add_end_deque(deque_t *const restrict deque, void *element)
 {
-    if (NULL == deque)
+    if (NULL == deque || NULL == element)
         return GLX_ERR_NULL_ARGUMENT;
 
     deque_node_t *node = NULL;
@@ -158,6 +159,7 @@ enum GalxlibError add_end_deque(deque_t *const restrict deque, void *element)
     node->payload = element;
     if (deque->length > 0)
     {
+        deque->end_node->next = node;
         node->previous = deque->end_node;
         deque->end_node = node;
     }
