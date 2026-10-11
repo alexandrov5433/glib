@@ -403,9 +403,10 @@ GALXLIB_API enum GalxlibError replace_char(String *const str, const char to_repl
 GALXLIB_API enum GalxlibError remove_char(String *const str, const char to_remove);
 
 /**
- * Removes all instances of the character from the String.
- * @param str A pointer to the String, which must be processed.
- * @param to_remove The character which must be removed. All instances are removed.
+ * Replaces all instances of one String, found in the targeted String, with another String.
+ * @param str The String which must be processed.
+ * @param str_to_replace The String, which must be replaced.
+ * @param str_replacement The String, which will be used as a replacement.
  * @return A value of the @ref StringError:
  *
  * - GLX_SUCCESS
