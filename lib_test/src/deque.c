@@ -249,6 +249,71 @@ static void _test_remove_end_deque()
     assert(free_deque(&deque) == GLX_SUCCESS);
 }
 
+static void _test_peek_start_deque()
+{
+    deque_t *deque = NULL;
+    int first_value = 17;
+    DequeTestItem last_item = {42, "answer"};
+    void *output = NULL;
+
+    assert(peek_start_deque(NULL, &output) == GLX_ERR_NULL_ARGUMENT);
+    assert(peek_start_deque(NULL, NULL) == GLX_ERR_NULL_ARGUMENT);
+    assert(new_deque(&deque) == GLX_SUCCESS);
+    assert(peek_start_deque(deque, &output) == GLX_ERR_ZERO_LENGTH);
+    assert(peek_start_deque(deque, NULL) == GLX_ERR_NULL_ARGUMENT);
+
+    deque_t missing_start = {NULL, NULL, NULL, 1};
+    assert(peek_start_deque(&missing_start, &output) == GLX_ERR_NULL_NODE);
+
+    assert(add_end_deque(deque, &first_value) == GLX_SUCCESS);
+    assert(add_end_deque(deque, &last_item) == GLX_SUCCESS);
+    deque_node_t *original_start = deque->start_node;
+    deque_node_t *original_end = deque->end_node;
+    size_t original_length = deque->length;
+
+    assert(peek_start_deque(deque, &output) == GLX_SUCCESS);
+    assert(output == &first_value);
+    assert(deque->start_node == original_start);
+    assert(deque->end_node == original_end);
+    assert(deque->length == original_length);
+
+    assert(free_deque(&deque) == GLX_SUCCESS);
+    assert(deque == NULL);
+}
+
+static void _test_peek_end_deque()
+{
+    deque_t *deque = NULL;
+    int first_value = 17;
+    DequeTestItem last_item = {42, "answer"};
+    void *output = NULL;
+
+    assert(peek_end_deque(NULL, &output) == GLX_ERR_NULL_ARGUMENT);
+    assert(peek_end_deque(NULL, NULL) == GLX_ERR_NULL_ARGUMENT);
+    assert(new_deque(&deque) == GLX_SUCCESS);
+    assert(peek_end_deque(deque, &output) == GLX_ERR_ZERO_LENGTH);
+    assert(peek_end_deque(deque, NULL) == GLX_ERR_NULL_ARGUMENT);
+
+    deque_t missing_end = {NULL, NULL, NULL, 1};
+    assert(peek_end_deque(&missing_end, &output) == GLX_ERR_NULL_NODE);
+
+    assert(add_end_deque(deque, &first_value) == GLX_SUCCESS);
+    assert(add_end_deque(deque, &last_item) == GLX_SUCCESS);
+    deque_node_t *original_start = deque->start_node;
+    deque_node_t *original_end = deque->end_node;
+    size_t original_length = deque->length;
+
+    assert(peek_end_deque(deque, &output) == GLX_SUCCESS);
+    assert(output == &last_item);
+    assert(deque->start_node == original_start);
+    assert(deque->end_node == original_end);
+    assert(deque->length == original_length);
+
+    assert(free_deque(&deque) == GLX_SUCCESS);
+    assert(deque == NULL);
+
+}
+
 void test_deque()
 {
     puts("################## Test: Deque ##################");
@@ -261,6 +326,8 @@ void test_deque()
     _test_add_end_deque();
     _test_remove_start_deque();
     _test_remove_end_deque();
+    _test_peek_start_deque();
+    _test_peek_end_deque();
 
     puts(ANSI_COLOR_GREEN "All tests passed!" ANSI_COLOR_RESET);
     puts("################## Test: Deque ##################");
