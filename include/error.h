@@ -35,6 +35,7 @@ enum GalxlibError
     GLX_ERR_MISSING_COMPILED_PATTERN_BUFFER = 20, /**< (20) The given @ref RegexContainer does not contain a compiled pattern buffer. The structure member, pointing to a regex_t structure, is NULL (container->regex == NULL). */
     GLX_ERR_MISSING_MATCH_GROUPS = 21,            /**< (21) The given @ref RegexContainer does not contain any match groups. The structure member, pointing to a regmatch_t array, is NULL (container->groups == NULL). */
     GLX_ERR_REGEX_EXECUTION = 22,                 /**< (22) The regexec function has returned an error code (different than 0 and REG_NOMATCH), while trying to match. */
+    GLX_ERR_NULL_NODE = 23,                       /**< (23) Missing a node in a structure based on linked nodes. This may be a deque with, for example, a start_node equal to NULL. */
 };
 
 #endif
