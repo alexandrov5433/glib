@@ -175,6 +175,13 @@ static void _test_remove_start_deque()
     assert(deque->length == 2);
     assert(remove_start_deque(deque, NULL) == GLX_SUCCESS);
     assert(deque->length == 1);
+
+    assert(deque->end_node == deque->start_node);
+    assert(deque->end_node->next == NULL);
+    assert(deque->end_node->previous == NULL);
+    assert(deque->start_node->previous == NULL);
+    assert(deque->start_node->next == NULL);
+
     assert(remove_start_deque(deque, &removed) == GLX_SUCCESS);
     assert(removed == &first_item);
     assert(deque->length == 0);
@@ -214,6 +221,13 @@ static void _test_remove_end_deque()
     assert(deque->length == 2);
     assert(remove_end_deque(deque, NULL) == GLX_SUCCESS);
     assert(deque->length == 1);
+
+    assert(deque->end_node == deque->start_node);
+    assert(deque->end_node->next == NULL);
+    assert(deque->end_node->previous == NULL);
+    assert(deque->start_node->previous == NULL);
+    assert(deque->start_node->next == NULL);
+
     assert(remove_end_deque(deque, &removed) == GLX_SUCCESS);
     assert(removed == &first_value);
     assert(deque->length == 0);
