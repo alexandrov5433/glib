@@ -47,7 +47,7 @@ typedef struct deque_t
 {
     struct deque_node_t *start_node; /**< A pointer to the first element of the deque. */
     struct deque_node_t *end_node;   /**< A pointer to the last element of the deque. */
-    void (*destructor)(void *ptr);   /**< A function, which is invoked for each element of the deque, with the pointer of the element as an argument, when the deque structure is freed using the free_deque function. */
+    void (*destructor)(void **ptr);   /**< A function, which is invoked for each element of the deque, with the pointer of the element as an argument, when the deque structure is freed using the free_deque function. */
     size_t length;                   /**< The total number of elements (deque_node_t) currently in the deque. */
 } deque_t;
 
