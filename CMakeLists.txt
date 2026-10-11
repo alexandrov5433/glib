@@ -47,6 +47,7 @@ target_sources(galxlib
         src/dynamic_array.c
         src/gstring.c
         src/gregex.c
+        src/deque.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
@@ -57,6 +58,7 @@ target_sources(galxlib
             include/dynamic_array.h
             include/gstring.h
             include/gregex.h
+            include/deque.h
 )
 
 
@@ -72,6 +74,7 @@ target_sources(lib_test
         lib_test/src/gstring.c
         lib_test/src/hash_map.c
         lib_test/src/gregex.c
+        lib_test/src/deque.c
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS
@@ -81,6 +84,7 @@ target_sources(lib_test
             lib_test/include/gstring.h
             lib_test/include/hash_map.h
             lib_test/include/gregex.h
+            lib_test/include/deque.h
 )
 # compile lib code with -g flag, enabling debugging of lib_test.exe with working breakpoints
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)

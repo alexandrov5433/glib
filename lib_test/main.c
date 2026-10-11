@@ -7,6 +7,7 @@
 #include "./include/gstring.h"
 #include "./include/hash_map.h"
 #include "./include/gregex.h"
+#include "./include/deque.h"
 
 int main()
 {
@@ -16,6 +17,8 @@ int main()
     test_hash_map();
     dynamic_array_test();
     test_gregex();
+    test_deque();
+
     clock_t c2 = clock();
     double dur = 1000.0 * (c2 - c1) / CLOCKS_PER_SEC;
     printf("CPU time used (per clock()): %.2f ms\n", dur);
