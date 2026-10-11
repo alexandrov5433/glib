@@ -148,4 +148,36 @@ GALXLIB_API enum GalxlibError remove_start_deque(deque_t *const restrict deque, 
  */
 GALXLIB_API enum GalxlibError remove_end_deque(deque_t *const restrict deque, void **const output);
 
+/**
+ * Gets the first (starting) element of the deque, without modifying it.
+ * @param deque The deque, containing the element. If the deque is empty, GLX_ERR_ZERO_LENGTH is returned.
+ * @param output A pointer where the pointer to the element will be placed.
+ * @return A value of the @ref GalxlibError:
+ *
+ *  - GLX_SUCCESS
+ *
+ *  - GLX_ERR_NULL_ARGUMENT
+ *
+ *  - GLX_ERR_ZERO_LENGTH
+ * 
+ *  - GLX_ERR_NULL_NODE
+ */
+GALXLIB_API enum GalxlibError peek_start_deque(const deque_t *const restrict deque, void **const output);
+
+/**
+ * Gets the last (ending) element of the deque, without modifying it.
+ * @param deque The deque, containing the element. If the deque is empty, GLX_ERR_ZERO_LENGTH is returned.
+ * @param output A pointer where the pointer to the element will be placed.
+ * @return A value of the @ref GalxlibError:
+ *
+ *  - GLX_SUCCESS
+ *
+ *  - GLX_ERR_NULL_ARGUMENT
+ *
+ *  - GLX_ERR_ZERO_LENGTH
+ * 
+ *  - GLX_ERR_NULL_NODE
+ */
+GALXLIB_API enum GalxlibError peek_end_deque(const deque_t *const restrict deque, void **const output);
+
 #endif

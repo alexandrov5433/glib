@@ -256,3 +256,35 @@ enum GalxlibError remove_end_deque(deque_t *const restrict deque, void **const o
 
     return GLX_SUCCESS;
 }
+
+enum GalxlibError peek_start_deque(const deque_t *const restrict deque, void **const output)
+{
+    if (NULL == deque || NULL == output)
+        return GLX_ERR_NULL_ARGUMENT;
+
+    if (0 == deque->length)
+        return GLX_ERR_ZERO_LENGTH;
+
+    if (NULL == deque->start_node)
+        return GLX_ERR_NULL_NODE;
+
+    *output = deque->start_node->payload;
+
+    return GLX_SUCCESS;
+}
+
+enum GalxlibError peek_end_deque(const deque_t *const restrict deque, void **const output)
+{
+    if (NULL == deque || NULL == output)
+        return GLX_ERR_NULL_ARGUMENT;
+
+    if (0 == deque->length)
+        return GLX_ERR_ZERO_LENGTH;
+
+    if (NULL == deque->end_node)
+        return GLX_ERR_NULL_NODE;
+
+    *output = deque->end_node->payload;
+
+    return GLX_SUCCESS;
+}
